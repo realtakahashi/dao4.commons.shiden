@@ -9,7 +9,7 @@ contract SubDAO {
 
     uint constant DEPOSIT_AMOUNT = 1;
 
-    event MintedNewERC721(address indexed owner,address erc721Address);
+    event MintedNewERC721(address indexed owner,address erc721Address, uint256 tokenId);
 
     struct DaoInfo {
         string daoName;
@@ -37,10 +37,13 @@ contract SubDAO {
         require(msg.value >= DEPOSIT_AMOUNT,"You have to deposite 10 Native tokens.");
         // create erc721
         memberToken = new MyERC721PresetMinterPauserAutoId(daoName,daoName,"nothing");
-        memberToken.mint(msg.sender);
+        uint256 tokenId = memberToken.member_token_mint(msg.sender);
         daoInfoes[msg.sender] = DaoInfo(daoName,githubURL,ownerName,address(memberToken));
+        
         console.log("address is : ",address(memberToken));
-        emit MintedNewERC721(msg.sender, address(memberToken));
+        console.log("tokenId is :",tokenId);
+
+        emit MintedNewERC721(msg.sender, address(memberToken), tokenId);
     }
 
 

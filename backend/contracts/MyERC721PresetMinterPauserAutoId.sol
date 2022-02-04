@@ -4,8 +4,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/presets/ERC721PresetMinterPauserAutoId.sol";
 
 contract MyERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId{
-
+    using Counters for Counters.Counter;
+    
     address owner;
+    Counters.Counter private _tokenIdTracker;
 
     event IssuedMemberToken(address indexed sender, uint256 id);
 
@@ -20,6 +22,16 @@ contract MyERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId{
     //     require(owner == msg.sender);
     //     _;
     // }
+
+    function member_token_mint(address to) public returns (uint256) {
+        require(hasRole(MINTER_ROLE, _msgSender()), "ERC721PresetMinterPauserAutoId: must have minter role to mint");
+
+        uint256 tokenId = _tokenIdTracker.current();
+        _mint(to, tokenId);
+        emit IssuedMemberToken(to, tokenId);
+        _tokenIdTracker.increment();
+        return tokenId;
+    }
 
     /**
      * @dev See {IERC721-safeTransferFrom}.

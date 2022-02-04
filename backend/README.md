@@ -24,7 +24,7 @@ npx hardhat node
 ```
 cd dao4.commons.shiden/backend
 npx hardhat compile
-npx hardhat run scripts/deploy_subdao.js 
+npx hardhat run --network localhost scripts/deploy_subdao.js 
 ```
 
 # Excecute contract by Hardhat console
@@ -37,7 +37,9 @@ npx hardhat node
 npx hardhat console --network localhost
 ```
 ```
-const DAO = await ethers.getContractFactory("SubDAO");
-const dao = await DAO.attach("YOUR DEPLOYED CONTRACT ADDRESS ");
-dao.createDAO("test","test.com","shin",{value:ethers.utils.parseEther("1.0")});
+let DAO = await ethers.getContractFactory("SubDAO");
+let dao = await DAO.attach("YOUR DEPLOYED CONTRACT ADDRESS ");
+let tx = await dao.createDAO("test","test.com","shin",{value:ethers.utils.parseEther("1.0")});
+let returnValue = await tx.wait();
+returnValue.events;
 ```
