@@ -11,7 +11,7 @@ const Layout: FC = ({ children }) => {
         <meta name="description" content="dao4.commons.shiden Project" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className={styles.container}>
+      <div className={styles.root}>
         <main className={styles.main}>
           {children}
         </main>
