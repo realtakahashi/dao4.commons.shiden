@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { FC } from "react";
-import { Footer } from "@/components/common";
+import { Footer, Header } from "@/components/common";
 import styles from "./Layout.module.scss"
 
 const Layout: FC = ({ children }) => {
@@ -11,6 +11,7 @@ const Layout: FC = ({ children }) => {
         <meta name="description" content="dao4.commons.shiden Project" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Header/>
       <div className={styles.root}>
         <main className={styles.main}>
           {children}

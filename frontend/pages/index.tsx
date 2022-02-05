@@ -7,7 +7,7 @@ export const getStaticProps = async () => {
 }
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
-    <Layout>
+    <>
       <Link href="/dao/create">
         <a className="m-10 py-2 px-4 border border-black-700 rounded">
           Create DAO
@@ -23,7 +23,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           MarketPlace
         </a>
       </Link>
-    </Layout>
+    </>
   )
 }
 
