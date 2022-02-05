@@ -13,7 +13,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           Create DAO
         </a>
       </Link>
-      <Link href="/login_dao">
+      <Link href="/dao/login">
         <a className="m-10 py-2 px-4 border border-black-700 rounded">
           Login DAO
         </a>
