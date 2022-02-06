@@ -42,7 +42,7 @@ contract MyERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId{
         uint256 tokenId
     ) public pure override {
         // safeTransferFrom(from, to, tokenId, "");
-        revert("This token is not permitted to transfer to others");
+        revert("can't transfer.");
     }
 
     /**
@@ -54,10 +54,27 @@ contract MyERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId{
         uint256 tokenId,
         bytes memory _data
     ) public  pure override  {
-        revert("This token is not permitted to transfer to others");
+        revert("can't transfer.");
         // require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: transfer caller is not owner nor approved");
         //_safeTransfer(from, to, tokenId, _data);
     }
+
+    // function _burn(uint256 tokenId) internal override {
+    //     address owner = ERC721.ownerOf(tokenId);
+
+    //     _beforeTokenTransfer(owner, address(0), tokenId);
+
+    //     // Clear approvals
+    //     _approve(address(0), tokenId);
+
+    //     _balances[owner] -= 1;
+    //     delete _owners[tokenId];
+
+    //     emit Transfer(owner, address(0), tokenId);
+
+    //     _afterTokenTransfer(owner, address(0), tokenId);
+    // }
+
 
 }
 
