@@ -15,7 +15,7 @@ async function main() {
 
   // We get the contract to deploy
   const SubDAO = await hre.ethers.getContractFactory("SubDAO");
-  const sudao = await SubDAO.deploy();
+  const sudao = await SubDAO.deploy("testDAO","test.com","0xAbB12158488d9C9Bd52C14B9AE4C835eCE4A6e13",0,"shin");
 
   await sudao.deployed();
 
