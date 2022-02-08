@@ -84,14 +84,26 @@ contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId{
     }
 
     /** 
+    * 譲渡不能にしています。
+    */
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public pure override {
+        revert("can't transfer.");
+    }
+
+    /** 
     * トークンをバーンします。
     * Mint時にDepositしたトークンを返却します。
     */
     function burn(uint256 tokenId) override public {
-        require(ownerOf(tokenId)!=address(0)&&(msg.sender == owner || ownerOf(tokenId)==msg.sender),"can't burn");
+        address tokenOwner = ownerOf(tokenId);
+        require(tokenOwner!=address(0)&&(msg.sender == owner || ownerOf(tokenId)==msg.sender),"can't burn");
         _burn(tokenId);
         payable(msg.sender).transfer(DEPOSITE_AMOUNT);
-        emit BurnedMemberToken(ownerOf(tokenId), tokenId);
+        emit BurnedMemberToken(tokenOwner, tokenId);
     }
 }
 
