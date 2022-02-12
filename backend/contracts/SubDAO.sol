@@ -3,20 +3,19 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-// import "@openzeppelin/contracts/token/ERC721/presets/ERC721PresetMinterPauserAutoId.sol";
-// import "./MyERC721PresetMinterPauserAutoId.sol";
-// import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /**
 * This contract is to create dao easier than pesent methmod.
 * - When you create your own dao, you can get a NFT what prove to be a dao member.
 */
-contract SubDAO {
+contract SubDAO is ReentrancyGuard{
     using Counters for Counters.Counter;
     Counters.Counter private _memberIdTracker;
 
     string public daoName;
     string public githubURL;
+    uint256 public amountOfDotation;
     address private erc721Address;
 
     struct MemberInfo {
@@ -28,8 +27,10 @@ contract SubDAO {
     event MemberAdded(address indexed eoa, uint256 memberId);
     event MemberDeleted(address indexed eoa, uint256 memberId);
 
-    // EAO address => DaoInfo
+    // EOA address => MemberInfo
     mapping(address => MemberInfo) public memberInfoes;
+    // EOA address => git url
+    mapping(address => string) public contributionReports;
 
     /** 
     * コンストラクター
@@ -37,6 +38,9 @@ contract SubDAO {
     */
     constructor(string memory _daoName, string memory _githubURL, address _erc721Address,uint256 _tokenId, 
         string memory _ownerName){
+        // initial increment
+        _memberIdTracker.increment();
+        
         daoName = _daoName;
         githubURL = _githubURL;
         erc721Address = _erc721Address;
@@ -70,5 +74,34 @@ contract SubDAO {
         emit MemberDeleted(eoa,memberId);
     }
 
+    /** 
+    * 貢献の活動をレポートする。
+    */
+    function reportContribution(string memory _githubURL) public {
+        require(bytes(_githubURL).length!=0,"invalid url.");
+        contributionReports[msg.sender]=_githubURL;
+    }
+
+    /** 
+    * 寄付を受け付ける
+    */
+    function donate() public payable {
+        amountOfDotation += msg.value;
+    }
+
+    /** 
+    * 分配する
+    */
+    function divide(address to, uint256 ammount) public payable {
+        require(bytes(memberInfoes[msg.sender].name).length!=0,"only member does.");
+        payable(to).transfer(ammount);
+    }
+
+    /** 
+    * contract addressの残高を確認する
+    */
+    function getContractBalance() public view returns(uint256) {
+        return address(this).balance;
+    }
 
 }

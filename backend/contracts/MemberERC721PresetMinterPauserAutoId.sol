@@ -3,13 +3,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/presets/ERC721PresetMinterPauserAutoId.sol";
 import "hardhat/console.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 /** 
 * DAOのメンバーようにMintするERC721トークン
 * DAOを作成時にデプロイして、DAOにこのトークンのアドレスを保存します。
 * メンバー追加を依頼するものはこのトークンをまずMintしてから追加を申し出る必要があります。
 */
-contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId{
+contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId,ReentrancyGuard{
     using Counters for Counters.Counter;
 
     uint256 DEPOSITE_AMOUNT = 10000000000000000000;
