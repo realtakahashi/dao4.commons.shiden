@@ -77,6 +77,12 @@ const CreateDao = () => {
             </div>
           </div>
         </form>
+        <p className="text-sm">
+          Contract Address: xxxxxxxxxxx
+        </p>
+        <p className="text-sm">
+          tokenId: 1
+        </p>
       </div>
     </>
   )
