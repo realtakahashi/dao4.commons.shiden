@@ -56,6 +56,13 @@ contract DaoERC721 is ERC721,ReentrancyGuard{
     }
 
     /** 
+    * contract addressの残高を確認する
+    */
+    function getContractBalance() public view returns(uint256) {
+        return address(this).balance;
+    }
+
+    /** 
     * 収益を還元する
     */
     function withdraw() public onlyOwner {
