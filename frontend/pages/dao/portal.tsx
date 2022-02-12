@@ -1,5 +1,6 @@
 
-import Layout from '../../components/common/Layout/Layout';
+import Layout from '@/components/common/Layout/Layout';
+import Link from 'next/link';
 
 const DaoPortal = () => {
   return (
@@ -21,12 +22,11 @@ const DaoPortal = () => {
             takahashi:0xyuuuuuuuuuuuu
           </p>
           <div className="md:flex md:items-center mb-6 mt-5">
-            <button className="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 mr-5 rounded" type="button">
-              Add Member
-            </button>
-            <button className="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="button">
-              Delete Member
-            </button>
+            <Link href="/dao/members/manage">
+              <a className="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 mr-5 rounded" type="button">
+                Add/Delete Member
+              </a>
+            </Link>
           </div>
 
           <div className="md:flex md:items-center mb-6">
