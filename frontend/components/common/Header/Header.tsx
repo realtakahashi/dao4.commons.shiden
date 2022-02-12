@@ -2,20 +2,21 @@ import React, { FC, ReactElement, useEffect, useState } from "react"
 import detectEthereumProvider from '@metamask/detect-provider'
 import Web3 from 'web3';
 import cn from "classnames"
+import HeaderNav from '../HeaderNav/HeaderNav';
 
 const Header: FC = () => {
   const [address, setAddress] = useState("");
   const [walletConnected, setWalletConnected] = useState(false)
-  const [headerMenuOpenStatus, setHeaderMenuOpenStatus] = useState(false)
+  const [headerMenuOpen, setheaderMenuOpen] = useState(false)
 
 
   const headerMenuClassName = cn(
     "w-full block flex-grow lg:flex lg:items-center lg:w-auto",
-    { "hidden": headerMenuOpenStatus }
+    { "hidden": !headerMenuOpen }
   )
 
   const onClickHeaderIcon = (): void => {
-    setHeaderMenuOpenStatus(!headerMenuOpenStatus)
+    setheaderMenuOpen(!headerMenuOpen)
   }
   const connectWallet = async () => {
     const provider = await detectEthereumProvider({ mustBeMetaMask: true });
@@ -71,21 +72,7 @@ const Header: FC = () => {
           </button>
         </div>
         <div className={headerMenuClassName}>
-          <div className="text-sm lg:flex-grow">
-            <a href="/dao/login" className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-              Login DAO
-            </a>
-          </div>
-          <div className="text-sm lg:flex-grow">
-            <a href="/dao/create" className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-              Create DAO
-            </a>
-          </div>
-          <div className="text-sm lg:flex-grow">
-            <a href="/marketplace" className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-              MarketPlace
-            </a>
-          </div>
+          <HeaderNav />
           <div>
             <ConnectButton />
           </div>
