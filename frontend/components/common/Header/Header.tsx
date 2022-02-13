@@ -9,7 +9,6 @@ const Header: FC = () => {
   const [walletConnected, setWalletConnected] = useState(false)
   const [headerMenuOpen, setheaderMenuOpen] = useState(false)
 
-
   const headerMenuClassName = cn(
     "w-full block flex-grow lg:flex lg:items-center lg:w-auto",
     { "hidden": !headerMenuOpen }
