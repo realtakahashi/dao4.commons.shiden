@@ -42,6 +42,7 @@ contract MasterDAO is ReentrancyGuard{
 
     struct DaoInfo {
         address ownerAddress;
+        address daoAddress;
         string daoName;
         string githubURL;
         bool rewardApproved;
@@ -87,7 +88,6 @@ contract MasterDAO is ReentrancyGuard{
         // initial id is started 1.
         _daoIdTracker.increment();
         _memberIdTracker.increment();
-        _daoIdTracker.increment();
         // initialize voting status
         votingDaoInProgress = address(0);
         votingMemberInProgress = address(0);
@@ -95,7 +95,6 @@ contract MasterDAO is ReentrancyGuard{
 
         githubURL = _githubURL;
         memberInfoes[msg.sender] = MemberInfo(_ownerName,_memberIdTracker.current());
-        _memberIdTracker.increment();
     }
 
     /**
@@ -104,8 +103,8 @@ contract MasterDAO is ReentrancyGuard{
     function startMemberVoting(string memory name, address memberAddress, bool _isMemberAdded) public onlyMember {
         require(votingMemberInProgress==address(0),"another voting is going.");
         require(memberAddress!=address(0),"invalid address.");
-        require((memberProposalHistories[_memberProposalIdTracker.current()].eoa==memberAddress && _isMemberAdded==false) ||
-            (memberProposalHistories[_memberProposalIdTracker.current()].eoa==address(0) && _isMemberAdded==true),"already finished.");
+        require((bytes(memberInfoes[memberAddress].name).length==0 && _isMemberAdded==true) || 
+                (bytes(memberInfoes[memberAddress].name).length!=0 && _isMemberAdded==false),"already finished.");
         votingMemberInProgress = memberAddress;
         _yesCountOfMember.reset();
         isMemberAdded = _isMemberAdded;
@@ -131,18 +130,21 @@ contract MasterDAO is ReentrancyGuard{
     /**
     * メンバー投票を終了する
     */
-    function finishMemberVoting(address memberAddress) public {
+    function finishMemberVoting(address memberAddress) public onlyMember {
         require(votingMemberInProgress==memberAddress,"invalid address.");
         require(memberAddress!=address(0),"invalid address.");
 
+        console.log("## yes:",_yesCountOfMember.current());
+        console.log("## proposal count:",_memberProposalIdTracker.current());
+
         if (_yesCountOfMember.current() * 100 / memberProposalHistories[_memberProposalIdTracker.current()].countsOfVoter
-            >= MEMBER_PASS_LINE){
+            >= MEMBER_PASS_LINE){          
+            _memberIdTracker.increment();
             memberInfoes[memberAddress]=
                 MemberInfo(
                     memberProposalHistories[_memberProposalIdTracker.current()].name,
                     _memberIdTracker.current()
                 );
-            _memberIdTracker.increment();
         }
         votingMemberInProgress = address(0);
         isMemberAdded = true;
@@ -151,10 +153,10 @@ contract MasterDAO is ReentrancyGuard{
     /** 
     * DAOを登録する。
     */
-    function registerDAO(address daoAddress,string memory daoName,string memory githubURL) public {
+    function registerDAO(address daoAddress,string memory daoName,string memory _githubURL) public {
         require(daoIds[daoAddress]==0,"already registerd.");
         uint256 id = _daoIdTracker.current();
-        daoInfoes[id] = DaoInfo(msg.sender,daoName,githubURL,false);
+        daoInfoes[id] = DaoInfo(msg.sender,daoAddress,daoName,_githubURL,false);
         daoIds[daoAddress] = id;
         _daoIdTracker.increment();
         emit DaoAdded(msg.sender, id);
@@ -198,10 +200,20 @@ contract MasterDAO is ReentrancyGuard{
         require(votingDaoInProgress!=address(0),"a vote isn't going.");
         require(daoAddress!=address(0) || daoIds[daoAddress]!=0,"invalid address.");
         if (_yesCountOfDao.current() * 100 / daoProposalHistories[daoIds[daoAddress]].countsOfVoter >= DAO_PASS_LINE){
-            daoInfoes[daoIds[daoAddress]].rewardApproved = true;
+            if (isDaoAdded){
+                daoInfoes[daoIds[daoAddress]].rewardApproved = true;
+            }
+            else{
+                daoInfoes[daoIds[daoAddress]].rewardApproved = false;
+            }
         }
         else{
-            daoInfoes[daoIds[daoAddress]].rewardApproved = false;
+            if (isDaoAdded){
+                daoInfoes[daoIds[daoAddress]].rewardApproved = false;
+            }
+            else{
+                daoInfoes[daoIds[daoAddress]].rewardApproved = true;
+            }
         }
         votingDaoInProgress = address(0);
         emit FinishedVoteOfDao(daoAddress,daoIds[daoAddress]);
@@ -228,6 +240,19 @@ contract MasterDAO is ReentrancyGuard{
     */
     function getContractBalance() public view returns(uint256) {
         return address(this).balance;
+    }
+
+    /**
+    * daoの一覧を取得する  
+    */
+    function getDaoList() public view returns (address[] memory){
+        address[] memory daoList = new address[](_daoIdTracker.current() - 1);
+        for (uint256 i=1; i < _daoIdTracker.current(); i++) {
+            if (bytes(daoInfoes[i].daoName).length!=0){
+                daoList[i-1] = daoInfoes[i].daoAddress;
+            }
+        }
+        return daoList;
     }
 
     /** 
