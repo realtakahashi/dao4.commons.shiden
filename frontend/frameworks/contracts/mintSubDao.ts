@@ -32,7 +32,7 @@ const mintSubDao = async (inputData: any) => {
     )
 
     contract
-      .original_mint(address)
+      .original_mint(address, {value: Web3.utils.toWei('10')})
       .then((d: any) => {
         const transaction = d.hash
         console.log(transaction)
