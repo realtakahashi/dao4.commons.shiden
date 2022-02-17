@@ -12,7 +12,8 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract SubDAO is ReentrancyGuard{
     using Counters for Counters.Counter;
     Counters.Counter private _memberIdTracker;
-
+    Counters.Counter private _contributeIdTracker;
+    
     string public daoName;
     string public githubURL;
     uint256 public amountOfDotation;
@@ -24,13 +25,18 @@ contract SubDAO is ReentrancyGuard{
         uint256 memberId;
     }
 
+    struct ContributeInfo {
+        address eoa;
+        string githubURL;
+    }
+
     event MemberAdded(address indexed eoa, uint256 memberId);
     event MemberDeleted(address indexed eoa, uint256 memberId);
 
     // EOA address => MemberInfo
     mapping(address => MemberInfo) public memberInfoes;
-    // EOA address => git url
-    mapping(address => string) public contributionReports;
+    // id => ContributeInfo
+    mapping(uint256 => ContributeInfo) public contributionReports;
 
     /** 
     * コンストラクター
@@ -79,7 +85,8 @@ contract SubDAO is ReentrancyGuard{
     */
     function reportContribution(string memory _githubURL) public {
         require(bytes(_githubURL).length!=0,"invalid url.");
-        contributionReports[msg.sender]=_githubURL;
+        contributionReports[_contributeIdTracker.current()]=ContributeInfo(msg.sender,_githubURL);
+        _contributeIdTracker.increment();
     }
 
     /** 
