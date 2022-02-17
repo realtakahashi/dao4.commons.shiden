@@ -8,7 +8,7 @@ const subDaoContractAddress = process.env.SUBDAO_CONTRACT_ADDRESS
 // TODO addressの取得
 const address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
 
-const mintSubDao = async (inputData: any) => {
+const mintMemberNFT = async (inputData: any) => {
   inputData = {
     amount: 1,
   }
@@ -43,4 +43,4 @@ const mintSubDao = async (inputData: any) => {
   return
 }
 
-export default mintSubDao
+export default mintMemberNFT

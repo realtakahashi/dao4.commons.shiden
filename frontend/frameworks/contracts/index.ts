@@ -1,1 +1,2 @@
-export {default as mintSubDao} from './mintSubDao'
+export {default as mintMemberNFT} from './mintMemberNFT'
+export {default as deployMemberNFT} from './deployMemberNFT'
