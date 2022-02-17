@@ -134,8 +134,8 @@ contract MasterDAO is ReentrancyGuard{
         require(votingMemberInProgress==memberAddress,"invalid address.");
         require(memberAddress!=address(0),"invalid address.");
 
-        console.log("## yes:",_yesCountOfMember.current());
-        console.log("## proposal count:",_memberProposalIdTracker.current());
+        // console.log("## yes:",_yesCountOfMember.current());
+        // console.log("## proposal count:",_memberProposalIdTracker.current());
 
         if (_yesCountOfMember.current() * 100 / memberProposalHistories[_memberProposalIdTracker.current()].countsOfVoter
             >= MEMBER_PASS_LINE){          
