@@ -18,9 +18,11 @@ contract MasterDAO is ReentrancyGuard{
     Counters.Counter private _daoProposalIdTracker;
     Counters.Counter private _yesCountOfDao;
     Counters.Counter private _yesCountOfMember;
+    Counters.Counter private _proposalIdTracker;
 
     uint public DAO_PASS_LINE = 60;
     uint public MEMBER_PASS_LINE = 60;
+    uint public PROPOSAL_PASS_LINE = 60;
 
     string public githubURL;
     address public votingDaoInProgress;
@@ -58,6 +60,40 @@ contract MasterDAO is ReentrancyGuard{
         bool isAdded;
     }
 
+    enum ProposalKind {
+        AddAMember,  
+        DeleteAMember,
+        UseOfFunds,
+        CommunityManagement,
+        Activities
+    }
+
+    enum ProposalStatus {
+        UnderDiscussionOnGithub,
+        Voting,
+        Pending,
+        Running,
+        Rejected,
+        FinishedVoting,
+        Finished
+    }
+
+    struct ProposalInfo {
+        ProposalKind proposalKind;
+        string title;
+        string outline;
+        string details;
+        string githubURL;
+        uint256 proposalId;
+        ProposalStatus proposalStatus;
+    }
+
+    struct VotingInfo {
+        uint256 votingCount;
+        uint256 yesCount;
+        uint256 noCount;
+    }
+
     event MemberAdded(address indexed eoa, uint256 memberId);
     event MemberDeleted(address indexed eoa, uint256 memberId);
     event DaoAdded(address indexed eoa, uint256 daoId);
@@ -79,6 +115,10 @@ contract MasterDAO is ReentrancyGuard{
     mapping(uint256 => DaoProposal) public daoProposalHistories;
     // eoa address => Vote
     mapping(address => Vote) public checkAlreadyDaoVoted;
+    // proposal id => ProposalInfo
+    mapping(uint256 => ProposalInfo) public proposalInfoes;
+    // proposal id => Voting Info
+    mapping(uint256 => VotingInfo) public votingInfoes;
 
     /** 
     * コンストラクター
@@ -88,6 +128,7 @@ contract MasterDAO is ReentrancyGuard{
         // initial id is started 1.
         _daoIdTracker.increment();
         _memberIdTracker.increment();
+        _proposalIdTracker.increment();
         // initialize voting status
         votingDaoInProgress = address(0);
         votingMemberInProgress = address(0);
@@ -134,8 +175,8 @@ contract MasterDAO is ReentrancyGuard{
         require(votingMemberInProgress==memberAddress,"invalid address.");
         require(memberAddress!=address(0),"invalid address.");
 
-        console.log("## yes:",_yesCountOfMember.current());
-        console.log("## proposal count:",_memberProposalIdTracker.current());
+        // console.log("## yes:",_yesCountOfMember.current());
+        // console.log("## proposal count:",_memberProposalIdTracker.current());
 
         if (_yesCountOfMember.current() * 100 / memberProposalHistories[_memberProposalIdTracker.current()].countsOfVoter
             >= MEMBER_PASS_LINE){          
@@ -253,6 +294,108 @@ contract MasterDAO is ReentrancyGuard{
             }
         }
         return daoList;
+    }
+
+    /** 
+    * 提案を提出する
+    */
+    function submitProposal(ProposalKind _proposalKind, string memory _title, string memory _outline, string memory _details, 
+        string memory _githubURL) public onlyMember {
+        proposalInfoes[_proposalIdTracker.current()] = 
+            ProposalInfo(_proposalKind, _title, _outline, _details, _githubURL, _proposalIdTracker.current()
+            ,ProposalStatus.UnderDiscussionOnGithub);
+        _proposalIdTracker.increment();
+    }
+
+    /**
+    * 提案のステータスを変更する
+    */
+    function changeProposalStatus(uint256 _proposalId, ProposalStatus _proposalStatus) public onlyMember {
+        require(bytes(proposalInfoes[_proposalId].title).length!=0,"Invalid proposal.");
+        if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.UnderDiscussionOnGithub) {
+            if ((_proposalStatus != ProposalStatus.Voting) && (_proposalStatus != ProposalStatus.Pending) && 
+                (_proposalStatus != ProposalStatus.Rejected)) {
+                revert("Invalid Status.");
+            }
+        }
+        else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Pending) {
+            if ((_proposalStatus != ProposalStatus.Voting) && 
+                (_proposalStatus != ProposalStatus.Rejected) &&
+                (_proposalStatus != ProposalStatus.UnderDiscussionOnGithub)) {
+                revert("Invalid Status.");
+            }
+        }
+        else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Voting) {
+            if ((_proposalStatus != ProposalStatus.FinishedVoting)) {
+                revert("Invalid Status.");
+            }
+        }
+        else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Running) {
+            if ((_proposalStatus != ProposalStatus.Finished)) {
+                revert("Invalid Status.");
+            }
+        }
+        else if ((proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Finished) ||
+                (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Rejected)) {
+                revert("Invalid Status.");
+        }
+
+        if (_proposalStatus == ProposalStatus.FinishedVoting){
+            proposalInfoes[_proposalId].proposalStatus = _checkVotingResult(_proposalId);
+        }
+        else if (_proposalStatus == ProposalStatus.Voting){
+            proposalInfoes[_proposalId].proposalStatus = _proposalStatus;
+            _startVoting(_proposalId);
+        }
+        else {
+            proposalInfoes[_proposalId].proposalStatus = _proposalStatus;
+        }
+    }
+
+    /**
+    * 投票する
+    */
+    function vote(uint256 _proposalId, bool yes) public onlyMember {
+        require(proposalInfoes[_proposalId].proposalStatus==ProposalStatus.Voting,"Now can not vote.");
+        votingInfoes[_proposalId].votingCount++;
+        if (yes){
+            votingInfoes[_proposalId].yesCount++;
+        }
+        else{
+            votingInfoes[_proposalId].noCount++;
+        }
+    }
+
+    /**
+    * 提案の一覧を取得する
+    */
+    function getProposalList() public view returns (ProposalInfo[] memory) {
+        ProposalInfo[] memory proposalList = new ProposalInfo[](_proposalIdTracker.current() - 1);
+        for (uint256 i=1; i < _proposalIdTracker.current(); i++) {
+            if (bytes(proposalInfoes[i].title).length!=0){
+                proposalList[i-1] = proposalInfoes[i];
+            }
+        }
+        return proposalList;
+    }
+
+    /**
+    * 投票を開始する
+    */
+    function _startVoting(uint256 _proposalId) internal {
+        votingInfoes[_proposalId]=VotingInfo(0,0,0);
+    }
+
+    /**
+    * 投票結果をチェックする。
+    */
+    function _checkVotingResult(uint256 _proposalId) internal view returns (ProposalStatus){
+        if (votingInfoes[_proposalId].yesCount * 100 / _memberIdTracker.current() >= PROPOSAL_PASS_LINE){   
+            return ProposalStatus.Running;
+        }
+        else {
+            return ProposalStatus.Rejected;
+        }       
     }
 
     /** 
