@@ -14,12 +14,12 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const SubDAO = await hre.ethers.getContractFactory("SubDAO");
-  const sudao = await SubDAO.deploy("testDAO","test.com","shin");
+  const ERC721 = await hre.ethers.getContractFactory("DaoERC721");
+  const erc721 = await ERC721.deploy("DAO ERC721","D721","0xAbB12158488d9C9Bd52C14B9AE4C835eCE4A6e13",
+    ethers.utils.parseEther("10.0"));
+  await erc721.deployed();
 
-  await sudao.deployed();
-
-  console.log("SubDAO deployed to:", sudao.address);
+  console.log("DAO ERC721 deployed to:", erc721.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

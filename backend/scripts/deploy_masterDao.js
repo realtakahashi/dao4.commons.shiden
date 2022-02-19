@@ -14,12 +14,12 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const SubDAO = await hre.ethers.getContractFactory("SubDAO");
-  const sudao = await SubDAO.deploy("testDAO","test.com","shin");
+  const MasterDAO = await hre.ethers.getContractFactory("MasterDAO");
+  const masterdao = await MasterDAO.deploy("https://github.com/realtakahashi/dao4.commons.shiden","Shin Takahashi");
 
-  await sudao.deployed();
+  await masterdao.deployed();
 
-  console.log("SubDAO deployed to:", sudao.address);
+  console.log("MasterDAO deployed to:", masterdao.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -29,7 +29,7 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     }
 
     modifier onlyOwner(){
-        require(owner == msg.sender);
+        require(owner == msg.sender,"only owner does.");
         _;
     }
 
