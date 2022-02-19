@@ -4,6 +4,8 @@ import {
   MasterDAOContractConstruct,
 } from '@/contracts/construct'
 
+import {SubDAODeployFormData} from '@/types/SubDAO'
+
 export const listSubDAO = async (): Promise<Array<string>> => {
   const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS
   const contractConstract = MasterDAOContractConstruct
@@ -30,7 +32,34 @@ export const listSubDAO = async (): Promise<Array<string>> => {
   return response
 }
 
-export const deploySubDAO = async (inputData: any) => {
+export const getSubDAO = async (address: string) => {
+  const subDAOAddress = address
+  const contractConstract = MasterDAOContractConstruct
+  let response: string[] = []
+  if (typeof window.ethereum !== 'undefined' && subDAOAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOAddress,
+      contractConstract.abi,
+      signer
+    )
+    // await contract
+    //   .getDaoList()
+    //   .then((r: any) => {
+    //     console.log(r)
+    //     response = r
+    //   })
+    //   .catch((err: any) => {
+    //     console.log(err)
+    //     alert('failed to get SubDAO')
+    //   })
+    return contract
+  }
+  return
+}
+
+export const deploySubDAO = async (inputData: SubDAODeployFormData) => {
   const contractConstract = SubDAOContractConstruct
   if (typeof window.ethereum !== 'undefined') {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -41,7 +70,7 @@ export const deploySubDAO = async (inputData: any) => {
       signer
     )
     await factory
-      .deploy('Name', 'Symbol', 'Gihub.com')
+      .deploy(inputData.name, inputData.github_url, inputData.owner_url)
       .then((r: any) => {
         console.log(r)
         alert('デプロイに成功しました。')

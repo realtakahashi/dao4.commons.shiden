@@ -2,15 +2,18 @@ import { Layout } from '@/components/common';
 import { useState } from 'react';
 import { FormInputText } from '@/components/ui';
 import { deploySubDAO, registerSubDAO } from '@/contracts/SubDAO';
-
+import { SubDAODeployFormData } from "@/types/SubDAO"
 const DeploySubDAO = () => {
-  const [formValue, setFormValue] = useState({})
+  const [formValue, setFormValue] = useState<SubDAODeployFormData>({
+    github_url: "",
+    owner_url: "",
+    name: ""
+  })
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormValue({
       ...formValue,
       [event.target.name]: event.target.value
     })
-    console.log(formValue)
   }
   const onSubmitSubDAOForm = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
