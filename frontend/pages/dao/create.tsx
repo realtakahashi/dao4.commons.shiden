@@ -1,5 +1,5 @@
 import { Layout } from "@/components/common";
-import { deployMemberNFT } from "@/frameworks/contracts";
+import { deployMemberNFT } from "@/contracts";
 
 
 const CreateDao = () => {

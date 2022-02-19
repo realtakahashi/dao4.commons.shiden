@@ -1,5 +1,5 @@
 import { Layout } from "@/components/common";
-import { mintMemberNFT } from "@/frameworks/contracts";
+import { mintMemberNFT } from "@/contracts";
 
 
 const CreateDao = () => {
