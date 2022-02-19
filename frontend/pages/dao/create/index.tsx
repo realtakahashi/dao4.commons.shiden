@@ -10,7 +10,7 @@ export const getStaticProps = async () => {
 
 // mock
 const topLinks = [
-  { path: '/dao/create/deploy_subdao', label: "Deploy SubDAO" },
+  { path: '/dao/create/subdao', label: "Deploy SubDAO" },
   { path: '/dao/members/deploy_nft', label: "Deploy MemberNFT" },
   { path: '/dao/members/mint_nft', label: "Mint MemberNFT" },
 ]
