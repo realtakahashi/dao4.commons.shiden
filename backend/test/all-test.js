@@ -130,14 +130,20 @@ describe("All contract", function() {
     describe("Sub DAO", async function() {
         it("SubDao deployment", async function() {
             const SubDao = await ethers.getContractFactory("SubDAO");
-            subDao = await SubDao.connect(SubDaoOwner1).deploy("narusedai-2-36","test.com",memberERC721.address,0,"Shin Takahashi");
+            subDao = await SubDao.connect(SubDaoOwner1).deploy("narusedai-2-36","test.com","Shin Takahashi");
             assert.equal(await subDao.daoName(),"narusedai-2-36");
             assert.equal(await subDao.githubURL(),"test.com");
 
             const member = await subDao.memberInfoes(SubDaoOwner1.address);
             assert.equal(member.name, "Shin Takahashi");
-            assert.equal(member.tokenId,0);
             assert.equal(member.memberId,1);
+        });
+        it("Update NftAddress & OwnerTokenId", async function() {
+            await subDao.connect(SubDaoOwner1).updateNftAddressAndOwnerTokenId(memberERC721.address,0);
+            const member = await subDao.memberInfoes(SubDaoOwner1.address);
+            assert.equal(member.name, "Shin Takahashi");
+            assert.equal(member.memberId,1);
+            assert.equal(member.tokenId,0);
         });
         it("Add Member", async function() {
             // Mint Member Token
@@ -289,6 +295,10 @@ describe("All contract", function() {
         });
         it("owner mint.", async function() {
             daoErc20.connect(SubDaoOwner1).mint(ethers.utils.parseEther("10.0"),10000);
+        });
+        it("not on sale", async function() {
+            await expect(daoErc20.connect(SubDaoOwner3).buy(10000,{value:ethers.utils.parseEther("10.0")}))
+            .to.be.revertedWith("now not on sale.");
         });
     });
 

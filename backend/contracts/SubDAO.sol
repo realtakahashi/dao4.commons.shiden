@@ -21,6 +21,7 @@ contract SubDAO is ReentrancyGuard{
     string public githubURL;
     uint256 public amountOfDotation;
     address private erc721Address;
+    address private owner;
 
     struct MemberInfo {
         string name;
@@ -85,19 +86,25 @@ contract SubDAO is ReentrancyGuard{
     * コンストラクター
     * DAOの基本情報をセットし、デプロイしたEOAを第一のメンバーとして登録する。
     */
-    constructor(string memory _daoName, string memory _githubURL, address _erc721Address,uint256 _tokenId, 
-        string memory _ownerName){
+    constructor(string memory _daoName, string memory _githubURL, string memory _ownerName){
         // initial increment
         _memberIdTracker.increment();
         _proposalIdTracker.increment();
         
         daoName = _daoName;
         githubURL = _githubURL;
-        erc721Address = _erc721Address;
-        memberInfoes[msg.sender] = MemberInfo(_ownerName,_tokenId,_memberIdTracker.current());
+        owner = msg.sender;
+        memberInfoes[msg.sender] = MemberInfo(_ownerName,0,_memberIdTracker.current());
         memberIds[_memberIdTracker.current()] = msg.sender;
         _memberIdTracker.increment();
+    }
 
+    /**
+    * SubDao用のNFTのアドレス、オーナーのTokenIdを設定する
+    */
+    function updateNftAddressAndOwnerTokenId(address _nftAddress, uint256 _ownerTokenId) public onlyOwner {
+        erc721Address = _nftAddress;
+        memberInfoes[msg.sender].tokenId = _ownerTokenId;
     }
 
     /**
@@ -278,4 +285,11 @@ contract SubDAO is ReentrancyGuard{
         _;
     }
 
+    /**
+    * オーナーチェック
+    */
+    modifier onlyOwner(){
+        require(msg.sender == owner);
+        _;
+    }
 }
