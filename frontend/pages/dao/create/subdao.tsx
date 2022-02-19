@@ -1,14 +1,7 @@
 import { Layout } from '@/components/common';
 import { useState } from 'react';
 import { FormInputText } from '@/components/ui';
-
-const onSubmitSubDAOForm = (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault()
-  const data = {
-
-  }
-  console.log(data)
-}
+import { deploySubDAO, registerSubDAO } from '@/contracts/SubDAO';
 
 const DeploySubDAO = () => {
   const [formValue, setFormValue] = useState({})
@@ -18,7 +11,10 @@ const DeploySubDAO = () => {
       [event.target.name]: event.target.value
     })
     console.log(formValue)
-
+  }
+  const onSubmitSubDAOForm = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    deploySubDAO(formValue)
   }
   return (
     <>
@@ -83,13 +79,28 @@ const DeploySubDAO = () => {
               </button>
             </div>
           </div>
-          <p className="text-sm">
-            DAO Address: xxxxxxxxxxx
-          </p>
-          <p className="text-sm">
-            MemberID
-          </p>
+
         </form>
+        <p className="text-sm">
+          DAO Address: xxxxxxxxxxx
+        </p>
+        <p className="text-sm">
+          MemberID
+        </p>
+
+        <div className="mt-10">
+          <div className="md:w-1/3"></div>
+          <div className="md:w-2/3">
+            <button
+              className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
+              type="button"
+              onClick={() => registerSubDAO()}
+            >
+              Propose to register my DAO
+            </button>
+          </div>
+
+        </div>
       </div>
     </>
   )

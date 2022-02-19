@@ -1,6 +1,8 @@
 import type { InferGetStaticPropsType, NextPage } from 'next'
 import { Layout } from '@/components/common'
 import Link from "next/link"
+import { listSubDAO } from '@/contracts/SubDAO'
+import { useEffect, useState } from 'react';
 
 export const getStaticProps = async () => {
   return { props: {} }
@@ -19,22 +21,29 @@ const topLinks = [
   { type: "link", path: '/dao/signup', label: "Signup DAO", action: null },
 ]
 
-// mock
-const DAOList = [
-  { title: "some title1" },
-  { title: "some title2" },
-  { title: "some title3" }
-]
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+
+  const [DAOList, setDAOList] = useState([""])
+  useEffect(() => {
+    const getSubDAOList = async () => {
+      const response = await listSubDAO()
+      setDAOList(
+        response
+      )
+    }
+    getSubDAOList()
+  }, [])
+
   return (
     <>
       <div>
         {
+
           topLinks.map((link) => {
             if (link.type === "button") {
               return (
-
                 <button
+                  key={link.label}
                   className="m-2 py-2 px-4 border border-black-700 rounded"
                   onClick={loginDAO}
                 >
@@ -43,7 +52,9 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
               )
             }
             return (
-              <Link href={link.path} key={link.path}>
+              <Link
+                href={link.path}
+                key={link.path}>
                 <a
                   className="m-2 py-2 px-4 border border-black-700 rounded"
                 >
@@ -59,13 +70,14 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <div className="flex justify-center">
           <ul className="bg-white rounded-lg border border-gray-200 w-96 text-gray-900">
             {
-              DAOList.map((dao) => {
+              DAOList.map((daoAddress) => {
+                console.log(daoAddress)
                 return (
                   <li
                     className="px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
-                    key={dao.title}
+                    key={daoAddress}
                   >
-                    {dao.title}
+                    {daoAddress}
                   </li>
                 )
               })
