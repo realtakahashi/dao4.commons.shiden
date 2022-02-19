@@ -46,7 +46,7 @@ contract SubDAO is ReentrancyGuard{
         Voting,
         Pending,
         Running,
-        Withdraw,
+        Rejected,
         FinishedVoting,
         Finished
     }
@@ -57,6 +57,7 @@ contract SubDAO is ReentrancyGuard{
         string outline;
         string details;
         string githubURL;
+        uint256 proposalId;
         ProposalStatus proposalStatus;
     }
 
@@ -88,6 +89,7 @@ contract SubDAO is ReentrancyGuard{
         string memory _ownerName){
         // initial increment
         _memberIdTracker.increment();
+        _proposalIdTracker.increment();
         
         daoName = _daoName;
         githubURL = _githubURL;
@@ -126,7 +128,7 @@ contract SubDAO is ReentrancyGuard{
     /**
     * メンバーの一覧を取得する
     */
-    function getMembers() public view returns (MemberInfo[] memory) {
+    function getMemberList() public view returns (MemberInfo[] memory) {
         MemberInfo[] memory memberList = new MemberInfo[](_memberIdTracker.current() - 1);
         for (uint256 i=1; i < _memberIdTracker.current(); i++) {
             if (bytes(memberInfoes[memberIds[i]].name).length!=0){
@@ -172,7 +174,9 @@ contract SubDAO is ReentrancyGuard{
     function submitProposal(ProposalKind _proposalKind, string memory _title, string memory _outline, string memory _details, 
         string memory _githubURL) public onlyMember {
         proposalInfoes[_proposalIdTracker.current()] = 
-            ProposalInfo(_proposalKind, _title, _outline, _details, _githubURL, ProposalStatus.UnderDiscussionOnGithub);
+            ProposalInfo(_proposalKind, _title, _outline, _details, _githubURL, _proposalIdTracker.current()
+            ,ProposalStatus.UnderDiscussionOnGithub);
+        _proposalIdTracker.increment();
     }
 
     /**
@@ -182,12 +186,14 @@ contract SubDAO is ReentrancyGuard{
         require(bytes(proposalInfoes[_proposalId].title).length!=0,"Invalid proposal.");
         if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.UnderDiscussionOnGithub) {
             if ((_proposalStatus != ProposalStatus.Voting) && (_proposalStatus != ProposalStatus.Pending) && 
-                (_proposalStatus != ProposalStatus.Withdraw)) {
+                (_proposalStatus != ProposalStatus.Rejected)) {
                 revert("Invalid Status.");
             }
         }
         else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Pending) {
-            if ((_proposalStatus != ProposalStatus.Voting) && (_proposalStatus != ProposalStatus.Withdraw)) {
+            if ((_proposalStatus != ProposalStatus.Voting) && 
+                (_proposalStatus != ProposalStatus.Rejected) &&
+                (_proposalStatus != ProposalStatus.UnderDiscussionOnGithub)) {
                 revert("Invalid Status.");
             }
         }
@@ -200,6 +206,10 @@ contract SubDAO is ReentrancyGuard{
             if ((_proposalStatus != ProposalStatus.Finished)) {
                 revert("Invalid Status.");
             }
+        }
+        else if ((proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Finished) ||
+                (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Rejected)) {
+                revert("Invalid Status.");
         }
 
         if (_proposalStatus == ProposalStatus.FinishedVoting){
@@ -217,7 +227,8 @@ contract SubDAO is ReentrancyGuard{
     /**
     * 投票する
     */
-    function vote(uint256 _proposalId, bool yes) public {
+    function vote(uint256 _proposalId, bool yes) public onlyMember {
+        require(proposalInfoes[_proposalId].proposalStatus==ProposalStatus.Voting,"Now can not vote.");
         votingInfoes[_proposalId].votingCount++;
         if (yes){
             votingInfoes[_proposalId].yesCount++;
@@ -225,6 +236,19 @@ contract SubDAO is ReentrancyGuard{
         else{
             votingInfoes[_proposalId].noCount++;
         }
+    }
+
+    /**
+    * 提案の一覧を取得する
+    */
+    function getProposalList() public view returns (ProposalInfo[] memory) {
+        ProposalInfo[] memory proposalList = new ProposalInfo[](_proposalIdTracker.current() - 1);
+        for (uint256 i=1; i < _proposalIdTracker.current(); i++) {
+            if (bytes(proposalInfoes[i].title).length!=0){
+                proposalList[i-1] = proposalInfoes[i];
+            }
+        }
+        return proposalList;
     }
 
     /**
@@ -242,7 +266,7 @@ contract SubDAO is ReentrancyGuard{
             return ProposalStatus.Running;
         }
         else {
-            return ProposalStatus.Withdraw;
+            return ProposalStatus.Rejected;
         }       
     }
 
