@@ -299,120 +299,120 @@ contract MasterDAO is ReentrancyGuard{
     /**
     * daoの一覧を取得する  
     */
-    function getDaoList() public view returns (address[] memory){
-        address[] memory daoList = new address[](_daoIdTracker.current() - 1);
+    function getDaoList() public view returns (DaoInfo[] memory){
+        DaoInfo[] memory daoList = new DaoInfo[](_daoIdTracker.current() - 1);
         for (uint256 i=1; i < _daoIdTracker.current(); i++) {
             if (bytes(daoInfoes[i].daoName).length!=0){
-                daoList[i-1] = daoInfoes[i].daoAddress;
+                daoList[i-1] = daoInfoes[i];
             }
         }
         return daoList;
     }
 
-    /** 
-    * 提案を提出する
-    */
-    function submitProposal(ProposalKind _proposalKind, string memory _title, string memory _outline, string memory _details, 
-        string memory _githubURL) public onlyMember {
-        proposalInfoes[_proposalIdTracker.current()] = 
-            ProposalInfo(_proposalKind, _title, _outline, _details, _githubURL, _proposalIdTracker.current()
-            ,ProposalStatus.UnderDiscussionOnGithub);
-        emit SubmitedProposal(msg.sender, _title, _proposalIdTracker.current());
-        _proposalIdTracker.increment();
-    }
+    // /** 
+    // * 提案を提出する
+    // */
+    // function submitProposal(ProposalKind _proposalKind, string memory _title, string memory _outline, string memory _details, 
+    //     string memory _githubURL) public onlyMember {
+    //     proposalInfoes[_proposalIdTracker.current()] = 
+    //         ProposalInfo(_proposalKind, _title, _outline, _details, _githubURL, _proposalIdTracker.current()
+    //         ,ProposalStatus.UnderDiscussionOnGithub);
+    //     emit SubmitedProposal(msg.sender, _title, _proposalIdTracker.current());
+    //     _proposalIdTracker.increment();
+    // }
 
-    /**
-    * 提案のステータスを変更する
-    */
-    function changeProposalStatus(uint256 _proposalId, ProposalStatus _proposalStatus) public onlyMember {
-        require(bytes(proposalInfoes[_proposalId].title).length!=0,"Invalid proposal.");
-        if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.UnderDiscussionOnGithub) {
-            if ((_proposalStatus != ProposalStatus.Voting) && (_proposalStatus != ProposalStatus.Pending) && 
-                (_proposalStatus != ProposalStatus.Rejected)) {
-                revert("Invalid Status.");
-            }
-        }
-        else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Pending) {
-            if ((_proposalStatus != ProposalStatus.Voting) && 
-                (_proposalStatus != ProposalStatus.Rejected) &&
-                (_proposalStatus != ProposalStatus.UnderDiscussionOnGithub)) {
-                revert("Invalid Status.");
-            }
-        }
-        else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Voting) {
-            if ((_proposalStatus != ProposalStatus.FinishedVoting)) {
-                revert("Invalid Status.");
-            }
-        }
-        else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Running) {
-            if ((_proposalStatus != ProposalStatus.Finished)) {
-                revert("Invalid Status.");
-            }
-        }
-        else if ((proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Finished) ||
-                (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Rejected)) {
-                revert("Invalid Status.");
-        }
+    // /**
+    // * 提案のステータスを変更する
+    // */
+    // function changeProposalStatus(uint256 _proposalId, ProposalStatus _proposalStatus) public onlyMember {
+    //     require(bytes(proposalInfoes[_proposalId].title).length!=0,"Invalid proposal.");
+    //     if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.UnderDiscussionOnGithub) {
+    //         if ((_proposalStatus != ProposalStatus.Voting) && (_proposalStatus != ProposalStatus.Pending) && 
+    //             (_proposalStatus != ProposalStatus.Rejected)) {
+    //             revert("Invalid Status.");
+    //         }
+    //     }
+    //     else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Pending) {
+    //         if ((_proposalStatus != ProposalStatus.Voting) && 
+    //             (_proposalStatus != ProposalStatus.Rejected) &&
+    //             (_proposalStatus != ProposalStatus.UnderDiscussionOnGithub)) {
+    //             revert("Invalid Status.");
+    //         }
+    //     }
+    //     else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Voting) {
+    //         if ((_proposalStatus != ProposalStatus.FinishedVoting)) {
+    //             revert("Invalid Status.");
+    //         }
+    //     }
+    //     else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Running) {
+    //         if ((_proposalStatus != ProposalStatus.Finished)) {
+    //             revert("Invalid Status.");
+    //         }
+    //     }
+    //     else if ((proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Finished) ||
+    //             (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Rejected)) {
+    //             revert("Invalid Status.");
+    //     }
 
-        if (_proposalStatus == ProposalStatus.FinishedVoting){
-            proposalInfoes[_proposalId].proposalStatus = _checkVotingResult(_proposalId);
-        }
-        else if (_proposalStatus == ProposalStatus.Voting){
-            proposalInfoes[_proposalId].proposalStatus = _proposalStatus;
-            _startVoting(_proposalId);
-        }
-        else {
-            proposalInfoes[_proposalId].proposalStatus = _proposalStatus;
-        }
-        emit ChangedProposalStatus(msg.sender, _proposalId, _proposalStatus);
-    }
+    //     if (_proposalStatus == ProposalStatus.FinishedVoting){
+    //         proposalInfoes[_proposalId].proposalStatus = _checkVotingResult(_proposalId);
+    //     }
+    //     else if (_proposalStatus == ProposalStatus.Voting){
+    //         proposalInfoes[_proposalId].proposalStatus = _proposalStatus;
+    //         _startVoting(_proposalId);
+    //     }
+    //     else {
+    //         proposalInfoes[_proposalId].proposalStatus = _proposalStatus;
+    //     }
+    //     emit ChangedProposalStatus(msg.sender, _proposalId, _proposalStatus);
+    // }
 
-    /**
-    * 投票する
-    */
-    function voteForProposal(uint256 _proposalId, bool yes) public onlyMember {
-        require(proposalInfoes[_proposalId].proposalStatus==ProposalStatus.Voting,"Now can not vote.");
-        votingInfoes[_proposalId].votingCount++;
-        if (yes){
-            votingInfoes[_proposalId].yesCount++;
-        }
-        else{
-            votingInfoes[_proposalId].noCount++;
-        }
-        emit VotedForProposal(msg.sender, _proposalId);
-    }
+    // /**
+    // * 投票する
+    // */
+    // function voteForProposal(uint256 _proposalId, bool yes) public onlyMember {
+    //     require(proposalInfoes[_proposalId].proposalStatus==ProposalStatus.Voting,"Now can not vote.");
+    //     votingInfoes[_proposalId].votingCount++;
+    //     if (yes){
+    //         votingInfoes[_proposalId].yesCount++;
+    //     }
+    //     else{
+    //         votingInfoes[_proposalId].noCount++;
+    //     }
+    //     emit VotedForProposal(msg.sender, _proposalId);
+    // }
 
-    /**
-    * 提案の一覧を取得する
-    */
-    function getProposalList() public view returns (ProposalInfo[] memory) {
-        ProposalInfo[] memory proposalList = new ProposalInfo[](_proposalIdTracker.current() - 1);
-        for (uint256 i=1; i < _proposalIdTracker.current(); i++) {
-            if (bytes(proposalInfoes[i].title).length!=0){
-                proposalList[i-1] = proposalInfoes[i];
-            }
-        }
-        return proposalList;
-    }
+    // /**
+    // * 提案の一覧を取得する
+    // */
+    // function getProposalList() public view returns (ProposalInfo[] memory) {
+    //     ProposalInfo[] memory proposalList = new ProposalInfo[](_proposalIdTracker.current() - 1);
+    //     for (uint256 i=1; i < _proposalIdTracker.current(); i++) {
+    //         if (bytes(proposalInfoes[i].title).length!=0){
+    //             proposalList[i-1] = proposalInfoes[i];
+    //         }
+    //     }
+    //     return proposalList;
+    // }
 
-    /**
-    * 投票を開始する
-    */
-    function _startVoting(uint256 _proposalId) internal {
-        votingInfoes[_proposalId]=VotingInfo(0,0,0);
-    }
+    // /**
+    // * 投票を開始する
+    // */
+    // function _startVoting(uint256 _proposalId) internal {
+    //     votingInfoes[_proposalId]=VotingInfo(0,0,0);
+    // }
 
-    /**
-    * 投票結果をチェックする。
-    */
-    function _checkVotingResult(uint256 _proposalId) internal view returns (ProposalStatus){
-        if (votingInfoes[_proposalId].yesCount * 100 / _memberIdTracker.current() >= PROPOSAL_PASS_LINE){   
-            return ProposalStatus.Running;
-        }
-        else {
-            return ProposalStatus.Rejected;
-        }       
-    }
+    // /**
+    // * 投票結果をチェックする。
+    // */
+    // function _checkVotingResult(uint256 _proposalId) internal view returns (ProposalStatus){
+    //     if (votingInfoes[_proposalId].yesCount * 100 / _memberIdTracker.current() >= PROPOSAL_PASS_LINE){   
+    //         return ProposalStatus.Running;
+    //     }
+    //     else {
+    //         return ProposalStatus.Rejected;
+    //     }       
+    // }
 
     /** 
     * Modifiter　メンバーのみ実行可能

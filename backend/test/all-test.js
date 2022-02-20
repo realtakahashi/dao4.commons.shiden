@@ -27,7 +27,9 @@ describe("All contract", function() {
 
     let masterDao;
     let memberERC721;
+    let memberERC721a;
     let subDao;
+    let subDaoa;
     let daoErc20;
     let daoErc721;
 
@@ -95,9 +97,19 @@ describe("All contract", function() {
         });
     });
     describe("MemberERC721", function() {
+        it("SubDao deployment For MemberNFT Test", async function() {
+            const SubDaoa = await ethers.getContractFactory("SubDAO");
+            subDaoa = await SubDaoa.connect(SubDaoOwner1).deploy("narusedai-2-36","test.com","Shin Takahashi");
+            assert.equal(await subDaoa.daoName(),"narusedai-2-36");
+            assert.equal(await subDaoa.githubURL(),"test.com");
+
+            const member = await subDaoa.memberInfoes(SubDaoOwner1.address);
+            assert.equal(member.name, "Shin Takahashi");
+            assert.equal(member.memberId,1);
+        });
         it("MemberERC721 Deployment.", async function(){
             const MemberERC721 = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
-            memberERC721 = await MemberERC721.connect(SubDaoOwner1).deploy("TEST","TEST","test.com");
+            memberERC721 = await MemberERC721.connect(SubDaoOwner1).deploy("TEST","TEST","test.com",subDaoa.address);
             assert.equal(await memberERC721.name(),"TEST");
             assert.equal(await memberERC721.symbol(),"TEST");
         });
@@ -138,8 +150,15 @@ describe("All contract", function() {
             assert.equal(member.name, "Shin Takahashi");
             assert.equal(member.memberId,1);
         });
+        it("MemberERC721a Deployment.", async function(){
+            const MemberERC721 = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
+            memberERC721a = await MemberERC721.connect(SubDaoOwner1).deploy("TEST1","TEST1","test.com",subDao.address);
+            assert.equal(await memberERC721a.name(),"TEST1");
+            assert.equal(await memberERC721a.symbol(),"TEST1");
+        });
         it("Update NftAddress & OwnerTokenId", async function() {
-            await subDao.connect(SubDaoOwner1).updateNftAddressAndOwnerTokenId(memberERC721.address,0);
+            await memberERC721a.connect(SubDaoOwner1).original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("10.0")});
+            await subDao.connect(SubDaoOwner1).updateNftAddressAndOwnerTokenId(memberERC721a.address,0);
             const member = await subDao.memberInfoes(SubDaoOwner1.address);
             assert.equal(member.name, "Shin Takahashi");
             assert.equal(member.memberId,1);
@@ -147,14 +166,14 @@ describe("All contract", function() {
         });
         it("Add Member", async function() {
             // Mint Member Token
-            await memberERC721.connect(SubDaoOwner2).original_mint(SubDaoOwner2.address,{value:ethers.utils.parseEther("10.0")});
-            assert.equal(await memberERC721.balanceOf(SubDaoOwner2.address),1);
-            assert.equal(await memberERC721.ownerOf(2),SubDaoOwner2.address);
+            await memberERC721a.connect(SubDaoOwner2).original_mint(SubDaoOwner2.address,{value:ethers.utils.parseEther("10.0")});
+            assert.equal(await memberERC721a.balanceOf(SubDaoOwner2.address),1);
+            assert.equal(await memberERC721a.ownerOf(1),SubDaoOwner2.address);
 
-            await subDao.connect(SubDaoOwner1).addMember(SubDaoOwner2.address, "Keisuke Funatsu", memberERC721.address,2);
+            await subDao.connect(SubDaoOwner1).addMember(SubDaoOwner2.address, "Keisuke Funatsu", memberERC721a.address,1);
             const member = await subDao.memberInfoes(SubDaoOwner2.address);
             assert.equal(member.name, "Keisuke Funatsu");
-            assert.equal(member.tokenId,2);
+            assert.equal(member.tokenId,1);
             assert.equal(member.memberId,2);
         });
         it("Get Member List", async function() {
@@ -163,7 +182,7 @@ describe("All contract", function() {
             assert.equal(list[0].tokenId,0);
             assert.equal(list[0].memberId,1);
             assert.equal(list[1].name,"Keisuke Funatsu");
-            assert.equal(list[1].tokenId,2);
+            assert.equal(list[1].tokenId,1);
             assert.equal(list[1].memberId,2);
         });
         it("Submit a Proposal.", async function() {
@@ -264,7 +283,9 @@ describe("All contract", function() {
             assert.equal(daoInfo.rewardApproved,false);
             const daoList = await masterDao.getDaoList();
             assert.equal(daoList.length,1);
-            assert.equal(daoList[0],subDao.address);
+            assert.equal(daoList[0].daoAddress,subDao.address);
+            assert.equal(daoList[0].daoName,"narusedai-2-36");
+            assert.equal(daoList[0].githubURL,"test.com");
         });
         it("Voting to a Sub DAO & Approved.", async function() {
             await masterDao.connect(MasterDaoOwner).startDaoVoting(subDao.address,true);
@@ -280,7 +301,7 @@ describe("All contract", function() {
             assert.equal(daoInfo.rewardApproved,true);
             const daoList = await masterDao.getDaoList();
             assert.equal(daoList.length,1);
-            assert.equal(daoList[0],subDao.address);
+            assert.equal(daoList[0].daoAddress,subDao.address);
         });
     });
     describe("Erc20 for DAO.", async function() {
