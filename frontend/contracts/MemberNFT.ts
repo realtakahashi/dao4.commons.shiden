@@ -49,17 +49,24 @@ export const mintMemberNFT = async (memberNFTTokenAddress: string) => {
       MemberERC721ContractConstruct.abi,
       signer
     )
-
     contract
       .original_mint(signerAddress, {value: Web3.utils.toWei('10')})
       .then((d: any) => {
         console.log(d)
-        alert('Succeeded to mint first NFT!')
+        alert('Succeeded to mint member NFT!')
       })
       .catch((err: any) => {
         console.log(err)
-        alert('Failed to mint first NFT!')
+        alert('Failed to mint member NFT!')
       })
+    const filters = contract.filters['IssuedMemberToken']
+    if (filters !== undefined) {
+      provider.once('block', () => {
+        contract.on(filters(), (to, tokenID) => {
+          console.log(to, tokenID)
+        })
+      })
+    }
   }
   return
 }
