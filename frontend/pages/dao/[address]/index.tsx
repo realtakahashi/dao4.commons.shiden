@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 
 
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-
   return {
     props: {
       address: params?.address
@@ -17,7 +16,7 @@ export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: ["/dao/test"],
+    paths: ["/dao/[address]"],
     fallback: true
   }
 }

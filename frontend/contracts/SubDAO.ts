@@ -3,7 +3,7 @@ import {
   SubDAOContractConstruct,
   MasterDAOContractConstruct,
 } from '@/contracts/construct'
-import {SubDAOData} from '@/types/SubDAO'
+import {SubDAOData, SubDAOMemberData} from '@/types/SubDAO'
 
 import {SubDAODeployFormData} from '@/types/SubDAO'
 
@@ -33,33 +33,30 @@ export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
   return response
 }
 
-export const getSubDAO = async (address: string) => {
-  const subDAOAddress = address
-  const contractConstract = MasterDAOContractConstruct
-  let response: string[] = []
-  if (typeof window.ethereum !== 'undefined' && subDAOAddress) {
+export const getSubDAOMemberList = async (sudDAOAddress: string): Promise<Array<SubDAOMemberData>> => {
+  const contractConstract = SubDAOContractConstruct
+  let response: SubDAOMemberData[] = []
+  if (typeof window.ethereum !== 'undefined' && sudDAOAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
-      subDAOAddress,
+      sudDAOAddress,
       contractConstract.abi,
       signer
     )
-    // await contract
-    //   .getDaoList()
-    //   .then((r: any) => {
-    //     console.log(r)
-    //     response = r
-    //   })
-    //   .catch((err: any) => {
-    //     console.log(err)
-    //     alert('failed to get SubDAO')
-    //   })
-    return contract
+    await contract
+      .getMemberList()
+      .then((r: any) => {
+        console.log(r)
+        response = r
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed to list SubDAO Member')
+      })
   }
-  return
+  return response
 }
-
 export const deploySubDAO = async (
   inputData: SubDAODeployFormData
 ): Promise<string> => {

@@ -9,3 +9,9 @@ export interface SubDAOData {
   daoName: string
   githubURL: string
 }
+
+export interface SubDAOMemberData {
+  name: string
+  token_id: string
+  member_id:string
+}
