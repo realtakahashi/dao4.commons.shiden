@@ -36,27 +36,30 @@ export const deployMemberNFT = async (
   return memberNFTTokenAddress
 }
 
-// export const mintMemberNFT = async (inputData: MemberNFTDeployFormData) => {
-//   const tokenAddress = memberNFTContractAddress
+export const mintMemberNFT = async (memberNFTTokenAddress: string) => {
+  if (
+    typeof window.ethereum !== 'undefined' &&
+    typeof memberNFTTokenAddress !== 'undefined'
+  ) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const signerAddress = await signer.getAddress()
+    const contract = new ethers.Contract(
+      memberNFTTokenAddress,
+      MemberERC721ContractConstruct.abi,
+      signer
+    )
 
-//   if (
-//     typeof window.ethereum !== 'undefined' &&
-//     typeof tokenAddress !== 'undefined'
-//   ) {
-//     const provider = new ethers.providers.Web3Provider(window.ethereum)
-//     const signer = provider.getSigner()
-//     const contract = new ethers.Contract(
-//       tokenAddress,
-//       MemberERC721ContractConstruct.abi,
-//       signer
-//     )
-
-//     contract
-//       .original_mint(tokenAddress, {value: Web3.utils.toWei('10')})
-//       .then((d: any) => {
-//         console.log(d)
-//       })
-//       .catch((err: any) => console.log(err))
-//   }
-//   return
-// }
+    contract
+      .original_mint(signerAddress, {value: Web3.utils.toWei('10')})
+      .then((d: any) => {
+        console.log(d)
+        alert('Succeeded to mint first NFT!')
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('Failed to mint first NFT!')
+      })
+  }
+  return
+}

@@ -1,10 +1,8 @@
 import { Layout } from '@/components/common';
 import { useState } from 'react';
 import { FormInputText } from '@/components/ui';
-import { deploySubDAO, registerSubDAO } from '@/contracts/SubDAO';
-
 import { MemberNFTDeployFormData } from "@/types/MemberNFT"
-import { deployMemberNFT } from '@/contracts/MemberNFT';
+import { deployMemberNFT, mintMemberNFT } from '@/contracts/MemberNFT';
 
 const DeployMemberNFT = () => {
   const [memberNFTAddress, setmemberNFTAddress] = useState("")
@@ -20,15 +18,14 @@ const DeployMemberNFT = () => {
       ...formValue,
       [event.target.name]: event.target.value
     })
-    console.log(formValue)
   }
   const onSubmitMemberNFTForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const address = await deployMemberNFT(formValue)
     if (address !== "") {
-      console.log(address)
       setmemberNFTAddress(address)
     }
+    await mintMemberNFT(address)
   }
   return (
     <>
