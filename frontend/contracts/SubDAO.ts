@@ -71,19 +71,24 @@ export const deploySubDAO = async (inputData: SubDAODeployFormData) => {
     )
     await factory
       .deploy(inputData.name, inputData.github_url, inputData.owner_url)
-      .then((r: any) => {
-        console.log(r)
-        alert('デプロイに成功しました。')
+      .then((res: any) => {
+        console.log(res)
+        const subDAOContractAddess = res.address
+        registerSubDAO(subDAOContractAddess, inputData)
+        alert('Succeeeded to deploy SubDAO')
       })
       .catch((err: any) => {
         console.log(err)
-        alert('デプロイに失敗しました。')
+        alert('Failed to deploy SubDAO')
       })
   }
   return
 }
 
-export const registerSubDAO = async () => {
+export const registerSubDAO = async (
+  subDAOContractAddess: string,
+  inputData: SubDAODeployFormData
+) => {
   const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS
   const contractConstract = MasterDAOContractConstruct
   if (typeof window.ethereum !== 'undefined' && masterDAOAddress) {
@@ -95,18 +100,15 @@ export const registerSubDAO = async () => {
       signer
     )
     await contract
-      .registerDAO(
-        '0x5fbdb2315678afecb367f032d93f642f64180aa3',
-        'MyDAO1',
-        'https://github.com/keisukefunatsu'
-      )
+      .registerDAO(subDAOContractAddess, inputData.name, inputData.github_url)
       .then((r: any) => {
-        alert('register function called')
+        console.log(r)
+        alert('Succeeded to connect SubDAO and MasterDAO')
         return
       })
       .catch((err: any) => {
         console.log(err)
-        alert('register function call failed')
+        alert('failed to connect SubDAO and MasterDAO')
         return
       })
   }
