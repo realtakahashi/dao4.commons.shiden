@@ -11,8 +11,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 */
 contract DaoERC721 is ERC721,ReentrancyGuard{
     using Counters for Counters.Counter;
-    // event IssuedMemberToken(address indexed sender, uint256 id);
-    // event BurnedMemberToken(address indexed sender, uint256 id);
 
     address public owner;
     address public daoAddress;
@@ -21,6 +19,10 @@ contract DaoERC721 is ERC721,ReentrancyGuard{
     bool public onSale;
 
     Counters.Counter private _tokenIdTracker;
+
+    event Bought(address indexed executer);
+    event ControledTokenSale(address indexed executer, bool onSale);
+    event Withdrawn(address indexed executer, uint256 amount);
 
     /** 
     * constructor
@@ -33,7 +35,7 @@ contract DaoERC721 is ERC721,ReentrancyGuard{
     }
 
     modifier onlyOwner(){
-        require(owner == msg.sender);
+        require(owner == msg.sender,"only owner does");
         _;
     }
 
@@ -46,6 +48,7 @@ contract DaoERC721 is ERC721,ReentrancyGuard{
         _safeMint(msg.sender,_tokenIdTracker.current());
         _tokenIdTracker.increment();
         salesAmount += msg.value;
+        emit Bought(msg.sender);
     }
 
     /** 
@@ -53,6 +56,7 @@ contract DaoERC721 is ERC721,ReentrancyGuard{
     */
     function controlTokenSale(bool _onSale) public onlyOwner {
         onSale = _onSale;
+        emit ControledTokenSale(msg.sender, onSale);
     }
 
     /** 
@@ -68,6 +72,7 @@ contract DaoERC721 is ERC721,ReentrancyGuard{
     function withdraw() public onlyOwner {
         payable(daoAddress).transfer(salesAmount);
         salesAmount = 0;
+        emit Withdrawn(msg.sender, salesAmount);
     }
 
 }

@@ -17,7 +17,7 @@ npm i
 - You get development account privte key, and you import the key to metamask.
 - When you execute "npx hardhat node", Some private key is appered.
 ```
-npx hardhat node
+npx hardhat node --hostname localhost
 ```
 
 # Deploy Contract
@@ -31,7 +31,7 @@ npx hardhat run --network localhost scripts/deploy_subdao.js
 - You have to run a local node.
 - With another termial,you can execute Hardhat concole.
 ```
-npx hardhat node
+npx hardhat node --hostname localhost 
 ```
 ```
 npx hardhat console --network localhost

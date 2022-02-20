@@ -17,6 +17,7 @@ contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId,
     
     address owner;
     Counters.Counter private _tokenIdTracker;
+    address daoAddress;
 
     event IssuedMemberToken(address indexed sender, uint256 id);
     event BurnedMemberToken(address indexed sender, uint256 id);
@@ -27,9 +28,11 @@ contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId,
     */
     constructor(string memory name,
                 string memory symbol,
-                string memory baseTokenURI
+                string memory baseTokenURI,
+                address _daoAddress
     ) ERC721PresetMinterPauserAutoId(name,symbol,baseTokenURI) {
         owner = msg.sender;
+        daoAddress = _daoAddress;
     }
 
     // modifier onlyOwner(){

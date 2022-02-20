@@ -27,7 +27,9 @@ describe("All contract", function() {
 
     let masterDao;
     let memberERC721;
+    let memberERC721a;
     let subDao;
+    let subDaoa;
     let daoErc20;
     let daoErc721;
 
@@ -95,9 +97,19 @@ describe("All contract", function() {
         });
     });
     describe("MemberERC721", function() {
+        it("SubDao deployment For MemberNFT Test", async function() {
+            const SubDaoa = await ethers.getContractFactory("SubDAO");
+            subDaoa = await SubDaoa.connect(SubDaoOwner1).deploy("narusedai-2-36","test.com","Shin Takahashi");
+            assert.equal(await subDaoa.daoName(),"narusedai-2-36");
+            assert.equal(await subDaoa.githubURL(),"test.com");
+
+            const member = await subDaoa.memberInfoes(SubDaoOwner1.address);
+            assert.equal(member.name, "Shin Takahashi");
+            assert.equal(member.memberId,1);
+        });
         it("MemberERC721 Deployment.", async function(){
             const MemberERC721 = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
-            memberERC721 = await MemberERC721.connect(SubDaoOwner1).deploy("TEST","TEST","test.com");
+            memberERC721 = await MemberERC721.connect(SubDaoOwner1).deploy("TEST","TEST","test.com",subDaoa.address);
             assert.equal(await memberERC721.name(),"TEST");
             assert.equal(await memberERC721.symbol(),"TEST");
         });
@@ -138,8 +150,15 @@ describe("All contract", function() {
             assert.equal(member.name, "Shin Takahashi");
             assert.equal(member.memberId,1);
         });
+        it("MemberERC721a Deployment.", async function(){
+            const MemberERC721 = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
+            memberERC721a = await MemberERC721.connect(SubDaoOwner1).deploy("TEST1","TEST1","test.com",subDao.address);
+            assert.equal(await memberERC721a.name(),"TEST1");
+            assert.equal(await memberERC721a.symbol(),"TEST1");
+        });
         it("Update NftAddress & OwnerTokenId", async function() {
-            await subDao.connect(SubDaoOwner1).updateNftAddressAndOwnerTokenId(memberERC721.address,0);
+            await memberERC721a.connect(SubDaoOwner1).original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("10.0")});
+            await subDao.connect(SubDaoOwner1).updateNftAddressAndOwnerTokenId(memberERC721a.address,0);
             const member = await subDao.memberInfoes(SubDaoOwner1.address);
             assert.equal(member.name, "Shin Takahashi");
             assert.equal(member.memberId,1);
@@ -147,14 +166,14 @@ describe("All contract", function() {
         });
         it("Add Member", async function() {
             // Mint Member Token
-            await memberERC721.connect(SubDaoOwner2).original_mint(SubDaoOwner2.address,{value:ethers.utils.parseEther("10.0")});
-            assert.equal(await memberERC721.balanceOf(SubDaoOwner2.address),1);
-            assert.equal(await memberERC721.ownerOf(2),SubDaoOwner2.address);
+            await memberERC721a.connect(SubDaoOwner2).original_mint(SubDaoOwner2.address,{value:ethers.utils.parseEther("10.0")});
+            assert.equal(await memberERC721a.balanceOf(SubDaoOwner2.address),1);
+            assert.equal(await memberERC721a.ownerOf(1),SubDaoOwner2.address);
 
-            await subDao.connect(SubDaoOwner1).addMember(SubDaoOwner2.address, "Keisuke Funatsu", memberERC721.address,2);
+            await subDao.connect(SubDaoOwner1).addMember(SubDaoOwner2.address, "Keisuke Funatsu", memberERC721a.address,1);
             const member = await subDao.memberInfoes(SubDaoOwner2.address);
             assert.equal(member.name, "Keisuke Funatsu");
-            assert.equal(member.tokenId,2);
+            assert.equal(member.tokenId,1);
             assert.equal(member.memberId,2);
         });
         it("Get Member List", async function() {
@@ -163,7 +182,7 @@ describe("All contract", function() {
             assert.equal(list[0].tokenId,0);
             assert.equal(list[0].memberId,1);
             assert.equal(list[1].name,"Keisuke Funatsu");
-            assert.equal(list[1].tokenId,2);
+            assert.equal(list[1].tokenId,1);
             assert.equal(list[1].memberId,2);
         });
         it("Submit a Proposal.", async function() {
@@ -221,10 +240,10 @@ describe("All contract", function() {
         });
         it("Voting Test.", async function() {
             // error rogic check
-            await expect(subDao.connect(SubDaoOwner1).vote(3,true)).to.be.revertedWith("Now can not vote.");
+            await expect(subDao.connect(SubDaoOwner1).voteForProposal(3,true)).to.be.revertedWith("Now can not vote.");
             // normal yes case
-            await subDao.connect(SubDaoOwner1).vote(2,true);
-            await subDao.connect(SubDaoOwner2).vote(2,true);
+            await subDao.connect(SubDaoOwner1).voteForProposal(2,true);
+            await subDao.connect(SubDaoOwner2).voteForProposal(2,true);
             await subDao.connect(SubDaoOwner1).changeProposalStatus(2,PROPOSAL_STATUS_FINISHED_VOTING);
             const voteInfo = await subDao.votingInfoes(2);
             // console.log("## voteinfo:",voteInfo);
@@ -239,8 +258,8 @@ describe("All contract", function() {
             assert.equal(proposalList2[1].proposalId,2);
             assert.equal(proposalList2[1].proposalStatus,6);
             // reject case
-            await subDao.connect(SubDaoOwner1).vote(1,true);
-            await subDao.connect(SubDaoOwner2).vote(1,false);
+            await subDao.connect(SubDaoOwner1).voteForProposal(1,true);
+            await subDao.connect(SubDaoOwner2).voteForProposal(1,false);
             await subDao.connect(SubDaoOwner1).changeProposalStatus(1,PROPOSAL_STATUS_FINISHED_VOTING);
             const voteInfo2 = await subDao.votingInfoes(1);
             // console.log("## voteinfo:",voteInfo);
@@ -264,7 +283,9 @@ describe("All contract", function() {
             assert.equal(daoInfo.rewardApproved,false);
             const daoList = await masterDao.getDaoList();
             assert.equal(daoList.length,1);
-            assert.equal(daoList[0],subDao.address);
+            assert.equal(daoList[0].daoAddress,subDao.address);
+            assert.equal(daoList[0].daoName,"narusedai-2-36");
+            assert.equal(daoList[0].githubURL,"test.com");
         });
         it("Voting to a Sub DAO & Approved.", async function() {
             await masterDao.connect(MasterDaoOwner).startDaoVoting(subDao.address,true);
@@ -280,26 +301,99 @@ describe("All contract", function() {
             assert.equal(daoInfo.rewardApproved,true);
             const daoList = await masterDao.getDaoList();
             assert.equal(daoList.length,1);
-            assert.equal(daoList[0],subDao.address);
+            assert.equal(daoList[0].daoAddress,subDao.address);
         });
     });
     describe("Erc20 for DAO.", async function() {
         it("Deploy DaoERC20", async function() {
             const DaoErc20 = await ethers.getContractFactory("DaoERC20");
-            daoErc20 = await DaoErc20.connect(SubDaoOwner1).deploy("DAO ERC20","D20",memberERC721.address);
+            daoErc20 = await DaoErc20.connect(SubDaoOwner1).deploy("DAO ERC20","D20",subDao.address);
+            assert.equal(await daoErc20.name(), "DAO ERC20");
+            assert.equal(await daoErc20.symbol(), "D20");
         });
-        it("Only owner can mint.", async function() {
+        it("Only owner check.", async function() {
             // not owner error.
-            await expect(daoErc20.connect(SubDaoOwner2).mint(ethers.utils.parseEther("10.0"),10000))
+            await expect(daoErc20.connect(SubDaoOwner2).mint(ethers.utils.parseEther("2.0"),10000))
+                .to.be.revertedWith("only owner does");
+            await expect(daoErc20.connect(SubDaoOwner2).controlTokenSale(true))
                 .to.be.revertedWith("only owner does");
         });
         it("owner mint.", async function() {
-            daoErc20.connect(SubDaoOwner1).mint(ethers.utils.parseEther("10.0"),10000);
+            daoErc20.connect(SubDaoOwner1).mint(ethers.utils.parseEther("2.0"),300);
         });
         it("not on sale", async function() {
-            await expect(daoErc20.connect(SubDaoOwner3).buy(10000,{value:ethers.utils.parseEther("10.0")}))
+            await expect(daoErc20.connect(SubDaoOwner3).buy(10000,{value:ethers.utils.parseEther("2.0")}))
             .to.be.revertedWith("now not on sale.");
         });
+        it("be on sale & not be on sale", async function() {
+            await daoErc20.connect(SubDaoOwner1).controlTokenSale(true);
+            assert.equal(await daoErc20.onSale(),true);
+            await daoErc20.connect(SubDaoOwner1).controlTokenSale(false);
+            assert.equal(await daoErc20.onSale(),false);
+            await daoErc20.connect(SubDaoOwner1).controlTokenSale(true);
+            assert.equal(await daoErc20.onSale(),true);
+        });
+        it("buy with error.", async function() {
+            await expect(daoErc20.connect(SubDaoOwner3).buy(301,{value:ethers.utils.parseEther("602.0")}))
+                .to.be.revertedWith("invalid amount.");
+            await expect(daoErc20.connect(SubDaoOwner3).buy(10,{value:ethers.utils.parseEther("30.0")}))
+                .to.be.revertedWith("invalid transfering value.");
+        });
+        it("normal buy", async function() {
+            await daoErc20.connect(SubDaoOwner3).buy(10,{value:ethers.utils.parseEther("20.0")});
+            assert.equal(await daoErc20.balanceOf(SubDaoOwner3.address),10);
+        });
+        it("check contract balance & withdraw.", async function() {
+            assert.equal(await daoErc20.getContractBalance(),20000000000000000000);
+            const beforedaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
+            await daoErc20.withdraw();
+            const afterdaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
+            assert.equal(afterdaobalance-beforedaobalance > 19,true);
+        });
     });
-
+    describe("Erc721 for DAO.", async function() {
+        it("Deploy DaoERC721", async function() {
+            const DaoErc721 = await ethers.getContractFactory("DaoERC721");
+            daoErc721 = await DaoErc721.connect(SubDaoOwner1).deploy("DAO ERC721","D721", subDao.address,
+                ethers.utils.parseEther("2.0"));
+            assert.equal(await daoErc721.name(), "DAO ERC721");
+            assert.equal(await daoErc721.symbol(), "D721");
+        });
+        it("Only owner check.", async function() {
+            // not owner error.
+            await expect(daoErc721.connect(SubDaoOwner2).controlTokenSale(true))
+                .to.be.revertedWith("only owner does");
+        });
+        it("not on sale", async function() {
+            await expect(daoErc721.connect(SubDaoOwner3).buy({value:ethers.utils.parseEther("2.0")}))
+            .to.be.revertedWith("now not on sale.");
+        });
+        it("be on sale & not be on sale", async function() {
+            await daoErc721.connect(SubDaoOwner1).controlTokenSale(true);
+            assert.equal(await daoErc721.onSale(),true);
+            await daoErc721.connect(SubDaoOwner1).controlTokenSale(false);
+            assert.equal(await daoErc721.onSale(),false);
+            await daoErc721.connect(SubDaoOwner1).controlTokenSale(true);
+            assert.equal(await daoErc721.onSale(),true);
+        });
+        it("buy with error.", async function() {
+            await expect(daoErc721.connect(SubDaoOwner3).buy({value:ethers.utils.parseEther("30.0")}))
+                .to.be.revertedWith("invalid transfering value.");
+        });
+        it("normal buy", async function() {
+            await daoErc721.connect(SubDaoOwner3).buy({value:ethers.utils.parseEther("2.0")});
+            assert.equal(await daoErc721.balanceOf(SubDaoOwner3.address),1);
+        });
+        it("check contract balance & withdraw.", async function() {
+            // const balance = await daoErc721.getContractBalance();
+            // console.log("# balance: ",balance);
+            assert.equal(await daoErc721.getContractBalance(),2000000000000000000);
+            const beforedaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
+            await daoErc721.withdraw();
+            const afterdaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
+            // console.log("## beforedaobalance: ",beforedaobalance);
+            // console.log("## afterdaobalance: ",afterdaobalance);
+            assert.equal(afterdaobalance-beforedaobalance > 1,true);
+        });
+    });
 });
