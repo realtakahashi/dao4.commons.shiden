@@ -94,7 +94,7 @@ const DeploySubDAO = () => {
               Deploy Succeeded!!
             </p>
             <p className="text-lg">
-              Your DAO Address: {sudDAOAddress}
+              Your DAO Contract Address: {sudDAOAddress}
             </p>
           </div>
         ) : ""}

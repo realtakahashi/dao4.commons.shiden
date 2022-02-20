@@ -62,7 +62,7 @@ export const getSubDAO = async (address: string) => {
 export const deploySubDAO = async (
   inputData: SubDAODeployFormData
 ): Promise<string> => {
-  let subDAOContractAddess: string = ''
+  let subDAOContractAddess = ''
   const contractConstract = SubDAOContractConstruct
   if (typeof window.ethereum !== 'undefined') {
     const provider = new ethers.providers.Web3Provider(window.ethereum)

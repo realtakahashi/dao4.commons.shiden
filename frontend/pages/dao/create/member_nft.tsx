@@ -7,6 +7,8 @@ import { MemberNFTDeployFormData } from "@/types/MemberNFT"
 import { deployMemberNFT } from '@/contracts/MemberNFT';
 
 const DeployMemberNFT = () => {
+  const [memberNFTAddress, setmemberNFTAddress] = useState("")
+
   const [formValue, setFormValue] = useState<MemberNFTDeployFormData>({
     name: "",
     symbol: "",
@@ -18,10 +20,15 @@ const DeployMemberNFT = () => {
       ...formValue,
       [event.target.name]: event.target.value
     })
+    console.log(formValue)
   }
-  const onSubmitMemberNFTForm = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitMemberNFTForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    deployMemberNFT(formValue)
+    const address = await deployMemberNFT(formValue)
+    if (address !== "") {
+      console.log(address)
+      setmemberNFTAddress(address)
+    }
   }
   return (
     <>
@@ -102,12 +109,16 @@ const DeployMemberNFT = () => {
           </div>
 
         </form>
-        <p className="text-sm">
-          DAO Address: xxxxxxxxxxx
-        </p>
-        <p className="text-sm">
-          MemberID
-        </p>
+        {memberNFTAddress !== "" ? (
+          <div className='mt-10'>
+            <p className="text-lg">
+              Deploy Succeeded!!
+            </p>
+            <p className="text-lg">
+              Your Member NFT Contract Address: {memberNFTAddress}
+            </p>
+          </div>
+        ) : ""}
       </div>
     </>
   )

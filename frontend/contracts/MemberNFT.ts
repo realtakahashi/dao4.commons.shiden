@@ -3,9 +3,10 @@ import {ethers} from 'ethers'
 import {MemberERC721ContractConstruct} from '@/contracts/construct'
 import {MemberNFTDeployFormData} from '@/types/MemberNFT'
 
-const memberNFTContractAddress = process.env.MEMBER_NFT_CONTRACT_ADDRESS
-
-export const deployMemberNFT = async (inputData: MemberNFTDeployFormData) => {
+export const deployMemberNFT = async (
+  inputData: MemberNFTDeployFormData
+): Promise<string> => {
+  let memberNFTTokenAddress = ''
   if (typeof window.ethereum !== 'undefined') {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
@@ -14,16 +15,25 @@ export const deployMemberNFT = async (inputData: MemberNFTDeployFormData) => {
       MemberERC721ContractConstruct.bytecode,
       signer
     )
-    factory
-      .deploy(inputData.name, inputData.symbol, inputData.token_uri)
-      .then((r: any) => {
-        console.log(r)
+    await factory
+      .deploy(
+        inputData.name,
+        inputData.symbol,
+        inputData.token_uri,
+        inputData.subdao_address
+      )
+      .then((res: any) => {
+        console.log(res)
+        alert('Succeeded to deploy member NFT contract')
+        memberNFTTokenAddress = res.address
+        return memberNFTTokenAddress
       })
       .catch((err: any) => {
         console.log(err)
+        alert('Failed to deploy member NFT contract')
       })
   }
-  return
+  return memberNFTTokenAddress
 }
 
 // export const mintMemberNFT = async (inputData: MemberNFTDeployFormData) => {
@@ -42,7 +52,7 @@ export const deployMemberNFT = async (inputData: MemberNFTDeployFormData) => {
 //     )
 
 //     contract
-//       .original_mint(address, {value: Web3.utils.toWei('10')})
+//       .original_mint(tokenAddress, {value: Web3.utils.toWei('10')})
 //       .then((d: any) => {
 //         console.log(d)
 //       })
