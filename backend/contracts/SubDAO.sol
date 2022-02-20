@@ -70,6 +70,13 @@ contract SubDAO is ReentrancyGuard{
 
     event MemberAdded(address indexed eoa, uint256 memberId);
     event MemberDeleted(address indexed eoa, uint256 memberId);
+    event UpdatedOwnerInfo(address memberNft, uint256 tokenId);
+    event ReportedContribution(address indexed eoa, string githubURL, uint256 reportId);
+    event Donated(address indexed eoa, uint256 amount);
+    event Divided(address indexed eoa, address to, uint256 amount);
+    event SubmitedProposal(address indexed eoa, string title, uint256 proposalId);
+    event ChangedProposalStatus(address indexed eoa, uint256 proposalId, ProposalStatus _proposalStatus);
+    event VotedForProposal(address indexed eoa, uint256 _proposalId);
 
     // EOA address => MemberInfo
     mapping(address => MemberInfo) public memberInfoes;
@@ -90,6 +97,7 @@ contract SubDAO is ReentrancyGuard{
         // initial increment
         _memberIdTracker.increment();
         _proposalIdTracker.increment();
+        _contributeIdTracker.increment();
         
         daoName = _daoName;
         githubURL = _githubURL;
@@ -105,6 +113,7 @@ contract SubDAO is ReentrancyGuard{
     function updateNftAddressAndOwnerTokenId(address _nftAddress, uint256 _ownerTokenId) public onlyOwner {
         erc721Address = _nftAddress;
         memberInfoes[msg.sender].tokenId = _ownerTokenId;
+        emit UpdatedOwnerInfo(_nftAddress,_ownerTokenId);
     }
 
     /**
@@ -151,7 +160,21 @@ contract SubDAO is ReentrancyGuard{
     function reportContribution(string memory _githubURL) public {
         require(bytes(_githubURL).length!=0,"invalid url.");
         contributionReports[_contributeIdTracker.current()]=ContributeInfo(msg.sender,_githubURL);
+        emit ReportedContribution(msg.sender, _githubURL, _contributeIdTracker.current());
         _contributeIdTracker.increment();
+    }
+
+    /**
+    * 活動の一覧を取得する
+    */
+    function getContributionList() public view returns (ContributeInfo[] memory) {
+        ContributeInfo[] memory contoributionList = new ContributeInfo[](_contributeIdTracker.current() - 1);
+        for (uint256 i=1; i < _contributeIdTracker.current(); i++) {
+            if (bytes(contributionReports[i].githubURL).length!=0){
+                contoributionList[i-1] = contributionReports[i];
+            }
+        }
+        return contoributionList;
     }
 
     /** 
@@ -159,13 +182,15 @@ contract SubDAO is ReentrancyGuard{
     */
     function donate() public payable {
         amountOfDotation += msg.value;
+        emit Donated(msg.sender, msg.value);
     }
 
     /** 
     * 分配する
     */
-    function divide(address to, uint256 ammount) public payable onlyMember {
-        payable(to).transfer(ammount);
+    function divide(address to, uint256 amount) public payable onlyMember {
+        payable(to).transfer(amount);
+        emit Divided(msg.sender, to, amount);
     }
 
     /** 
@@ -183,6 +208,7 @@ contract SubDAO is ReentrancyGuard{
         proposalInfoes[_proposalIdTracker.current()] = 
             ProposalInfo(_proposalKind, _title, _outline, _details, _githubURL, _proposalIdTracker.current()
             ,ProposalStatus.UnderDiscussionOnGithub);
+        emit SubmitedProposal(msg.sender, _title, _proposalIdTracker.current());
         _proposalIdTracker.increment();
     }
 
@@ -229,12 +255,13 @@ contract SubDAO is ReentrancyGuard{
         else {
             proposalInfoes[_proposalId].proposalStatus = _proposalStatus;
         }
+        emit ChangedProposalStatus(msg.sender, _proposalId, _proposalStatus);
     }
 
     /**
     * 投票する
     */
-    function vote(uint256 _proposalId, bool yes) public onlyMember {
+    function voteForProposal(uint256 _proposalId, bool yes) public onlyMember {
         require(proposalInfoes[_proposalId].proposalStatus==ProposalStatus.Voting,"Now can not vote.");
         votingInfoes[_proposalId].votingCount++;
         if (yes){
@@ -243,6 +270,7 @@ contract SubDAO is ReentrancyGuard{
         else{
             votingInfoes[_proposalId].noCount++;
         }
+        emit VotedForProposal(msg.sender, _proposalId);
     }
 
     /**
@@ -265,6 +293,11 @@ contract SubDAO is ReentrancyGuard{
         votingInfoes[_proposalId]=VotingInfo(0,0,0);
     }
 
+    /**
+    * 入金を受け取る
+    */
+    receive() external payable {}
+    
     /**
     * 投票結果をチェックする。
     */

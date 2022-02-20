@@ -10,14 +10,16 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 */
 contract DaoERC20 is ERC20,ReentrancyGuard{
 
-    // event IssuedMemberToken(address indexed sender, uint256 id);
-    // event BurnedMemberToken(address indexed sender, uint256 id);
-
     address public owner;
     uint256 public priceWei;
     address public daoAddress;
     uint256 public salesAmount;
     bool public onSale;
+
+    event Minted(address indexed executer, uint256 price, uint256 amount);
+    event Bought(address indexed executer, uint256 amount);
+    event ControledTokenSale(address indexed executer, bool onSale);
+    event Withdrawn(address indexed executer, uint256 amount);
 
     /** 
     * constructor
@@ -38,7 +40,8 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     */
     function mint(uint256 _priceWei,uint256 amount) public onlyOwner {
         priceWei = _priceWei;
-        _mint(address(this),amount);        
+        _mint(address(this),amount);
+        emit Minted(msg.sender, _priceWei, amount);   
     }
 
     /** 
@@ -46,11 +49,12 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     */
     function buy(uint256 _amount) public payable {
         require(onSale,"now not on sale.");
-        require(_amount>0 && _amount<=totalSupply(),"invalid aamount.");
+        require(_amount>0 && _amount<=totalSupply(),"invalid amount.");
         require(msg.value==_amount*priceWei,"invalid transfering value.");
 
         _transfer(address(this),msg.sender,_amount);
         salesAmount += msg.value;
+        emit Bought(msg.sender,_amount);
     }
 
     /** 
@@ -58,6 +62,7 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     */
     function controlTokenSale(bool _onSale) public onlyOwner {
         onSale = _onSale;
+        emit ControledTokenSale(msg.sender, _onSale);
     }
 
     /** 
@@ -72,6 +77,7 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     */
     function withdraw() public onlyOwner {
         payable(daoAddress).transfer(salesAmount);
+        emit Withdrawn(msg.sender, salesAmount);
         salesAmount = 0;
     }
 
