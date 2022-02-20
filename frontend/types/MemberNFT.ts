@@ -4,3 +4,7 @@ export interface MemberNFTDeployFormData {
   token_uri: string
   subdao_address: string
 }
+
+export interface MemberNFTMintFormData {
+  token_address: string
+}

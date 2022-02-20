@@ -12,7 +12,7 @@ export const getStaticProps = async () => {
 const topLinks = [
   { path: '/dao/create/subdao', label: "Deploy SubDAO" },
   { path: '/dao/create/member_nft', label: "Deploy MemberNFT" },
-  { path: '/dao/members/mint_nft', label: "Mint MemberNFT" },
+  { path: '/dao/create/signup_mint_nft', label: "Mint MemberNFT" },
 ]
 
 const CreateDAO = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
