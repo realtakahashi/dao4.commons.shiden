@@ -3,6 +3,7 @@ import detectEthereumProvider from '@metamask/detect-provider'
 import Web3 from 'web3';
 import cn from "classnames"
 import HeaderNav from '../HeaderNav/HeaderNav';
+import Link from 'next/link';
 
 const Header: FC = () => {
   const [address, setAddress] = useState("");
@@ -60,7 +61,11 @@ const Header: FC = () => {
     <>
       <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
         <div className="flex items-center flex-shrink-0 text-white mr-6">
-          <span className="font-semibold text-xl tracking-tight">Shiden DAO</span>
+          <span className="font-semibold text-xl tracking-tight">
+            <Link href="/">
+              Shiden DAO
+            </Link>
+          </span>
         </div>
         <div className="block lg:hidden">
           <button
