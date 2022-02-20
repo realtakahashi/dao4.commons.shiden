@@ -17,7 +17,6 @@ const loginDAO = (): void => {
 // mock
 const topLinks = [
   { type: "link", path: '/dao/create', label: "Create DAO", action: null },
-  { type: "button", path: "", label: "Login DAO", action: loginDAO },
   { type: "link", path: '/dao/signup', label: "Signup DAO", action: null },
 ]
 
