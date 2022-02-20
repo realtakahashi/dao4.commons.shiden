@@ -3,13 +3,14 @@ import {
   SubDAOContractConstruct,
   MasterDAOContractConstruct,
 } from '@/contracts/construct'
+import {SubDAOData} from '@/types/SubDAO'
 
 import {SubDAODeployFormData} from '@/types/SubDAO'
 
-export const listSubDAO = async (): Promise<Array<string>> => {
+export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
   const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS
   const contractConstract = MasterDAOContractConstruct
-  let response: string[] = []
+  let response: SubDAOData[] = []
   if (typeof window.ethereum !== 'undefined' && masterDAOAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
@@ -21,7 +22,7 @@ export const listSubDAO = async (): Promise<Array<string>> => {
     await contract
       .getDaoList()
       .then((r: any) => {
-        console.log(r)
+        // console.log(r)
         response = r
       })
       .catch((err: any) => {
