@@ -59,7 +59,10 @@ export const getSubDAO = async (address: string) => {
   return
 }
 
-export const deploySubDAO = async (inputData: SubDAODeployFormData) => {
+export const deploySubDAO = async (
+  inputData: SubDAODeployFormData
+): Promise<string> => {
+  let subDAOContractAddess: string = ''
   const contractConstract = SubDAOContractConstruct
   if (typeof window.ethereum !== 'undefined') {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -73,7 +76,7 @@ export const deploySubDAO = async (inputData: SubDAODeployFormData) => {
       .deploy(inputData.name, inputData.github_url, inputData.owner_url)
       .then((res: any) => {
         console.log(res)
-        const subDAOContractAddess = res.address
+        subDAOContractAddess = res.address
         registerSubDAO(subDAOContractAddess, inputData)
         alert('Succeeeded to deploy SubDAO')
       })
@@ -82,7 +85,7 @@ export const deploySubDAO = async (inputData: SubDAODeployFormData) => {
         alert('Failed to deploy SubDAO')
       })
   }
-  return
+  return subDAOContractAddess
 }
 
 export const registerSubDAO = async (

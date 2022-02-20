@@ -4,6 +4,7 @@ import { FormInputText } from '@/components/ui';
 import { deploySubDAO, registerSubDAO } from '@/contracts/SubDAO';
 import { SubDAODeployFormData } from "@/types/SubDAO"
 const DeploySubDAO = () => {
+  const [sudDAOAddress, setSubDAOAddress] = useState("")
   const [formValue, setFormValue] = useState<SubDAODeployFormData>({
     github_url: "",
     owner_url: "",
@@ -15,9 +16,12 @@ const DeploySubDAO = () => {
       [event.target.name]: event.target.value
     })
   }
-  const onSubmitSubDAOForm = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitSubDAOForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    deploySubDAO(formValue)
+    const address = await deploySubDAO(formValue)
+    if (address !== "") {
+      setSubDAOAddress(address)
+    }
   }
   return (
     <>
@@ -84,26 +88,17 @@ const DeploySubDAO = () => {
           </div>
 
         </form>
-        <p className="text-sm">
-          DAO Address: xxxxxxxxxxx
-        </p>
-        <p className="text-sm">
-          MemberID
-        </p>
-
-        <div className="mt-10">
-          <div className="md:w-1/3"></div>
-          <div className="md:w-2/3">
-            <button
-              className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
-              type="button"
-              onClick={() => registerSubDAO()}
-            >
-              Propose to register my DAO
-            </button>
+        {sudDAOAddress !== "" ? (
+          <div className='mt-10'>
+            <p className="text-lg">
+              Deploy Succeeded!!
+            </p>
+            <p className="text-lg">
+              Your DAO Address: {sudDAOAddress}
+            </p>
           </div>
+        ) : ""}
 
-        </div>
       </div>
     </>
   )
