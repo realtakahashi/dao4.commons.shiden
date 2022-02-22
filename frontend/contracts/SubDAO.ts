@@ -7,6 +7,8 @@ import {SubDAOData, SubDAOMemberData} from '@/types/SubDAO'
 
 import {SubDAODeployFormData} from '@/types/SubDAO'
 
+import { AddProposalFormData } from '@/types/Proposal'
+
 export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
   const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS
   const contractConstract = MasterDAOContractConstruct
@@ -114,4 +116,28 @@ export const registerSubDAO = async (
       })
   }
   return
+}
+
+export const registerProposal = async (
+  subDAOContractAddess: string,
+  inputData: AddProposalFormData
+): Promise<string> =>{
+  console.log("### registerProposal 1")
+  const contractConstract = SubDAOContractConstruct
+  if (typeof window.ethereum !== 'undefined') {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOContractAddess,
+      contractConstract.abi,
+      signer
+    )
+    const tx = await contract.submitProposal(inputData.proposalKind, inputData.title, inputData.outline, 
+      inputData.detail, inputData.githubURL)
+    const returnValue = await tx.wait();
+    console.log("### returnValue:",returnValue);
+    console.log("### Proposal ID:",returnValue.events[0].args.proposalId)
+    return returnValue.events[0].args.proposalId.toString()
+  }
+  return ""
 }
