@@ -3,9 +3,9 @@ import {
   SubDAOContractConstruct,
   MasterDAOContractConstruct,
 } from '@/contracts/construct'
-import {SubDAOData} from '@/types/SubDAO'
-
+import {SubDAOData, SubDAOMemberData} from '@/types/SubDAO'
 import {SubDAODeployFormData} from '@/types/SubDAO'
+import { AddProposalFormData, ProposalInfo } from '@/types/Proposal'
 
 export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
   const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS
@@ -33,33 +33,30 @@ export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
   return response
 }
 
-export const getSubDAO = async (address: string) => {
-  const subDAOAddress = address
-  const contractConstract = MasterDAOContractConstruct
-  let response: string[] = []
-  if (typeof window.ethereum !== 'undefined' && subDAOAddress) {
+export const getSubDAOMemberList = async (sudDAOAddress: string): Promise<Array<SubDAOMemberData>> => {
+  const contractConstract = SubDAOContractConstruct
+  let response: SubDAOMemberData[] = []
+  if (typeof window.ethereum !== 'undefined' && sudDAOAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
-      subDAOAddress,
+      sudDAOAddress,
       contractConstract.abi,
       signer
     )
-    // await contract
-    //   .getDaoList()
-    //   .then((r: any) => {
-    //     console.log(r)
-    //     response = r
-    //   })
-    //   .catch((err: any) => {
-    //     console.log(err)
-    //     alert('failed to get SubDAO')
-    //   })
-    return contract
+    await contract
+      .getMemberList()
+      .then((r: any) => {
+        console.log(r)
+        response = r
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed to list SubDAO Member')
+      })
   }
-  return
+  return response
 }
-
 export const deploySubDAO = async (
   inputData: SubDAODeployFormData
 ): Promise<string> => {
@@ -74,7 +71,7 @@ export const deploySubDAO = async (
       signer
     )
     await factory
-      .deploy(inputData.name, inputData.github_url, inputData.owner_url)
+      .deploy(inputData.name, inputData.github_url, inputData.owner_name)
       .then((res: any) => {
         console.log(res)
         subDAOContractAddess = res.address
@@ -117,4 +114,53 @@ export const registerSubDAO = async (
       })
   }
   return
+}
+
+export const registerProposal = async (
+  subDAOContractAddess: string,
+  inputData: AddProposalFormData
+): Promise<string> =>{
+  console.log("### registerProposal 1")
+  const contractConstract = SubDAOContractConstruct
+  if (typeof window.ethereum !== 'undefined') {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOContractAddess,
+      contractConstract.abi,
+      signer
+    )
+    const tx = await contract.submitProposal(inputData.proposalKind, inputData.title, inputData.outline, 
+      inputData.detail, inputData.githubURL)
+    const returnValue = await tx.wait();
+    console.log("### returnValue:",returnValue);
+    console.log("### Proposal ID:",returnValue.events[0].args.proposalId)
+    return returnValue.events[0].args.proposalId.toString()
+  }
+  return ""
+}
+
+export const getProposalListFromContract = async (
+  subDAOContractAddess: string,
+): Promise<Array<ProposalInfo>> => {
+  console.log("## SubDao Address: ", subDAOContractAddess)
+  const contractConstract = SubDAOContractConstruct
+  let response: ProposalInfo[] = []
+  if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOContractAddess,
+      contractConstract.abi,
+      signer
+    )
+    response = await contract
+      .getProposalList()
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed to list Proposal Info.')
+      })
+    console.log("### getProposalList Return: ",response)
+  }
+  return response
 }
