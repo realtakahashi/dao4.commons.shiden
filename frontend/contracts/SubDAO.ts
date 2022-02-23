@@ -164,3 +164,30 @@ export const getProposalListFromContract = async (
   }
   return response
 }
+
+export const changeProposalStatus = async (
+  subDAOContractAddess: string,
+  proposalStatus: number,
+  proposalId: number
+) => {
+  console.log("## SubDao Address: ", subDAOContractAddess)
+  const contractConstract = SubDAOContractConstruct
+  let response: ProposalInfo[] = []
+  if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOContractAddess,
+      contractConstract.abi,
+      signer
+    )
+    response = await contract
+      .changeProposalStatus(proposalId,proposalStatus)
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed changeProposalStatus.')
+      })
+    console.log("### changeProposalStatus Return: ",response)
+  }
+  return response
+}
