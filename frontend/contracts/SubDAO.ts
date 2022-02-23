@@ -4,10 +4,8 @@ import {
   MasterDAOContractConstruct,
 } from '@/contracts/construct'
 import {SubDAOData, SubDAOMemberData} from '@/types/SubDAO'
-
 import {SubDAODeployFormData} from '@/types/SubDAO'
-
-import { AddProposalFormData } from '@/types/Proposal'
+import { AddProposalFormData, ProposalInfo } from '@/types/Proposal'
 
 export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
   const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS
@@ -73,7 +71,7 @@ export const deploySubDAO = async (
       signer
     )
     await factory
-      .deploy(inputData.name, inputData.github_url, inputData.owner_url)
+      .deploy(inputData.name, inputData.github_url, inputData.owner_name)
       .then((res: any) => {
         console.log(res)
         subDAOContractAddess = res.address
@@ -140,4 +138,29 @@ export const registerProposal = async (
     return returnValue.events[0].args.proposalId.toString()
   }
   return ""
+}
+
+export const getProposalListFromContract = async (
+  subDAOContractAddess: string,
+): Promise<Array<ProposalInfo>> => {
+  console.log("## SubDao Address: ", subDAOContractAddess)
+  const contractConstract = SubDAOContractConstruct
+  let response: ProposalInfo[] = []
+  if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOContractAddess,
+      contractConstract.abi,
+      signer
+    )
+    response = await contract
+      .getProposalList()
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed to list Proposal Info.')
+      })
+    console.log("### getProposalList Return: ",response)
+  }
+  return response
 }
