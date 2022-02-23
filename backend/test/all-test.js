@@ -42,57 +42,69 @@ describe("All contract", function() {
             assert.equal(await memberInfo.name,"Shin Takahashi");
         });
         it("Add a member to Mastar DAO", async function(){
-            await masterDao.connect(MasterDaoOwner).startMemberVoting("Keisuke Funatsu",SubDaoOwner1.address,true);
-            await masterDao.connect(MasterDaoOwner).voteForMember(SubDaoOwner1.address,true);
-            await masterDao.connect(MasterDaoOwner).finishMemberVoting(SubDaoOwner1.address);
-
-            //const proposalInfo = await masterDao.memberProposalHistories(1);
-            //console.log("poposal:",proposalInfo);
+            await masterDao.connect(MasterDaoOwner).submitProposal(PROPOSAL_KIND_ADD_MEMBER,"add a new member",
+                "I want a new member", "Please Approve to add.", "test.com", 0, SubDaoOwner1.address);
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(0,PROPOSAL_STATUS_VOTING);
+            await masterDao.connect(MasterDaoOwner).voteForProposal(0,true);
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(0,PROPOSAL_STATUS_FINISHED_VOTING);
+            await masterDao.connect(MasterDaoOwner).addMember("Keisuke Funatsu",SubDaoOwner1.address,0)
 
             const memberInfo = await masterDao.memberInfoes(SubDaoOwner1.address);
             assert.equal(await memberInfo.memberId,2);
             assert.equal(await memberInfo.name,"Keisuke Funatsu");
         });
         it("Add another member to Mastar DAO", async function(){
-            await masterDao.connect(SubDaoOwner1).startMemberVoting("Saki Takahashi",SubDaoOwner2.address,true);
-            await masterDao.connect(SubDaoOwner1).voteForMember(SubDaoOwner2.address,true);
-            await masterDao.connect(MasterDaoOwner).voteForMember(SubDaoOwner2.address,true);
-            await masterDao.connect(SubDaoOwner1).finishMemberVoting(SubDaoOwner2.address);
+            await masterDao.connect(MasterDaoOwner).submitProposal(PROPOSAL_KIND_ADD_MEMBER,"add a new member",
+                "I want a new member", "Please Approve to add.", "test.com", 0, SubDaoOwner2.address);
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(1,PROPOSAL_STATUS_VOTING);
+            await masterDao.connect(MasterDaoOwner).voteForProposal(1,true);
+            await masterDao.connect(SubDaoOwner1).voteForProposal(1,true);            
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(1,PROPOSAL_STATUS_FINISHED_VOTING);
+            await masterDao.connect(MasterDaoOwner).addMember("Saki Takahashi",SubDaoOwner2.address,1)
 
             const memberInfo = await masterDao.memberInfoes(SubDaoOwner2.address);
             assert.equal(await memberInfo.memberId,3);
             assert.equal(await memberInfo.name,"Saki Takahashi");
         });
-        it("Mastar DAO denied starting vote a already finished member.", async function(){
-            await expect(masterDao.connect(SubDaoOwner1).startMemberVoting("Saki Takahashi",SubDaoOwner2.address,true))
-                .to.be.revertedWith("already finished.");
+        it("Denied to Add another member to Mastar DAO", async function(){
+            await masterDao.connect(MasterDaoOwner).submitProposal(PROPOSAL_KIND_ADD_MEMBER,"add a new member",
+                "I want a new member", "Please Approve to add.", "test.com", 0, SubDaoOwner3.address);
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(2,PROPOSAL_STATUS_VOTING);
+            await masterDao.connect(SubDaoOwner1).voteForProposal(2,true);            
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(2,PROPOSAL_STATUS_FINISHED_VOTING);
+            await expect(masterDao.connect(MasterDaoOwner).addMember("Anonimous",SubDaoOwner3.address,2))
+                .to.be.revertedWith("Not approved.");
+            const proposalInfo = await masterDao.proposalInfoes(2);
+            assert.equal(proposalInfo.proposalStatus,PROPOSAL_STATUS_REJECTED);
         });
-        it("Mastar DAO denied adding a member.", async function(){
-            await masterDao.connect(SubDaoOwner2).startMemberVoting("Sei Takahashi",SubDaoOwner3.address,true);
-            await masterDao.connect(SubDaoOwner2).voteForMember(SubDaoOwner3.address,true);
-            await masterDao.connect(SubDaoOwner2).finishMemberVoting(SubDaoOwner3.address);
+        it("Delete a member.", async function(){
+            await masterDao.connect(MasterDaoOwner).submitProposal(PROPOSAL_KIND_ADD_MEMBER,"delete member",
+                "I want to delete a member", "Please Approve to delete.", "test.com", 0, SubDaoOwner2.address);
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(3,PROPOSAL_STATUS_VOTING);
+            await masterDao.connect(MasterDaoOwner).voteForProposal(3,true);
+            await masterDao.connect(SubDaoOwner1).voteForProposal(3,true);            
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(3,PROPOSAL_STATUS_FINISHED_VOTING);
+            await masterDao.connect(MasterDaoOwner).deleteMember(SubDaoOwner2.address,3)
 
-            const proposalInfo = await masterDao.memberProposalHistories(2);
-            // console.log("poposal:",proposalInfo);
-
-            const memberInfo = await masterDao.memberInfoes(SubDaoOwner3.address);
+            const memberInfo = await masterDao.memberInfoes(SubDaoOwner2.address);
             assert.equal(await memberInfo.memberId,0);
             assert.equal(await memberInfo.name,"");
         });
         it("Non member is denied to execute some contract functions.", async function(){
-            await expect(masterDao.connect(SubDaoOwner4).startMemberVoting("Sei Takahashi",SubDaoOwner3.address,true))
+            await expect(masterDao.connect(SubDaoOwner4).submitProposal(PROPOSAL_KIND_ADD_MEMBER,"delete member",
+                "I want to delete a member", "Please Approve to delete.", "test.com", 0, SubDaoOwner2.address))
                 .to.be.revertedWith("only member does.");
-            await expect(masterDao.connect(SubDaoOwner4).voteForMember(SubDaoOwner3.address,true))
+            await expect(masterDao.connect(SubDaoOwner4).changeProposalStatus(4,PROPOSAL_STATUS_VOTING))
                 .to.be.revertedWith("only member does.");
-            await expect(masterDao.connect(SubDaoOwner4).finishMemberVoting(SubDaoOwner3.address))
+            await expect(masterDao.connect(SubDaoOwner4).voteForProposal(4,true))
                 .to.be.revertedWith("only member does.");
-            await expect(masterDao.connect(SubDaoOwner4).startDaoVoting(masterDao.address,true))
+            await expect(masterDao.connect(SubDaoOwner4).addMember("Anonimous",SubDaoOwner2.address,4))
                 .to.be.revertedWith("only member does.");
-            await expect(masterDao.connect(SubDaoOwner4).voteForDao(masterDao.address,true))
-                .to.be.revertedWith("only member does.");
-            await expect(masterDao.connect(SubDaoOwner4).finishDaoVoting(masterDao.address))
+            await expect(masterDao.connect(SubDaoOwner4).deleteMember(SubDaoOwner2.address,4))
                 .to.be.revertedWith("only member does.");
             await expect(masterDao.connect(SubDaoOwner4).divide(masterDao.address,200))
+                .to.be.revertedWith("only member does.");
+            await expect(masterDao.connect(SubDaoOwner4).changeDaoReward(masterDao.address,4,true))
                 .to.be.revertedWith("only member does.");
         });
     });
@@ -288,10 +300,14 @@ describe("All contract", function() {
             assert.equal(daoList[0].githubURL,"test.com");
         });
         it("Voting to a Sub DAO & Approved.", async function() {
-            await masterDao.connect(MasterDaoOwner).startDaoVoting(subDao.address,true);
-            await masterDao.connect(MasterDaoOwner).voteForDao(subDao.address,true);
-            await masterDao.connect(SubDaoOwner1).voteForDao(subDao.address,true);
-            await masterDao.connect(MasterDaoOwner).finishDaoVoting(subDao.address);
+            await masterDao.connect(MasterDaoOwner).submitProposal(PROPOSAL_KIND_COMMUNITY_MANAGEMENT,"approve the dao",
+                "I want to approve", "Please Approve to reward.", "test.com", 0, subDao.address);
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(4,PROPOSAL_STATUS_VOTING);
+            await masterDao.connect(MasterDaoOwner).voteForProposal(4,true);
+            await masterDao.connect(SubDaoOwner1).voteForProposal(4,true);            
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(4,PROPOSAL_STATUS_FINISHED_VOTING);
+            await masterDao.connect(MasterDaoOwner).changeDaoReward(subDao.address,4,true);
+
             const daoId = await masterDao.daoIds(subDao.address);
             const daoInfo = await masterDao.daoInfoes(daoId);
             assert.equal(daoInfo.daoName,"narusedai-2-36");
@@ -302,6 +318,13 @@ describe("All contract", function() {
             const daoList = await masterDao.getDaoList();
             assert.equal(daoList.length,1);
             assert.equal(daoList[0].daoAddress,subDao.address);
+
+            const beforedaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
+            await masterDao.connect(MasterDaoOwner).donate({value:ethers.utils.parseEther("10.0")});
+            await masterDao.connect(MasterDaoOwner).divide(subDao.address,ethers.utils.parseEther("2.0"));
+            const afterdaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
+            assert.equal(afterdaobalance-beforedaobalance > 1,true);
+
         });
     });
     describe("Erc20 for DAO.", async function() {
