@@ -52,7 +52,7 @@ const DaoMembers = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           {
             typeof targetSubDAO !== "undefined" ?
               (<h2>
-                DAO: {targetSubDAO.daoName}({targetSubDAO.daoName})
+                DAO: {targetSubDAO.daoName}
               </h2>) : ''
           }
         </div>

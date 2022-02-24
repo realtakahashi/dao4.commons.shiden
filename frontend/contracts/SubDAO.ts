@@ -3,9 +3,13 @@ import {
   SubDAOContractConstruct,
   MasterDAOContractConstruct,
 } from '@/contracts/construct'
-import {SubDAOData, SubDAOMemberData} from '@/types/SubDAO'
-import {SubDAODeployFormData} from '@/types/SubDAO'
-import { AddProposalFormData, ProposalInfo } from '@/types/Proposal'
+import {
+  SubDAOData,
+  SubDAOMemberData,
+  SubDAODeployFormData,
+} from '@/types/SubDAO'
+import {AddProposalFormData, ProposalInfo} from '@/types/Proposal'
+import {AddMemberFormData} from '@/types/MemberNFT'
 
 export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
   const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS
@@ -33,7 +37,9 @@ export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
   return response
 }
 
-export const getSubDAOMemberList = async (sudDAOAddress: string): Promise<Array<SubDAOMemberData>> => {
+export const getSubDAOMemberList = async (
+  sudDAOAddress: string
+): Promise<Array<SubDAOMemberData>> => {
   const contractConstract = SubDAOContractConstruct
   let response: SubDAOMemberData[] = []
   if (typeof window.ethereum !== 'undefined' && sudDAOAddress) {
@@ -115,12 +121,45 @@ export const registerSubDAO = async (
   }
   return
 }
+export const addMemberToSubDAO = async (
+  subDAOContractAddess: string,
+  inputData: AddMemberFormData
+): Promise<void> => {
+  const contractConstract = SubDAOContractConstruct
+  if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOContractAddess,
+      contractConstract.abi,
+      signer
+    )
+    const tx = await contract
+      .addMember(
+        inputData.memberAddress,
+        inputData.name,
+        inputData.nftContractAddress,
+        inputData.tokenID
+      )
+      .then((r: any) => {
+        console.log(r)
+        alert('Succeeded to add member to SubDAO')
+        return
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed to add Member to SubDAO')
+        return
+      })
+  }
+  return
+}
 
 export const registerProposal = async (
   subDAOContractAddess: string,
   inputData: AddProposalFormData
-): Promise<string> =>{
-  console.log("### registerProposal 1")
+): Promise<string> => {
+  console.log('### registerProposal 1')
   const contractConstract = SubDAOContractConstruct
   if (typeof window.ethereum !== 'undefined') {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -131,20 +170,25 @@ export const registerProposal = async (
       signer
     )
     console.log("## Add Proposal: Detail: ",inputData.detail)
-    const tx = await contract.submitProposal(inputData.proposalKind, inputData.title, inputData.outline, 
-      inputData.detail, inputData.githubURL)
-    const returnValue = await tx.wait();
-    console.log("### returnValue:",returnValue);
-    console.log("### Proposal ID:",returnValue.events[0].args.proposalId)
+    const tx = await contract.submitProposal(
+      inputData.proposalKind,
+      inputData.title,
+      inputData.outline,
+      inputData.detail,
+      inputData.githubURL
+    )
+    const returnValue = await tx.wait()
+    console.log('### returnValue:', returnValue)
+    console.log('### Proposal ID:', returnValue.events[0].args.proposalId)
     return returnValue.events[0].args.proposalId.toString()
   }
-  return ""
+  return ''
 }
 
 export const getProposalListFromContract = async (
-  subDAOContractAddess: string,
+  subDAOContractAddess: string
 ): Promise<Array<ProposalInfo>> => {
-  console.log("## SubDao Address: ", subDAOContractAddess)
+  console.log('## SubDao Address: ', subDAOContractAddess)
   const contractConstract = SubDAOContractConstruct
   let response: ProposalInfo[] = []
   if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
@@ -155,13 +199,11 @@ export const getProposalListFromContract = async (
       contractConstract.abi,
       signer
     )
-    response = await contract
-      .getProposalList()
-      .catch((err: any) => {
-        console.log(err)
-        alert('failed to list Proposal Info.')
-      })
-    console.log("### getProposalList Return: ",response)
+    response = await contract.getProposalList().catch((err: any) => {
+      console.log(err)
+      alert('failed to list Proposal Info.')
+    })
+    console.log('### getProposalList Return: ', response)
   }
   return response
 }

@@ -17,20 +17,20 @@ const topLinks = [
 ]
 
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [subDAOList, setsubDAOList] = useState<Array<SubDAOData>>()
+  const [SubDAOList, setSubDAOList] = useState<Array<SubDAOData>>()
   const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
   useEffect(() => {
-    const getSubDAOList = async () => {
+    const getSubSubDAOList = async () => {
       const response = await listSubDAO()
-      setsubDAOList(
+      setSubDAOList(
         response
       )
     }
-    getSubDAOList()
+    getSubSubDAOList()
   }, [])
 
   const displayDAOData = (SubDAOAddress: string) => {
-    const target = subDAOList?.find(SubDAO => SubDAO.daoAddress === SubDAOAddress)
+    const target = SubDAOList?.find(SubDAO => SubDAO.daoAddress === SubDAOAddress)
     setTargetSubDAO(target)
   }
   return (
@@ -68,8 +68,8 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <h2>Your DAO</h2>
         <div className="flex justify-center">
           <ul className="bg-white rounded-lg border border-gray-200 w-96 text-gray-900">
-            {typeof subDAOList !== "undefined" ?
-              subDAOList.map((dao) => {
+            {typeof SubDAOList !== "undefined" ?
+              SubDAOList.map((dao) => {
                 return (
                   <li
                     className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
@@ -77,10 +77,8 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                     onClick={() => displayDAOData(dao.daoAddress)}
                   >
                     <Link href={`/dao/${dao.daoAddress}`}>
-                      <a>
-                        {dao.daoName}
-                      </a>
-                    </Link>
+                      {dao.daoName}
+                    </Link>                    
                   </li>
                 )
               }) : ""

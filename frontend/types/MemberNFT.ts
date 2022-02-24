@@ -8,3 +8,12 @@ export interface MemberNFTDeployFormData {
 export interface MemberNFTMintFormData {
   token_address: string
 }
+
+
+export interface AddMemberFormData {
+  subDaoAddress: string
+  tokenID: number
+  nftContractAddress: string
+  name: string
+  memberAddress: string
+}

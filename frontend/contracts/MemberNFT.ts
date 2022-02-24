@@ -36,7 +36,10 @@ export const deployMemberNFT = async (
   return memberNFTTokenAddress
 }
 
-export const mintMemberNFT = async (memberNFTTokenAddress: string) => {
+export const mintMemberNFT = async (
+  memberNFTTokenAddress: string
+): Promise<string> => {
+  let id: string = ''
   if (
     typeof window.ethereum !== 'undefined' &&
     typeof memberNFTTokenAddress !== 'undefined'
@@ -52,21 +55,25 @@ export const mintMemberNFT = async (memberNFTTokenAddress: string) => {
     contract
       .original_mint(signerAddress, {value: Web3.utils.toWei('10')})
       .then((d: any) => {
-        console.log(d)
+        // console.log(d)
+        id = d.address
         alert('Succeeded to mint member NFT!')
+        const filters = contract.filters['IssuedMemberToken']
+        if (filters !== undefined) {
+          provider.once('block', () => {
+            contract.on(filters(), (to, tokenID) => {
+              console.log(to, tokenID)
+              id = tokenID
+              console.log(id)
+            })
+          })
+        }
+        id = '3'
       })
       .catch((err: any) => {
         console.log(err)
         alert('Failed to mint member NFT!')
       })
-    const filters = contract.filters['IssuedMemberToken']
-    if (filters !== undefined) {
-      provider.once('block', () => {
-        contract.on(filters(), (to, tokenID) => {
-          console.log(to, tokenID)
-        })
-      })
-    }
   }
-  return
+  return id
 }

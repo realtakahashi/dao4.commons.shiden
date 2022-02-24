@@ -5,7 +5,7 @@ import { MemberNFTMintFormData } from "@/types/MemberNFT"
 import { deployMemberNFT, mintMemberNFT } from '@/contracts/MemberNFT';
 
 const MintMemberNFT = () => {
-  const [memberNFTTokenID, setmemberNFTTokenID] = useState("")
+  const [memberNFTTokenID, setMemberNFTTokenID] = useState("")
 
   const [formValue, setFormValue] = useState<MemberNFTMintFormData>({
     token_address: ""
@@ -18,7 +18,11 @@ const MintMemberNFT = () => {
   }
   const onSubmitMemberNFTForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    await mintMemberNFT(formValue.token_address)
+    const id = await mintMemberNFT(formValue.token_address)
+    console.log(id)
+    if (id) {
+      setMemberNFTTokenID(id)
+    }    
   }
   return (
     <>
@@ -60,7 +64,7 @@ const MintMemberNFT = () => {
               Mint Succeeded!!
             </p>
             <p className="text-lg">
-              Your Member NFT TokenID:
+              Your Member NFT TokenID: {memberNFTTokenID}
             </p>
           </div>
         ) : ""}
