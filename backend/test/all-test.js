@@ -255,7 +255,11 @@ describe("All contract", function() {
             await expect(subDao.connect(SubDaoOwner1).voteForProposal(3,true)).to.be.revertedWith("Now can not vote.");
             // normal yes case
             await subDao.connect(SubDaoOwner1).voteForProposal(2,true);
+            // // double vote check
+            await expect(subDao.connect(SubDaoOwner1).voteForProposal(2,true)).to.be.revertedWith("Already voted.");
             await subDao.connect(SubDaoOwner2).voteForProposal(2,true);
+            // // double vote check
+            await expect(subDao.connect(SubDaoOwner2).voteForProposal(2,true)).to.be.revertedWith("Already voted.");
             await subDao.connect(SubDaoOwner1).changeProposalStatus(2,PROPOSAL_STATUS_FINISHED_VOTING);
             const voteInfo = await subDao.votingInfoes(2);
             // console.log("## voteinfo:",voteInfo);
