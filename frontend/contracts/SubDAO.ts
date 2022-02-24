@@ -130,6 +130,7 @@ export const registerProposal = async (
       contractConstract.abi,
       signer
     )
+    console.log("## Add Proposal: Detail: ",inputData.detail)
     const tx = await contract.submitProposal(inputData.proposalKind, inputData.title, inputData.outline, 
       inputData.detail, inputData.githubURL)
     const returnValue = await tx.wait();
@@ -188,6 +189,36 @@ export const changeProposalStatus = async (
         alert('failed changeProposalStatus.')
       })
     console.log("### changeProposalStatus Return: ",response)
+    alert('Chainging proposal status is succeeded.')
+  }
+  return response
+}
+
+export const doVoteForProposal = async (
+  subDAOContractAddess: string,
+  yes: boolean,
+  proposalId: number
+) => {
+  console.log("## doVote:yes: ",yes)
+  console.log("## doVote:SubDao Address: ", subDAOContractAddess)
+  const contractConstract = SubDAOContractConstruct
+  let response: ProposalInfo[] = []
+  if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOContractAddess,
+      contractConstract.abi,
+      signer
+    )
+    response = await contract
+      .voteForProposal(proposalId,yes)
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed changeProposalStatus.')
+      })
+    console.log("### changeProposalStatus Return: ",response)
+    alert('Voting proposal status is succeeded.')
   }
   return response
 }

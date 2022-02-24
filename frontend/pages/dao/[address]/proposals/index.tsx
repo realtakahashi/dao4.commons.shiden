@@ -1,9 +1,10 @@
 import { Layout } from '@/components/common'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ProposalInfo } from '@/types/Proposal'
-import { getProposalListFromContract, changeProposalStatus } from '@/contracts/SubDAO'
+import { getProposalListFromContract, changeProposalStatus, doVoteForProposal } from '@/contracts/SubDAO'
 import type { InferGetStaticPropsType, GetStaticPaths, GetStaticPropsContext } from 'next'
 import { useRouter } from 'next/router'
+import { Link } from 'react-router-dom';
 
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
   return {
@@ -24,6 +25,83 @@ const PROPOSAL_KIND = ['AddAMember', 'DeleteAMember', 'UseOfFunds', 'CommunityMa
 const PROPOSAL_STATUS = ['UnderDiscussionOnGithub', 'Voting', 'Pending', 'Running', 'Rejected', 'FinishedVoting',
   'Finished'] as const;
 
+function VoteModal({showVote, setShowVote, selectProposal, subDaoAddress}){
+
+    const doVote = async (selectProposal) => {
+      console.log("## subDaoAddress: ", subDaoAddress)
+      console.log("## selectProposal.proposalId: ", parseInt(selectProposal.proposalId))
+      console.log("## proposalStatus: ", voteStatus)
+  
+      await doVoteForProposal(subDaoAddress,voteStatus,parseInt(selectProposal.proposalId))
+    }
+  
+    const [voteStatus, setVoteStatus] = useState(0)
+  
+    const selectVoteStatus = (status) => {
+      setVoteStatus(status)
+    }
+  
+    const changeVoteAndSetShow = async (showVote,proposal) => {
+      setShowVote(showVote)
+      await doVote(proposal)
+    }
+  
+    if(showVote){
+      return (
+        <div id="overlay">
+          <div id="content">
+            <div className="shadow-lg rounded p-8 bg-white">
+              <p className="font-light text-gray-700 leading-relaxed">
+                Proposal Kind: {PROPOSAL_KIND[selectProposal.proposalKind]}
+              </p>
+              <p className="font-light text-gray-700 leading-relaxed">
+                Tiltle: {selectProposal.title}
+              </p>
+              <p className="font-light text-gray-700 leading-relaxed">
+                Outline: {selectProposal.outline}
+              </p>
+              <p className="font-light text-gray-700 leading-relaxed">
+                Detail: {selectProposal.details}
+              </p>
+              <p className="font-light text-gray-700 leading-relaxed">
+                GithubUrl: {selectProposal.githubURL}
+              </p>
+              <p className="font-Bold text-gray-700 leading-relaxed">
+                Proposal Status: {PROPOSAL_STATUS[selectProposal.proposalStatus]}
+              </p>
+              You Vote For :
+              <select 
+                className="font-bold"
+                name="Status"
+                value={voteStatus}
+                onChange={e => selectVoteStatus(e.target.value)}
+              >
+                <option value="1">YES</option>
+                <option value="0">NO</option>
+              </select>
+              <div className="flex items-center justify-end mt-4">
+                <button
+                  className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50 mr-4"
+                  onClick={() => changeVoteAndSetShow(false,selectProposal)}
+                >
+                  Ok
+                </button>
+                <button
+                  className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50"
+                  onClick={() => setShowVote(false)}
+                >
+                  Chancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+    else{
+      return null;
+    }
+  }  
 
 function Modal({show, setShow, selectProposal, subDaoAddress}){
 
@@ -51,26 +129,27 @@ function Modal({show, setShow, selectProposal, subDaoAddress}){
       <div id="overlay">
         <div id="content">
           <div className="shadow-lg rounded p-8 bg-white">
-            <p className="font-bold text-gray-700 leading-relaxed">
+            <p className="font-light text-gray-700 leading-relaxed">
               Proposal Kind: {PROPOSAL_KIND[selectProposal.proposalKind]}
             </p>
-            <p className="font-bold text-gray-700 leading-relaxed">
+            <p className="font-light text-gray-700 leading-relaxed">
               Tiltle: {selectProposal.title}
             </p>
-            <p className="font-bold text-gray-700 leading-relaxed">
+            <p className="font-light text-gray-700 leading-relaxed">
               Outline: {selectProposal.outline}
             </p>
-            <p className="font-bold text-gray-700 leading-relaxed">
-              Detail: {selectProposal.detail}
+            <p className="font-light text-gray-700 leading-relaxed">
+              Detail: {selectProposal.details}
             </p>
-            <p className="font-bold text-gray-700 leading-relaxed">
+            <p className="font-light text-gray-700 leading-relaxed">
               GithubUrl: {selectProposal.githubURL}
             </p>
-            <p className="font-bold text-gray-700 leading-relaxed">
+            <p className="font-light text-gray-700 leading-relaxed">
               Proposal Status: {PROPOSAL_STATUS[selectProposal.proposalStatus]}
             </p>
             Change Status to :
             <select 
+              className="font-bold"
               name="Status"
               value={proposalStatus}
               onChange={e => selectStatus(e.target.value)}
@@ -114,6 +193,7 @@ const DaoProposals = (props: InferGetStaticPropsType<typeof getStaticProps>) => 
   const subDAOaddress = router.query.address;
 
   const [show, setShow] = useState(false)
+  const [showVote, setShowVote] = useState(false)
   const [selectProposal, setSelectProposal] = useState(null)
   
   function setProposal(proposal){
@@ -138,18 +218,32 @@ const DaoProposals = (props: InferGetStaticPropsType<typeof getStaticProps>) => 
         Proposals page
       </div>
 		  <div className="">
-			      <button className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
+            <button className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
 				      font-bold py-2 px-4 rounded" type="button"
+			      >
+				      <a href={"/dao/" + subDAOaddress + "/proposals/add_proposal"}> Add A Propsal</a>
+			      </button>
+
+			      <button className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
+				      font-bold py-2 px-4 m-5 rounded" type="button"
 			        onClick={() => setShow(true)}
 			      >
 				      Change Propsal Status
 			      </button>
               <Modal show={show} setShow={setShow} selectProposal={selectProposal} subDaoAddress={subDAOaddress} />
+            
+            <button className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
+				      font-bold py-2 px-4 m-5 rounded" type="button"
+			        onClick={() => setShowVote(true)}
+			      >
+				      Vote For A Proposal
+			      </button>
+              <VoteModal showVote={showVote} setShowVote={setShowVote} selectProposal={selectProposal} subDaoAddress={subDAOaddress} />
 		  </div>
       <div className='mt-5'>
           <h2>Proposals</h2>
           <div className="flex justify-center">
-            <ul className="bg-white rounded-lg border border-gray-200 w-96 text-gray-900">
+            <ul className="bg-white rounded-lg border border-gray-200  text-gray-900">
               {typeof proposalList !== "undefined" ?
                 proposalList.map((proposal) => {
                   return (
