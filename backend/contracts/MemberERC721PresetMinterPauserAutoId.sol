@@ -19,6 +19,9 @@ contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId,
     Counters.Counter private _tokenIdTracker;
     address daoAddress;
 
+    // eoa => tokenId
+    mapping(address => uint256) public ownedTokenId;
+
     event IssuedMemberToken(address indexed sender, uint256 id);
     event BurnedMemberToken(address indexed sender, uint256 id);
 
@@ -31,6 +34,9 @@ contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId,
                 string memory baseTokenURI,
                 address _daoAddress
     ) ERC721PresetMinterPauserAutoId(name,symbol,baseTokenURI) {
+        // This NFT start One
+        _tokenIdTracker.increment();
+
         owner = msg.sender;
         daoAddress = _daoAddress;
     }
@@ -48,8 +54,10 @@ contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId,
     function original_mint(address to) public payable {
         // require(hasRole(MINTER_ROLE, _msgSender()), "ERC721PresetMinterPauserAutoId: must have minter role to mint");
         // console.log("msg.value is :", msg.value);
+        require(ownedTokenId[msg.sender]==0,"Already minted.");
         require(msg.value==DEPOSITE_AMOUNT,"10 token is needed as deposit.");
         _mint(to, _tokenIdTracker.current());
+        ownedTokenId[msg.sender] = _tokenIdTracker.current();
         emit IssuedMemberToken(to, _tokenIdTracker.current());
         _tokenIdTracker.increment();
     }
@@ -107,6 +115,7 @@ contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId,
         require(tokenOwner!=address(0)&&(msg.sender == owner || ownerOf(tokenId)==msg.sender),"can't burn");
         _burn(tokenId);
         payable(msg.sender).transfer(DEPOSITE_AMOUNT);
+        ownedTokenId[msg.sender] = 0;
         emit BurnedMemberToken(tokenOwner, tokenId);
     }
 }
