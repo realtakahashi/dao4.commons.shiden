@@ -35,18 +35,19 @@ const AddProposal = () => {
   return (
 	<>
 	  <div>
-		<h2 className="text-xl">Add Proposal</h2>
+		  <h1 className="text-3xl">Add A Proposal</h1>
+          <div className="p-5"></div>
 		<form
-		  className="w-full max-w-sm"
+		  className="w-full max-w-screen-sm"
 		  onSubmit={onSubmitAddProposalForm}
 		>
-		  <div className="md:flex md:items-center mb-6">
-			<div className="md:w-1/3">
-			  <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" >
+		  <div className="md:flex md:items-center mb-3">
+			<div className="md:w-3/6">
+			  <label className="block font-bold md:text-right mb-1 md:mb-0 pr-4" >
 				Sub DAO Address
 			  </label>
 			</div>
-			<div className="md:w-2/3">
+			<div className="md:w-3/6">
 			  <FormInputText className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
 				name="subDaoAddress"
@@ -54,13 +55,13 @@ const AddProposal = () => {
 			  />
 			</div>
 		  </div>
-		  <div className="md:flex md:items-center mb-6">
-			<div className="md:w-1/3">
-			  <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" >
+		  <div className="md:flex md:items-center mb-3">
+			<div className="md:w-1/2">
+			  <label className="block font-bold md:text-right mb-1 md:mb-0 pr-4" >
 				Proposal Kind
 			  </label>
 			</div>
-			<div className="md:w-2/3">
+			<div className="md:w-1/2">
 			  <FormInputText className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
 				name="proposalKind"
@@ -68,9 +69,9 @@ const AddProposal = () => {
 			  />
 			</div>
 		  </div>
-		  <div className="md:flex md:items-center mb-6">
+		  <div className="md:flex md:items-center mb-3">
 			<div className="md:w-1/3">
-			  <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" >
+			  <label className="block font-bold md:text-right mb-1 md:mb-0 pr-4" >
 				Title
 			  </label>
 			</div>
@@ -82,9 +83,9 @@ const AddProposal = () => {
 			  />
 			</div>
 		  </div>
-		  <div className="md:flex md:items-center mb-6">
+		  <div className="md:flex md:items-center mb-3">
 			<div className="md:w-1/3">
-			  <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" >
+			  <label className="block font-bold md:text-right mb-1 md:mb-0 pr-4" >
 				Outline
 			  </label>
 			</div>
@@ -96,9 +97,9 @@ const AddProposal = () => {
 			  />
 			</div>
 		  </div>
-		  <div className="md:flex md:items-center mb-6">
+		  <div className="md:flex md:items-center mb-3">
 			<div className="md:w-1/3">
-			  <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" >
+			  <label className="block font-bold md:text-right mb-1 md:mb-0 pr-4" >
 				Detail
 			  </label>
 			</div>
@@ -110,9 +111,9 @@ const AddProposal = () => {
 			  />
 			</div>
 		  </div>
-		  <div className="md:flex md:items-center mb-6">
+		  <div className="md:flex md:items-center mb-3">
 			<div className="md:w-1/3">
-			  <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" >
+			  <label className="block font-bold md:text-right mb-1 md:mb-0 pr-4" >
 				Github URL
 			  </label>
 			</div>
@@ -125,7 +126,7 @@ const AddProposal = () => {
 			</div>
 		  </div>
 
-		  <div className="">
+		  <div className="p-5">
 			<div className="md:w-1/3"></div>
 			<div className="md:w-2/3">
 			  <button className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
@@ -134,7 +135,7 @@ const AddProposal = () => {
 			  </button>
 			</div>
 		  </div>
-		  <p className="text-sm">
+		  <p className="text-sm p-5">
 			Your Proposal Accept With The Proposal ID : [ {proposalId} ]
 		  </p>
 		</form>
