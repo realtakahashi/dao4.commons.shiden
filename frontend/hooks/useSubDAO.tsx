@@ -21,18 +21,13 @@ export const useSubDAOData = (subDAOaddress: string) => {
   useEffect(() => {
     console.log("test")
     const setAddress = async () => {
-      const subDAOList = await listSubDAO()
-      console.log(subDAOList, subDAOaddress)
+      const subDAOList = await listSubDAO()      
       const target = subDAOList?.find(subDAOList => subDAOList.daoAddress === subDAOaddress)
-      console.log(target)
       if (typeof target !== "undefined") {
-        setTargetSubDAO(target)
-        console.log(target)
+        setTargetSubDAO(target)      
       }
     }
-
     setAddress()
-
   }, [])
 
   return targetSubDAO
