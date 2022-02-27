@@ -1,9 +1,6 @@
 import type { InferGetStaticPropsType, GetStaticPaths, GetStaticPropsContext } from 'next'
 import { Layout } from '@/components/common'
 import Link from "next/link"
-import { listSubDAO } from '@/contracts/SubDAO'
-import { SubDAOData } from "@/types/SubDAO"
-import { useEffect, useState } from 'react';
 import { useSubDAOData } from '@/hooks'
 import { Loading } from '@/components/common/Loading'
 
