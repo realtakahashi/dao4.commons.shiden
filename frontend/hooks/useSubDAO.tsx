@@ -19,7 +19,6 @@ export const useSubDAOList = () => {
 export const useSubDAOData = (subDAOaddress: string) => {
   const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
   useEffect(() => {
-    console.log("test")
     const setAddress = async () => {
       const subDAOList = await listSubDAO()      
       const target = subDAOList?.find(subDAOList => subDAOList.daoAddress === subDAOaddress)

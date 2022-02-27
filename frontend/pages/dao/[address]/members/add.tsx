@@ -1,15 +1,24 @@
 import type { InferGetStaticPropsType, GetStaticPaths, GetStaticPropsContext } from 'next'
 import { Layout } from '@/components/common';
 import { useState } from 'react';
-import { FormInputText } from '@/components/ui';
+import { FormInputText, FormText } from '@/components/ui';
 import { AddMemberFormData } from "@/types/MemberNFT"
-import { deployMemberNFT, mintMemberNFT } from '@/contracts/MemberNFT';
 import { addMemberToSubDAO } from '@/contracts/SubDAO';
+import { Loading } from '@/components/common/Loading';
+import { useSubDAOData } from '@/hooks';
 
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
+  if (typeof params !== "undefined"
+    && typeof params.address === "string") {
+    return {
+      props: {
+        address: params.address
+      }
+    }
+  }
   return {
     props: {
-      address: params?.address
+      address: ""
     }
   }
 }
@@ -22,6 +31,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 const MintMemberNFT = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+  if (typeof props.address === "undefined") {
+    return (
+      <Loading />
+    )
+  }
+  const targetSubDAO = useSubDAOData(props.address)
   const [memberAdded, setMemberAdded] = useState(false)
   const [formValue, setFormValue] = useState<AddMemberFormData>({
     subDaoAddress: "",
@@ -48,6 +63,12 @@ const MintMemberNFT = (props: InferGetStaticPropsType<typeof getStaticProps>) =>
   return (
     <>
       <div>
+        {
+          typeof targetSubDAO !== "undefined" ?
+            (<h2>
+              DAO: {targetSubDAO.daoName}
+            </h2>) : ''
+        }
         <h2 className="text-xl">Add DAO member</h2>
         <form className="w-full max-w-sm"
           onSubmit={onSubmitAddMemberForm}
@@ -76,11 +97,11 @@ const MintMemberNFT = (props: InferGetStaticPropsType<typeof getStaticProps>) =>
             name="tokenID"
             handleOnChangeInput={onChangeInput}
           />
-          <FormInputText
-            label='Sub DAO Address'
-            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-            name="subDaoAddress"
-            handleOnChangeInput={onChangeInput}
+
+          <FormText
+            label='Sub DAO'
+            // className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            text={`${targetSubDAO?.daoName}(${targetSubDAO?.daoAddress})`}            
           />
 
           <div className="">

@@ -1,16 +1,26 @@
 import type { InferGetStaticPropsType, GetStaticPaths, GetStaticPropsContext } from 'next'
 import { listSubDAO, getSubDAOMemberList } from '@/contracts/SubDAO'
 import { SubDAOData } from "@/types/SubDAO"
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Layout } from '@/components/common'
 import { SubDAOMemberData } from '@/types/SubDAO';
 import Link from 'next/link';
+import { useSubDAOData } from '@/hooks';
+import { Loading } from '@/components/common/Loading';
 
 
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
+  if (typeof params !== "undefined"
+    && typeof params.address === "string") {
+    return {
+      props: {
+        address: params.address
+      }
+    }
+  }
   return {
     props: {
-      address: params?.address
+      address: ""
     }
   }
 }
@@ -23,23 +33,24 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 const DaoMembers = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
+  if (typeof props.address === "undefined") {
+    return (
+      <Loading />
+    )
+  }
+  const targetSubDAO = useSubDAOData(props.address)
   const [daoMemberList, setDAOMemberList] = useState<Array<SubDAOMemberData>>()
   const [targetDAOMember, setTargetDAOMember] = useState<SubDAOMemberData>()
   useEffect(() => {
-    const subDAOaddress = props.address
-    const setAddress = async () => {
-      const daoList = await listSubDAO()      
-      const target = daoList?.find(dao => dao.daoAddress === subDAOaddress)
-      if (typeof target !== "undefined") {
-        setTargetSubDAO(target)
-        const membersList = await getSubDAOMemberList(target.daoAddress)
-        setDAOMemberList(membersList)
-        daoMemberList?.map(member => member.member_id)
-      }
+    const listMember = async () => {
+      const membersList = await getSubDAOMemberList(props.address)
+      setDAOMemberList(membersList)
+      console.log(daoMemberList)
+      daoMemberList?.map(member => member.member_id)
     }
-    setAddress()
+    listMember()
   }, [])
+
 
   const handleClickDAOmember = (memberID: string) => {
     const target = daoMemberList?.find(member => member.member_id === memberID)
@@ -70,15 +81,15 @@ const DaoMembers = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
             </Link>
           </div>
           <h2>Members</h2>
-          <div className="flex justify-center">          
+          <div className="flex justify-center">
             <ul className="bg-white rounded-lg border border-gray-200 w-96 text-gray-900">
               {typeof daoMemberList !== "undefined" ?
                 daoMemberList.map((member) => {
                   return (
                     <li
                       className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
-                      key={member.name}   
-                      onClick={() =>handleClickDAOmember(member.member_id)}
+                      key={member.name}
+                      onClick={() => handleClickDAOmember(member.member_id)}
                     >
                       {member.name}
                     </li>

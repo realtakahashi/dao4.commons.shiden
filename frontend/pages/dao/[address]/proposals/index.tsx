@@ -12,7 +12,6 @@ import type {
   GetStaticPropsContext,
 } from "next";
 import { useRouter } from "next/router";
-import { Link } from "react-router-dom";
 
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
   return {
