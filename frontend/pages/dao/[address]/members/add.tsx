@@ -52,44 +52,35 @@ const MintMemberNFT = (props: InferGetStaticPropsType<typeof getStaticProps>) =>
         <form className="w-full max-w-sm"
           onSubmit={onSubmitAddMemberForm}
         >
-          <div className="md:flex md:items-center mb-6">
-            <div className="md:w-1/3">
-              <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" >
-                Member Address
-              </label>
-            </div>
-            <div className="md:w-2/3">
-              <FormInputText
-                label='Member Address'
-                className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-                name="memberAddress"
-                handleOnChange={onChangeInput}
-              />
-            </div>
-          </div>
+          <FormInputText
+            label='Member Address'
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="memberAddress"
+            handleOnChangeInput={onChangeInput}
+          />
           <FormInputText
             label='Name'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="name"
-            handleOnChange={onChangeInput}
+            handleOnChangeInput={onChangeInput}
           />
           <FormInputText
             label='NFT contract address'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="nftContractAddress"
-            handleOnChange={onChangeInput}
+            handleOnChangeInput={onChangeInput}
           />
           <FormInputText
             label='TokenID'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="tokenID"
-            handleOnChange={onChangeInput}
+            handleOnChangeInput={onChangeInput}
           />
           <FormInputText
             label='Sub DAO Address'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="subDaoAddress"
-            handleOnChange={onChangeInput}
+            handleOnChangeInput={onChangeInput}
           />
 
           <div className="">

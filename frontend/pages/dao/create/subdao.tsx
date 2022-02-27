@@ -34,19 +34,19 @@ const DeploySubDAO = () => {
             label='Name'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="name"
-            handleOnChange={onChangeInput}
+            handleOnChangeInput={onChangeInput}
           />
           <FormInputText
             label='GithubURL'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="github_url"
-            handleOnChange={onChangeInput}
+            handleOnChangeInput={onChangeInput}
           />
           <FormInputText
             label='Owner Name'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="owner_name"
-            handleOnChange={onChangeInput}
+            handleOnChangeInput={onChangeInput}
           />
           <div className="">
             <div className="md:w-1/3"></div>

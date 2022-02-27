@@ -31,7 +31,6 @@ const AddProposal = () => {
 		}
 	}
 
-
 	return (
 		<>
 			<div>
@@ -46,42 +45,42 @@ const AddProposal = () => {
 						className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
 						name="subDaoAddress"
-						handleOnChange={onChangeInput}
+						handleOnChangeInput={onChangeInput}
 					/>
 					<FormInputText
 						label='Proposal Kind'
 						className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
 						name="proposalKind"
-						handleOnChange={onChangeInput}
+						handleOnChangeInput={onChangeInput}
 					/>
 					<FormInputText
 						label='Title'
 						className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			  	leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
 						name="title"
-						handleOnChange={onChangeInput}
+						handleOnChangeInput={onChangeInput}
 					/>
 					<FormInputText
 						label='Outline'
 						className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
 						name="outline"
-						handleOnChange={onChangeInput}
+						handleOnChangeInput={onChangeInput}
 					/>
 					<FormInputText
 						label='Detail'
 						className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
 						name="detail"
-						handleOnChange={onChangeInput}
+						handleOnChangeInput={onChangeInput}
 					/>
 					<FormInputText
 						label='Github URL'
 						className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
 						name="githubURL"
-						handleOnChange={onChangeInput}
+						handleOnChangeInput={onChangeInput}
 					/>
 					<div className="p-5">
 						<div className="md:w-1/3"></div>
