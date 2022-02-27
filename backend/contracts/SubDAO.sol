@@ -88,6 +88,8 @@ contract SubDAO is ReentrancyGuard{
     mapping(uint256 => ProposalInfo) public proposalInfoes;
     // proposal id => Voting Info
     mapping(uint256 => VotingInfo) public votingInfoes;
+    // proposal id => ( eoa => Already Voted)
+    mapping(uint256 => mapping(address => bool)) public checkVoted;
 
     /** 
     * コンストラクター
@@ -263,6 +265,7 @@ contract SubDAO is ReentrancyGuard{
     */
     function voteForProposal(uint256 _proposalId, bool yes) public onlyMember {
         require(proposalInfoes[_proposalId].proposalStatus==ProposalStatus.Voting,"Now can not vote.");
+        require(checkVoted[_proposalId][msg.sender]==false,"Already voted.");
         votingInfoes[_proposalId].votingCount++;
         if (yes){
             votingInfoes[_proposalId].yesCount++;
@@ -270,6 +273,7 @@ contract SubDAO is ReentrancyGuard{
         else{
             votingInfoes[_proposalId].noCount++;
         }
+        checkVoted[_proposalId][msg.sender] = true;
         emit VotedForProposal(msg.sender, _proposalId);
     }
 
