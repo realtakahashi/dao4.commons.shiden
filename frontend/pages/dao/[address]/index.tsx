@@ -4,12 +4,21 @@ import Link from "next/link"
 import { listSubDAO } from '@/contracts/SubDAO'
 import { SubDAOData } from "@/types/SubDAO"
 import { useEffect, useState } from 'react';
+import { useSubDAOData } from '@/hooks'
 
 
 export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
+  if (typeof params !== "undefined"
+  && typeof params.address === "string") {
+    return {
+      props: {
+        address: params.address
+      }
+    }
+  }
   return {
     props: {
-      address: params?.address
+      address: ""
     }
   }
 }
@@ -22,18 +31,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 const DAOportal = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
-  useEffect(() => {
-    const subDAOaddress = props.address
-    const setAddress = async () => {
-      const subDAOList = await listSubDAO()      
-      const target = subDAOList?.find(subDAOList => subDAOList.daoAddress === subDAOaddress)
-      if (typeof target !== "undefined") {
-        setTargetSubDAO(target)        
-      }
-    }
-    setAddress()
-  }, [])
+  let targetSubDAO
+  if(typeof props.address === "undefined") {
+    return (
+      <>
+      <div>loading...</div>
+      </>
+    )
+  } 
+  targetSubDAO = useSubDAOData(props.address) 
   // mock
   const topLinks = [
     { path: `/dao/${props.address}/members`, label: "Members" },

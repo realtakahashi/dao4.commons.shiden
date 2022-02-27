@@ -1,10 +1,9 @@
-import type { InferGetStaticPropsType, NextPage } from 'next'
+import type { InferGetStaticPropsType } from 'next'
 import { Layout } from '@/components/common'
 import Link from "next/link"
-import { listSubDAO } from '@/contracts/SubDAO'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SubDAOData } from "@/types/SubDAO"
-
+import { useSubDAOList } from '@/hooks';
 
 export const getStaticProps = async () => {
   return { props: {} }
@@ -17,20 +16,10 @@ const topLinks = [
 ]
 
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [SubDAOList, setSubDAOList] = useState<Array<SubDAOData>>()
   const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
-  useEffect(() => {
-    const getSubSubDAOList = async () => {
-      const response = await listSubDAO()
-      setSubDAOList(
-        response
-      )
-    }
-    getSubSubDAOList()
-  }, [])
-
+  const subDAOList = useSubDAOList()
   const displayDAOData = (SubDAOAddress: string) => {
-    const target = SubDAOList?.find(SubDAO => SubDAO.daoAddress === SubDAOAddress)
+    const target = subDAOList?.find(subDAO => subDAO.daoAddress === SubDAOAddress)
     setTargetSubDAO(target)
   }
   return (
@@ -68,8 +57,8 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <h2>Your DAO</h2>
         <div className="flex justify-center">
           <ul className="bg-white rounded-lg border border-gray-200 w-96 text-gray-900">
-            {typeof SubDAOList !== "undefined" ?
-              SubDAOList.map((dao) => {
+            {typeof subDAOList !== "undefined" ?
+              subDAOList.map((dao) => {
                 return (
                   <li
                     className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
@@ -78,7 +67,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                   >
                     <Link href={`/dao/${dao.daoAddress}`}>
                       {dao.daoName}
-                    </Link>                    
+                    </Link>
                   </li>
                 )
               }) : ""
