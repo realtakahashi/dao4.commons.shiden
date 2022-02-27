@@ -110,7 +110,7 @@ function Modal({show, setShow, selectProposal, subDaoAddress}){
     console.log("## selectProposal.proposalId: ", parseInt(selectProposal.proposalId))
     console.log("## proposalStatus: ", proposalStatus)
 
-    await changeProposalStatus(subDaoAddress,parseInt(selectProposal.proposalId), proposalStatus)
+    await changeProposalStatus(subDaoAddress, proposalStatus, parseInt(selectProposal.proposalId))
   }
 
   const [proposalStatus, setProposalStatus] = useState(0)

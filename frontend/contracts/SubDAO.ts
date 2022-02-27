@@ -213,7 +213,10 @@ export const changeProposalStatus = async (
   proposalStatus: number,
   proposalId: number
 ) => {
+  console.log("#### changeProposalStatus ####")
   console.log("## SubDao Address: ", subDAOContractAddess)
+  console.log("## Proposal Status: ", proposalStatus)
+  console.log("## Proposal Id: ", proposalId)
   const contractConstract = SubDAOContractConstruct
   let response: ProposalInfo[] = []
   if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
