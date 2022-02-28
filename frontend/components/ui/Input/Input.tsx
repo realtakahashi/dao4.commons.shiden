@@ -2,7 +2,6 @@
 import { FC } from 'react';
 import cn from "classnames"
 import { SubDAOData } from '@/types/SubDAO';
-import { useSubDAOData } from '@/hooks';
 
 interface InputProps {
   className: string | undefined

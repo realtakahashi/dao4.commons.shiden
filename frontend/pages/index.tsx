@@ -26,7 +26,6 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     <>
       <div>
         {
-
           topLinks.map((link) => {
             if (link.type === "button") {
               return (
@@ -63,10 +62,12 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                   <li
                     className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
                     key={dao.daoAddress}
-                    onClick={() => displayDAOData(dao.daoAddress)}
+                    onMouseEnter={() => displayDAOData(dao.daoAddress)}
                   >
                     <Link href={`/dao/${dao.daoAddress}`}>
-                      {dao.daoName}
+                      <a className='block'>
+                        {dao.daoName}
+                      </a>
                     </Link>
                   </li>
                 )
