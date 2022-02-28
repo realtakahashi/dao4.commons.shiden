@@ -12,7 +12,7 @@ export const getStaticProps = async () => {
 // mock
 const topLinks = [
   { type: "link", path: '/dao/create', label: "Create DAO", action: null },
-  { type: "link", path: '/dao/signup', label: "Signup DAO", action: null },
+  { type: "link", path: '/dao/create/signup_mint_nft', label: "Signup DAO", action: null },
 ]
 
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
