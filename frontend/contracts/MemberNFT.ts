@@ -40,6 +40,7 @@ export const mintMemberNFT = async (
   memberNFTTokenAddress: string
 ): Promise<string> => {
   let id: string = ''
+  console.log("memberNFT address: ",memberNFTTokenAddress);
   if (
     typeof window.ethereum !== 'undefined' &&
     typeof memberNFTTokenAddress !== 'undefined'
@@ -52,6 +53,13 @@ export const mintMemberNFT = async (
       MemberERC721ContractConstruct.abi,
       signer
     )
+    let nId = await contract.ownedTokenId(signerAddress);
+    if (nId!=0){
+      alert('You are already minted.Your Token Id is:' + nId)
+      id=String(nId)
+      return id
+    }
+
     contract
       .original_mint(signerAddress, {value: Web3.utils.toWei('10')})
       .then((d: any) => {
