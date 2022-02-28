@@ -3,8 +3,12 @@ import { AddProposalFormData } from '@/types/Proposal';
 import { useState } from 'react';
 import { registerProposal } from 'contracts/SubDAO';
 import { FormInputText } from '@/components/ui';
+import { useRouter } from 'next/router';
 
 const AddProposal = () => {
+	const router = useRouter();
+	const subDAOaddress = router.query.address;
+  
 	const [proposalId, setPoposalId] = useState("")
 	const [formValue, setFormValue] = useState<AddProposalFormData>({
 		subDaoAddress: "",
@@ -25,7 +29,7 @@ const AddProposal = () => {
 	const onSubmitAddProposalForm = async (event: React.FormEvent<HTMLFormElement>) => {
 		console.log("#### Submit 1")
 		event.preventDefault()
-		const proposalId = await registerProposal(formValue.subDaoAddress, formValue)
+		const proposalId = await registerProposal(subDAOaddress, formValue)
 		if (proposalId !== "") {
 			setPoposalId(proposalId)
 		}
@@ -40,13 +44,6 @@ const AddProposal = () => {
 					className="w-full max-w-screen-sm"
 					onSubmit={onSubmitAddProposalForm}
 				>
-					<FormInputText
-						label='Sub DAO Address'
-						className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
-			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-						name="subDaoAddress"
-						handleOnChangeInput={onChangeInput}
-					/>
 					<FormInputText
 						label='Proposal Kind'
 						className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
