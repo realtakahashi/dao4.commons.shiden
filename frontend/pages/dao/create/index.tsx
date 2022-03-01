@@ -22,7 +22,8 @@ const CreateDAO = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         topLinks.map((link) => {
           return (
             <Link href={link.path} key={link.path}>
-              <a className="m-10 py-2 px-4 border border-black-700 rounded">
+              <a className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
+                  font-bold py-2 px-4 m-5 rounded">
                 {link.label}
               </a>
             </Link>
