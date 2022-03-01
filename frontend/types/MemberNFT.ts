@@ -11,7 +11,6 @@ export interface MemberNFTMintFormData {
 
 
 export interface AddMemberFormData {
-  subDaoAddress: string
   tokenID: number
   nftContractAddress: string
   name: string

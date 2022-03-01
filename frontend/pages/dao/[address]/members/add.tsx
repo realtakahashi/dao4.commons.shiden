@@ -21,7 +21,6 @@ const MintMemberNFT = () => {
   const targetSubDAO = useSubDAOData(subDAOaddress) 
   const [memberAdded, setMemberAdded] = useState(false)
   const [formValue, setFormValue] = useState<AddMemberFormData>({
-    subDaoAddress: "",
     tokenID: 0,
     nftContractAddress: "",
     name: "",
@@ -32,11 +31,11 @@ const MintMemberNFT = () => {
       ...formValue,
       [event.target.name]: event.target.value
     })
-    console.log(formValue)
+    // console.log(formValue)
   }
   const onSubmitAddMemberForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
+    // console.log(subDAOaddress, formValue)
     await addMemberToSubDAO(subDAOaddress, formValue)
     setMemberAdded(true)
 

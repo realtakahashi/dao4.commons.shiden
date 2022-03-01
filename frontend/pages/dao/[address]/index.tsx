@@ -3,43 +3,28 @@ import { Layout } from '@/components/common'
 import Link from "next/link"
 import { useSubDAOData } from '@/hooks'
 import { Loading } from '@/components/common/Loading'
+import { useRouter } from 'next/router'
 
 
-export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  if (typeof params !== "undefined"
-    && typeof params.address === "string") {
-    return {
-      props: {
-        address: params.address
-      }
-    }
-  }
-  return {
-    props: {
-      address: ""
-    }
-  }
-}
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: ["/dao/[address]"],
-    fallback: true
-  }
-}
-
-const DAOportal = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  let targetSubDAO
-  if (typeof props.address === "undefined") {
+const DAOportal = () => {
+  const router = useRouter()
+  const subDAOaddress = router.query.address as string
+  if (router.isFallback || typeof subDAOaddress === "undefined") {
     return (
       <Loading />
     )
+  } 
+  
+  let targetSubDAO
+  if (router.isReady || typeof subDAOaddress !== "undefined") { 
+    targetSubDAO = useSubDAOData(subDAOaddress)
   }
-  targetSubDAO = useSubDAOData(props.address)
-  // mock
+
+  
+    
   const topLinks = [
-    { path: `/dao/${props.address}/members`, label: "Members" },
-    { path: `/dao/${props.address}/proposals`, label: "Proposals" },
+    { path: `/dao/${subDAOaddress}/members`, label: "Members" },
+    { path: `/dao/${subDAOaddress}/proposals`, label: "Proposals" },
     { path: '/dao', label: "Tokens" },
   ]
   return (
