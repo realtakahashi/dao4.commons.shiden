@@ -23,16 +23,16 @@ const DAOportal = () => {
   ]
   return (
     <>
-      {
-        typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold text-3xl">DAO Name: {targetSubDAO.daoName}</h2>):""
-      }
-      {
-        typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold text-3xl">Github URL: {targetSubDAO.githubURL}</h2>):""
-      }
-      {
-        typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold">DAO Address: {targetSubDAO.daoAddress}</h2>):""
-      }
 
+      {
+        typeof targetSubDAO !== "undefined" ? (
+          <div>
+            <h2 className="font-bold text-3xl">DAO Name: {targetSubDAO.daoName}</h2>
+            <h2 className="font-bold text-3xl">Github URL: {targetSubDAO.githubURL}</h2>
+            <h2 className="font-bold">DAO Address: {targetSubDAO.daoAddress}</h2>
+          </div>
+        ) : ""
+      }    
       <div className="p-3"></div>
       {
         topLinks.map((link) => {
