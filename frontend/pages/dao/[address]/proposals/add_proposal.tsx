@@ -1,10 +1,46 @@
+import type {
+	InferGetStaticPropsType,
+	GetStaticPaths, GetStaticPropsContext
+} from 'next'
 import { Layout } from '@/components/common';
 import { AddProposalFormData } from '@/types/Proposal';
 import { useState } from 'react';
 import { registerProposal } from 'contracts/SubDAO';
-import { FormInputText } from '@/components/ui';
+import { FormInputText, FormText } from '@/components/ui';
+import { useSubDAOData } from '@/hooks';
+import { Loading } from '@/components/common/Loading';
 
-const AddProposal = () => {
+export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
+	if (typeof params !== "undefined"
+		&& typeof params.address === "string") {
+		return {
+			props: {
+				address: params.address
+			}
+		}
+	}
+	return {
+		props: {
+			address: ""
+		}
+	}
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+	return {
+		paths: ["/dao/[address]/proposals/add_proposal"],
+		fallback: true
+	}
+}
+
+const AddProposal = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+	if (typeof props.address === "undefined") {
+		return (
+			<Loading />
+		)
+	}
+	const targetSubDAO = useSubDAOData(props.address)
+	console.log(targetSubDAO)
 	const [proposalId, setPoposalId] = useState("")
 	const [formValue, setFormValue] = useState<AddProposalFormData>({
 		subDaoAddress: "",
@@ -40,12 +76,10 @@ const AddProposal = () => {
 					className="w-full max-w-screen-sm"
 					onSubmit={onSubmitAddProposalForm}
 				>
-					<FormInputText
-						label='Sub DAO Address'
-						className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
-			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-						name="subDaoAddress"
-						handleOnChangeInput={onChangeInput}
+					<FormText
+						label='Sub DAO'
+						// className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+						text={`${targetSubDAO?.daoName}(${targetSubDAO?.daoAddress})`}
 					/>
 					<FormInputText
 						label='Proposal Kind'
