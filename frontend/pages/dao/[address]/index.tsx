@@ -45,17 +45,22 @@ const DAOportal = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
       {
-        typeof targetSubDAO !== "undefined" ?
-          (<h2>
-            DAO: {targetSubDAO.daoName}
-          </h2>) : ''
+        typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold text-3xl">DAO Name: {targetSubDAO.daoName}</h2>):""
+      }
+      {
+        typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold text-3xl">Github URL: {targetSubDAO.githubURL}</h2>):""
+      }
+      {
+        typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold">DAO Address: {targetSubDAO.daoAddress}</h2>):""
       }
 
+      <div className="p-3"></div>
       {
         topLinks.map((link) => {
           return (
             <Link href={link.path} key={link.path}>
-              <a className="m-10 py-2 px-4 border border-black-700 rounded">
+              <a className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
+                  font-bold text-2xl py-2 px-4 m-5 rounded">
                 {link.label}
               </a>
             </Link>

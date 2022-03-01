@@ -53,12 +53,6 @@ export const mintMemberNFT = async (
       MemberERC721ContractConstruct.abi,
       signer
     )
-    let nId = await contract.ownedTokenId(signerAddress);
-    if (nId!=0){
-      alert('You are already minted.Your Token Id is:' + nId)
-      id=String(nId)
-      return id
-    }
 
     contract
       .original_mint(signerAddress, {value: Web3.utils.toWei('10')})
@@ -85,3 +79,30 @@ export const mintMemberNFT = async (
   }
   return id
 }
+
+export const checkNFTMinted = async (
+  memberNFTTokenAddress: string
+): Promise<string> => {
+  if (
+    typeof window.ethereum !== "undefined" &&
+    typeof memberNFTTokenAddress !== "undefined"
+  ) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const signerAddress = await signer.getAddress();
+    const contract = new ethers.Contract(
+      memberNFTTokenAddress,
+      MemberERC721ContractConstruct.abi,
+      signer
+    );
+    let id = "";
+    let nId = await contract.ownedTokenId(signerAddress);
+    if (nId != 0) {
+      alert("You are already minted.Your Token Id is:" + nId);
+      id = String(nId);
+    }
+    return id;
+  }
+  return "";
+};
+
