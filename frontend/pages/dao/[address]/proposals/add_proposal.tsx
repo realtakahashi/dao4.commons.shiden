@@ -6,8 +6,8 @@ import { FormInputText } from "@/components/ui";
 import { useRouter } from "next/router";
 
 const AddProposal = () => {
-  const router = useRouter();
-  const subDAOaddress = router.query.address;
+  const router = useRouter()
+  const subDAOaddress = router.query.address as string
 
   const [proposalId, setPoposalId] = useState("");
   const [formValue, setFormValue] = useState<AddProposalFormData>({
@@ -24,6 +24,14 @@ const AddProposal = () => {
       ...formValue,
       [event.target.name]: event.target.value,
     });
+    console.log(formValue)
+  };
+  const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormValue({
+      ...formValue,
+      [event.target.name]: event.target.value,
+    });
+    console.log(formValue)
   };
 
   const onSubmitAddProposalForm = async (
@@ -60,7 +68,7 @@ const AddProposal = () => {
               </label>
             </div>
             <div className="md:w-2/3">
-              <select name="proposalKind" onChange={onChangeInput}>
+              <select name="proposalKind" onChange={onChangeSelect}>
                 <option value="0">Add A Member</option>
                 <option value="1">Delete A Member</option>
                 <option value="2">Use Of Funds</option>

@@ -6,37 +6,19 @@ import { AddMemberFormData } from "@/types/MemberNFT"
 import { addMemberToSubDAO } from '@/contracts/SubDAO';
 import { Loading } from '@/components/common/Loading';
 import { useSubDAOData } from '@/hooks';
+import { useRouter } from 'next/router';
 
-export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  if (typeof params !== "undefined"
-    && typeof params.address === "string") {
-    return {
-      props: {
-        address: params.address
-      }
-    }
-  }
-  return {
-    props: {
-      address: ""
-    }
-  }
-}
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: ["/dao/[address]/members/add"],
-    fallback: true
-  }
-}
-
-const MintMemberNFT = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  if (typeof props.address === "undefined") {
+const MintMemberNFT = () => {
+  const router = useRouter()
+  const subDAOaddress = router.query.address as string
+  if (typeof subDAOaddress === "undefined") {
     return (
       <Loading />
     )
   }
-  const targetSubDAO = useSubDAOData(props.address)
+
+  const targetSubDAO = useSubDAOData(subDAOaddress) 
   const [memberAdded, setMemberAdded] = useState(false)
   const [formValue, setFormValue] = useState<AddMemberFormData>({
     subDaoAddress: "",
@@ -55,7 +37,7 @@ const MintMemberNFT = (props: InferGetStaticPropsType<typeof getStaticProps>) =>
   const onSubmitAddMemberForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    await addMemberToSubDAO(formValue.subDaoAddress, formValue)
+    await addMemberToSubDAO(subDAOaddress, formValue)
     setMemberAdded(true)
 
   }
