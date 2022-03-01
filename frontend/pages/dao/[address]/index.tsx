@@ -45,10 +45,10 @@ const DAOportal = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
       {
-        typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold">DAO Name: {targetSubDAO.daoName}</h2>):""
+        typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold text-3xl">DAO Name: {targetSubDAO.daoName}</h2>):""
       }
       {
-        typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold">Github URL: {targetSubDAO.githubURL}</h2>):""
+        typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold text-3xl">Github URL: {targetSubDAO.githubURL}</h2>):""
       }
       {
         typeof targetSubDAO !== "undefined" ? (<h2 className="font-bold">DAO Address: {targetSubDAO.daoAddress}</h2>):""
@@ -60,7 +60,7 @@ const DAOportal = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           return (
             <Link href={link.path} key={link.path}>
               <a className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                  font-bold py-2 px-4 m-5 rounded">
+                  font-bold text-2xl py-2 px-4 m-5 rounded">
                 {link.label}
               </a>
             </Link>

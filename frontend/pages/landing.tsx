@@ -42,12 +42,20 @@ const NewIndex = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
             <p className="p-10"></p>
             <p className="text-purple-900 text-4xl font-bold leading-10">How to submit a Proposal </p>                        
             <p className="p-2"></p>
-            <p className="text-purple-900 text-2xl leading-10">........</p>
+            <p className="text-purple-900 text-2xl leading-10">1. SubDAO has the ability for DAO members to submit proposals.</p>
+            <p className="text-purple-900 text-2xl leading-10">2. You can propose a proposal by logging in to the target SubDAO and clicking "Add a Proposal".</p>
+            <p className="text-purple-900 text-2xl leading-10">3. What is stored on the blockchain is "github url", "voting results", etc. </p>
+            <p className="text-purple-900 text-2xl leading-10">4. It is a premise that the progress of the discussion will be carried out on github.</p>
 
             <p className="p-10"></p>
             <p className="text-purple-900 text-4xl font-bold leading-10">How to vote a Proposal </p>                        
             <p className="p-2"></p>
-            <p className="text-purple-900 text-2xl leading-10">........</p>
+            <p className="text-purple-900 text-2xl leading-10">1. When the discussion is exhausted, the authorized person changes the Proposal status to "voting".</p>
+            <p className="text-purple-900 text-2xl leading-10">2. All DAO members have equal voting rights and can vote.</p>
+            <p className="text-purple-900 text-2xl leading-10">3. At the end of the election period, the authorized person 
+                will change the status of Proposal to "Finished Voting".</p>
+            <p className="text-purple-900 text-2xl leading-10">4. When the status moves to "Finished Voting", the dApp will aggregate the voting results.</p>
+            <p className="text-purple-900 text-2xl leading-10">5. If Proposal is passed, the status will be "running", and if rejected, the status will be "rejected".</p>
 
             <p className="p-10"></p>
             <p className="text-purple-900 text-4xl font-bold leading-10">How to create a token sale </p>                        

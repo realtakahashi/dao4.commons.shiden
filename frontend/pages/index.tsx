@@ -45,7 +45,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                 key={link.path}>
                 <a
                   className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                  font-bold py-2 px-4 m-5 rounded"
+                  font-bold text-2xl py-2 px-4 m-5 rounded"
                 >
                   {link.label}
                 </a>
@@ -55,7 +55,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         }
       </div>
       <div className='mt-5 p-5'>
-        <h2>List of Sub DAOs to which you belong</h2>
+        <h2 className="">List of Sub DAOs to which you belong</h2>
         <div className="flex justify-center p-3">
           <ul className="bg-white rounded-lg border border-gray-200 w-96 text-gray-900">
             {typeof subDAOList !== "undefined" ?
@@ -67,7 +67,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                     onMouseEnter={() => displayDAOData(dao.daoAddress)}
                   >
                     <Link href={`/dao/${dao.daoAddress}`}>
-                      <a className='block'>
+                      <a className='block text-xl'>
                         {dao.daoName}
                       </a>
                     </Link>
