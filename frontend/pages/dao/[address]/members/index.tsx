@@ -7,43 +7,22 @@ import { SubDAOMemberData } from '@/types/SubDAO';
 import Link from 'next/link';
 import { useSubDAOData } from '@/hooks';
 import { Loading } from '@/components/common/Loading';
+import { useRouter } from 'next/router';
 
-
-export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  if (typeof params !== "undefined"
-    && typeof params.address === "string") {
-    return {
-      props: {
-        address: params.address
-      }
-    }
-  }
-  return {
-    props: {
-      address: ""
-    }
-  }
-}
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: ["/dao/[address]/members"],
-    fallback: true
-  }
-}
-
-const DaoMembers = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  if (typeof props.address === "undefined") {
+const DaoMembers = () => {
+  const router = useRouter()
+  const subDAOaddress = router.query.address as string
+  if (typeof subDAOaddress === "undefined") {
     return (
       <Loading />
     )
   }
-  const targetSubDAO = useSubDAOData(props.address)
+  const targetSubDAO = useSubDAOData(subDAOaddress)
   const [daoMemberList, setDAOMemberList] = useState<Array<SubDAOMemberData>>()
   const [targetDAOMember, setTargetDAOMember] = useState<SubDAOMemberData>()
   useEffect(() => {
     const listMember = async () => {
-      const membersList = await getSubDAOMemberList(props.address)
+      const membersList = await getSubDAOMemberList(subDAOaddress)
       setDAOMemberList(membersList)
       console.log(daoMemberList)
       daoMemberList?.map(member => member.member_id)
@@ -71,7 +50,7 @@ const DaoMembers = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <div className='mt-5'>
           <div className="mx-5">
             <Link
-              href={`/dao/${props.address}/members/add`}
+              href={`/dao/${subDAOaddress}/members/add`}
             >
               <a
                 className="m-2 py-2 px-4 border border-black-700 rounded"

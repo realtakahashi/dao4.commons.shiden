@@ -11,7 +11,6 @@ const AddProposal = () => {
 
   const [proposalId, setPoposalId] = useState("");
   const [formValue, setFormValue] = useState<AddProposalFormData>({
-    subDaoAddress: "",
     proposalKind: 0,
     title: "",
     outline: "",
@@ -24,14 +23,14 @@ const AddProposal = () => {
       ...formValue,
       [event.target.name]: event.target.value,
     });
-    console.log(formValue)
+    // console.log(formValue)
   };
   const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setFormValue({
       ...formValue,
       [event.target.name]: event.target.value,
     });
-    console.log(formValue)
+    // console.log(formValue)
   };
 
   const onSubmitAddProposalForm = async (
@@ -54,13 +53,6 @@ const AddProposal = () => {
           className="w-full max-w-screen-sm"
           onSubmit={onSubmitAddProposalForm}
         >
-          {/* <FormInputText
-						label='Proposal Kind'
-						className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
-			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-						name="proposalKind"
-						handleOnChangeInput={onChangeInput}
-					/> */}
           <div className="md:flex md:items-center mb-6">
             <div className="md:w-1/3">
               <label className="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">

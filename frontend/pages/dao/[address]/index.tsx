@@ -9,19 +9,13 @@ import { useRouter } from 'next/router'
 const DAOportal = () => {
   const router = useRouter()
   const subDAOaddress = router.query.address as string
-  if (router.isFallback || typeof subDAOaddress === "undefined") {
+  if (typeof subDAOaddress === "undefined") {
     return (
       <Loading />
     )
-  } 
-  
-  let targetSubDAO
-  if (router.isReady || typeof subDAOaddress !== "undefined") { 
-    targetSubDAO = useSubDAOData(subDAOaddress)
   }
+  const targetSubDAO = useSubDAOData(subDAOaddress)
 
-  
-    
   const topLinks = [
     { path: `/dao/${subDAOaddress}/members`, label: "Members" },
     { path: `/dao/${subDAOaddress}/proposals`, label: "Proposals" },
