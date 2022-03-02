@@ -1,59 +1,82 @@
 import type { InferGetStaticPropsType, GetStaticPaths, GetStaticPropsContext } from 'next'
 import { Layout } from '@/components/common'
 import Link from "next/link"
-import { listSubDAO } from '@/contracts/SubDAO'
+import { useSubDAOData } from '@/hooks'
 import { SubDAOData } from "@/types/SubDAO"
-import { useEffect, useState } from 'react';
+import { Loading } from '@/components/common/Loading'
+import { useRouter } from 'next/router'
+import { getSubDAOBalance,listSubDAO } from '@/contracts/SubDAO'
+import { useEffect,useState } from 'react'
 
 
-export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  return {
-    props: {
-      address: params?.address
-    }
+const DAOportal = () => {
+  const router = useRouter()
+  const subDAOaddress = router.query.address as string
+  if (typeof subDAOaddress === "undefined") {
+    return (
+      <Loading />
+    )
   }
-}
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: ["/dao/[address]"],
-    fallback: true
-  }
-}
-
-const DAOportal = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
-  useEffect(() => {
-    const subDAOaddress = props.address
-    const setAddress = async () => {
-      const subDAOList = await listSubDAO()      
-      const target = subDAOList?.find(subDAOList => subDAOList.daoAddress === subDAOaddress)
-      if (typeof target !== "undefined") {
-        setTargetSubDAO(target)        
+  const [_daoBalnce, setDAOBalance] = useState("");
+  useEffect(async() => {
+    const _getDAOInfo = async () => {
+      if (targetSubDAO==null){
+        const subDAOList = await listSubDAO()      
+        const target = subDAOList?.find(subDAOList => subDAOList.daoAddress === subDAOaddress)
+        setTargetSubDAO(target)
+      }
+      if (_daoBalnce==""){
+      const balance = await getSubDAOBalance(subDAOaddress)
+      console.log("## dao balance:",balance)
+      setDAOBalance(balance)
       }
     }
-    setAddress()
+    _getDAOInfo()
   }, [])
-  // mock
+
+  const getRewardString=():String=> {
+    if (targetSubDAO.rewardApproved==true){
+      return "(#Reward Approved)"
+    }
+    else{
+      return "(#Reward Not Approved)"
+    }
+    return ""
+  }
+
   const topLinks = [
-    { path: `/dao/${props.address}/members`, label: "Members" },
-    { path: `/dao/${props.address}/proposals`, label: "Proposals" },
+    { path: `/dao/${subDAOaddress}/members`, label: "Members" },
+    { path: `/dao/${subDAOaddress}/proposals`, label: "Proposals" },
     { path: '/dao', label: "Tokens" },
   ]
+
   return (
     <>
+
       {
-        typeof targetSubDAO !== "undefined" ?
-        (<h2>
-          DAO: {targetSubDAO.daoName}
-        </h2>) : ''
-      }
-      
+        typeof targetSubDAO !== "undefined" ? (
+          <div>
+            <p className="font-bold text-3xl">{targetSubDAO.daoName}</p>
+            <p className="font-bold text-3xl">{getRewardString()}</p>            
+            <p className="font-bold">
+              <a href={targetSubDAO.githubURL}> 
+                {targetSubDAO.githubURL}
+              </a>
+            </p>
+            <p className="font-bold">{targetSubDAO.daoAddress}</p>
+            <p className="font-bold text-xl">DAO Balance: {_daoBalnce} ether</p>
+          </div>
+        ) : ""
+      }    
+      <div className="p-3"></div>
       {
         topLinks.map((link) => {
           return (
             <Link href={link.path} key={link.path}>
-              <a className="m-10 py-2 px-4 border border-black-700 rounded">
+              <a className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
+                  font-bold text-2xl py-2 px-4 m-5 rounded">
                 {link.label}
               </a>
             </Link>

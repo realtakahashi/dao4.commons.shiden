@@ -1,5 +1,4 @@
 export interface AddProposalFormData {
-    subDaoAddress: string
     proposalKind: number
     title: string
     outline: string

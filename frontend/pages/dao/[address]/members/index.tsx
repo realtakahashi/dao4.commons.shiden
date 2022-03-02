@@ -1,45 +1,40 @@
 import type { InferGetStaticPropsType, GetStaticPaths, GetStaticPropsContext } from 'next'
 import { listSubDAO, getSubDAOMemberList } from '@/contracts/SubDAO'
 import { SubDAOData } from "@/types/SubDAO"
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Layout } from '@/components/common'
-import { SubDAOMemberData } from '../../../../types/SubDAO';
+import { SubDAOMemberData } from '@/types/SubDAO';
 import Link from 'next/link';
+import { useSubDAOData } from '@/hooks';
+import { Loading } from '@/components/common/Loading';
+import { useRouter } from 'next/router';
 
-
-export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  return {
-    props: {
-      address: params?.address
-    }
+const DaoMembers = () => {
+  const router = useRouter()
+  const subDAOaddress = router.query.address as string
+  if (typeof subDAOaddress === "undefined") {
+    return (
+      <Loading />
+    )
   }
-}
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: ["/dao/[address]/members"],
-    fallback: true
-  }
-}
-
-const DaoMembers = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
+  const targetSubDAO = useSubDAOData(subDAOaddress)
   const [daoMemberList, setDAOMemberList] = useState<Array<SubDAOMemberData>>()
+  const [targetDAOMember, setTargetDAOMember] = useState<SubDAOMemberData>()
   useEffect(() => {
-    const subDAOaddress = props.address
-    const setAddress = async () => {
-      const daoMemberList = await listSubDAO()
-      const target = daoMemberList?.find(daoMemberList => daoMemberList.daoAddress === subDAOaddress)
-      if (typeof target !== "undefined") {
-        setTargetSubDAO(target)
-        const membersList = await getSubDAOMemberList(target.daoAddress)
-        setDAOMemberList(membersList)
-      }
+    const listMember = async () => {
+      const membersList = await getSubDAOMemberList(subDAOaddress)
+      setDAOMemberList(membersList)
+      console.log(daoMemberList)
+      daoMemberList?.map(member => member.member_id)
     }
-    setAddress()
-
-
+    listMember()
   }, [])
+
+
+  const handleClickDAOmember = (memberID: string) => {
+    const target = daoMemberList?.find(member => member.member_id === memberID)
+    setTargetDAOMember(target)
+  }
   return (
     <>
       <div>
@@ -53,15 +48,27 @@ const DaoMembers = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         </div>
 
         <div className='mt-5'>
+          <div className="mx-5">
+            <Link
+              href={`/dao/${subDAOaddress}/members/add`}
+            >
+              <a
+                className="m-2 py-2 px-4 border border-black-700 rounded"
+              >
+                Add Member
+              </a>
+            </Link>
+          </div>
+          <h2>Members</h2>
           <div className="flex justify-center">
-            <h2>Members</h2>
             <ul className="bg-white rounded-lg border border-gray-200 w-96 text-gray-900">
               {typeof daoMemberList !== "undefined" ?
                 daoMemberList.map((member) => {
                   return (
                     <li
                       className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
-                      key={member.member_id}                      
+                      key={member.name}
+                      onClick={() => handleClickDAOmember(member.member_id)}
                     >
                       {member.name}
                     </li>
@@ -70,6 +77,14 @@ const DaoMembers = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
               }
             </ul>
           </div>
+        </div>
+        <div className='mt-5'>
+          {typeof targetDAOMember !== "undefined" ? (
+            <div>
+              <p>Name: {targetDAOMember.name}</p>
+              <p>MemberID: {targetDAOMember.member_id}</p>
+            </div>
+          ) : ""}
         </div>
       </div>
     </>

@@ -1,10 +1,9 @@
-import type { InferGetStaticPropsType, NextPage } from 'next'
+import type { InferGetStaticPropsType } from 'next'
 import { Layout } from '@/components/common'
 import Link from "next/link"
-import { listSubDAO } from '@/contracts/SubDAO'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SubDAOData } from "@/types/SubDAO"
-
+import { useSubDAOList } from '@/hooks';
 
 export const getStaticProps = async () => {
   return { props: {} }
@@ -13,37 +12,27 @@ export const getStaticProps = async () => {
 // mock
 const topLinks = [
   { type: "link", path: '/dao/create', label: "Create DAO", action: null },
-  { type: "link", path: '/dao/signup', label: "Signup DAO", action: null },
+  { type: "link", path: '/dao/create/signup_mint_nft', label: "Signup DAO", action: null },
 ]
 
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [subDAOList, setsubDAOList] = useState<Array<SubDAOData>>()
   const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
-  useEffect(() => {
-    const getSubDAOList = async () => {
-      const response = await listSubDAO()
-      setsubDAOList(
-        response
-      )
-    }
-    getSubDAOList()
-  }, [])
-
+  const subDAOList = useSubDAOList()
   const displayDAOData = (SubDAOAddress: string) => {
-    const target = subDAOList?.find(SubDAO => SubDAO.daoAddress === SubDAOAddress)
+    const target = subDAOList?.find(subDAO => subDAO.daoAddress === SubDAOAddress)
     setTargetSubDAO(target)
   }
   return (
     <>
       <div>
         {
-
           topLinks.map((link) => {
             if (link.type === "button") {
               return (
                 <button
                   key={link.label}
-                  className="m-2 py-2 px-4 border border-black-700 rounded"
+                  className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
+                  font-bold py-2 px-4 m-5 rounded"
                   onClick={() => link.action}
                 >
                   {link.label}
@@ -55,7 +44,8 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                 href={link.path}
                 key={link.path}>
                 <a
-                  className="m-2 py-2 px-4 border border-black-700 rounded"
+                  className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
+                  font-bold text-2xl py-2 px-4 m-5 rounded"
                 >
                   {link.label}
                 </a>
@@ -64,20 +54,20 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           })
         }
       </div>
-      <div className='mt-5'>
-        <h2>Your DAO</h2>
-        <div className="flex justify-center">
+      <div className='mt-5 p-5'>
+        <h2 className="">List of Sub DAOs to which you belong</h2>
+        <div className="flex justify-center p-3">
           <ul className="bg-white rounded-lg border border-gray-200 w-96 text-gray-900">
             {typeof subDAOList !== "undefined" ?
               subDAOList.map((dao) => {
                 return (
                   <li
-                    className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
+                    className="cursor-pointer px-6 py-2 border-b border-gray-200 font-bold w-full rounded-t-lg"
                     key={dao.daoAddress}
-                    onClick={() => displayDAOData(dao.daoAddress)}
+                    onMouseEnter={() => displayDAOData(dao.daoAddress)}
                   >
                     <Link href={`/dao/${dao.daoAddress}`}>
-                      <a>
+                      <a className='block text-xl'>
                         {dao.daoName}
                       </a>
                     </Link>
