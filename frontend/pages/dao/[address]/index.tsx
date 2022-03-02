@@ -2,8 +2,11 @@ import type { InferGetStaticPropsType, GetStaticPaths, GetStaticPropsContext } f
 import { Layout } from '@/components/common'
 import Link from "next/link"
 import { useSubDAOData } from '@/hooks'
+import { SubDAOData } from "@/types/SubDAO"
 import { Loading } from '@/components/common/Loading'
 import { useRouter } from 'next/router'
+import { getSubDAOBalance,listSubDAO } from '@/contracts/SubDAO'
+import { useEffect,useState } from 'react'
 
 
 const DAOportal = () => {
@@ -14,22 +17,56 @@ const DAOportal = () => {
       <Loading />
     )
   }
-  const targetSubDAO = useSubDAOData(subDAOaddress)
+
+  const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
+  const [_daoBalnce, setDAOBalance] = useState("");
+  useEffect(async() => {
+    const _getDAOInfo = async () => {
+      if (targetSubDAO==null){
+        const subDAOList = await listSubDAO()      
+        const target = subDAOList?.find(subDAOList => subDAOList.daoAddress === subDAOaddress)
+        setTargetSubDAO(target)
+      }
+      if (_daoBalnce==""){
+      const balance = await getSubDAOBalance(subDAOaddress)
+      console.log("## dao balance:",balance)
+      setDAOBalance(balance)
+      }
+    }
+    _getDAOInfo()
+  }, [])
+
+  const getRewardString=():String=> {
+    if (targetSubDAO.rewardApproved==true){
+      return "(#Reward Approved)"
+    }
+    else{
+      return "(#Reward Not Approved)"
+    }
+    return ""
+  }
 
   const topLinks = [
     { path: `/dao/${subDAOaddress}/members`, label: "Members" },
     { path: `/dao/${subDAOaddress}/proposals`, label: "Proposals" },
     { path: '/dao', label: "Tokens" },
   ]
+
   return (
     <>
 
       {
         typeof targetSubDAO !== "undefined" ? (
           <div>
-            <h2 className="font-bold text-3xl">DAO Name: {targetSubDAO.daoName}</h2>
-            <h2 className="font-bold text-3xl">Github URL: {targetSubDAO.githubURL}</h2>
-            <h2 className="font-bold">DAO Address: {targetSubDAO.daoAddress}</h2>
+            <p className="font-bold text-3xl">{targetSubDAO.daoName}</p>
+            <p className="font-bold text-3xl">{getRewardString()}</p>            
+            <p className="font-bold">
+              <a href={targetSubDAO.githubURL}> 
+                {targetSubDAO.githubURL}
+              </a>
+            </p>
+            <p className="font-bold">{targetSubDAO.daoAddress}</p>
+            <p className="font-bold text-xl">DAO Balance: {_daoBalnce} ether</p>
           </div>
         ) : ""
       }    

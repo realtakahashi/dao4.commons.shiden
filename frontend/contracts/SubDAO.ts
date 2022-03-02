@@ -260,10 +260,38 @@ export const doVoteForProposal = async (
       .voteForProposal(proposalId,yes)
       .catch((err: any) => {
         console.log(err)
-        alert('failed changeProposalStatus.')
+        alert('failed voteForProposal.')
       })
-    console.log("### changeProposalStatus Return: ",response)
+    console.log("### voteForProposal Return: ",response)
     alert('Voting proposal status is succeeded.')
   }
   return response
+}
+
+export const getSubDAOBalance = async (
+  subDAOContractAddess: string,
+  ):Promise<string> => 
+{
+  const contractConstract = SubDAOContractConstruct
+
+  let response:BigNumber = 0;
+  if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOContractAddess,
+      contractConstract.abi,
+      signer
+    )
+    response = await contract
+      .getContractBalance()
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed getSubDAOBalance.')
+      })
+    console.log("### getSubDAOBalance Return: ",ethers.utils.formatEther(response))
+    return ethers.utils.formatEther(response)
+    // alert('Voting proposal status is succeeded.')
+  }
+  return ""
 }
