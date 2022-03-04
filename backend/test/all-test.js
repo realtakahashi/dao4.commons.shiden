@@ -38,7 +38,8 @@ describe("All contract", function() {
         it("MasterDAO Deployment.", async function() {
             const MasterDao = await ethers.getContractFactory("MasterDAO");
             masterDao = await MasterDao.connect(MasterDaoOwner).deploy("test.com","Shin Takahashi");
-            const memberInfo = await masterDao.memberInfoes(MasterDaoOwner.address);
+            const memberId = await masterDao.memberIds(MasterDaoOwner.address)
+            const memberInfo = await masterDao.memberInfoes(memberId);
             assert.equal(await memberInfo.memberId,1);
             assert.equal(await memberInfo.name,"Shin Takahashi");
         });
@@ -50,7 +51,8 @@ describe("All contract", function() {
             await masterDao.connect(MasterDaoOwner).changeProposalStatus(0,PROPOSAL_STATUS_FINISHED_VOTING);
             await masterDao.connect(MasterDaoOwner).addMember("Keisuke Funatsu",SubDaoOwner1.address,0)
 
-            const memberInfo = await masterDao.memberInfoes(SubDaoOwner1.address);
+            const memberId = await masterDao.memberIds(SubDaoOwner1.address)
+            const memberInfo = await masterDao.memberInfoes(memberId);
             assert.equal(await memberInfo.memberId,2);
             assert.equal(await memberInfo.name,"Keisuke Funatsu");
         });
@@ -63,9 +65,15 @@ describe("All contract", function() {
             await masterDao.connect(MasterDaoOwner).changeProposalStatus(1,PROPOSAL_STATUS_FINISHED_VOTING);
             await masterDao.connect(MasterDaoOwner).addMember("Saki Takahashi",SubDaoOwner2.address,1)
 
-            const memberInfo = await masterDao.memberInfoes(SubDaoOwner2.address);
+            const memberId = await masterDao.memberIds(SubDaoOwner2.address)
+            const memberInfo = await masterDao.memberInfoes(memberId);
             assert.equal(await memberInfo.memberId,3);
             assert.equal(await memberInfo.name,"Saki Takahashi");
+        });
+        it("Check Member List", async function(){
+            const list = await masterDao.getMemberList();
+            console.log("## Master DAO Member List: ",list);
+            assert.equal(list.length,3);
         });
         it("Denied to Add another member to Mastar DAO", async function(){
             await masterDao.connect(MasterDaoOwner).submitProposal(PROPOSAL_KIND_ADD_MEMBER,"add a new member",
@@ -87,7 +95,8 @@ describe("All contract", function() {
             await masterDao.connect(MasterDaoOwner).changeProposalStatus(3,PROPOSAL_STATUS_FINISHED_VOTING);
             await masterDao.connect(MasterDaoOwner).deleteMember(SubDaoOwner2.address,3)
 
-            const memberInfo = await masterDao.memberInfoes(SubDaoOwner2.address);
+            const memberId = await masterDao.memberIds(SubDaoOwner2.address)
+            const memberInfo = await masterDao.memberInfoes(memberId);
             assert.equal(await memberInfo.memberId,0);
             assert.equal(await memberInfo.name,"");
         });

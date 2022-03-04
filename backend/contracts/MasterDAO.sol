@@ -85,8 +85,10 @@ contract MasterDAO is ReentrancyGuard{
     // event VotedForMember(address indexed eoa, address memberAddress);
     // event FinishedMemberVoting(address indexed eoa, address memberAddress);
 
-    // EAO address => MemberInfo
-    mapping(address => MemberInfo) public memberInfoes;
+    // EAO address => MemberId
+    mapping(address => uint256) public memberIds;
+    // Member id => MemberInfo
+    mapping(uint256 => MemberInfo) public memberInfoes;
     // dao id => DAOInfo
     mapping(uint256 => DaoInfo) public daoInfoes;
     // Dao address => dao id
@@ -108,7 +110,9 @@ contract MasterDAO is ReentrancyGuard{
         _memberIdTracker.increment();
 
         githubURL = _githubURL;
-        memberInfoes[msg.sender] = MemberInfo(_ownerName,_memberIdTracker.current());
+        memberIds[msg.sender] = _memberIdTracker.current();
+        memberInfoes[_memberIdTracker.current()]=MemberInfo(_ownerName,_memberIdTracker.current());
+        _memberIdTracker.increment();
     }
 
     /** 
@@ -139,10 +143,11 @@ contract MasterDAO is ReentrancyGuard{
     function addMember(string memory _name, address _memberAddress, uint256 _relatedProposalId) public onlyMember {
         require(_memberAddress==proposalInfoes[_relatedProposalId].relatedAddress,"Not proposed.");
         require(proposalInfoes[_relatedProposalId].proposalStatus==ProposalStatus.Running,"Not approved.");
-        _memberIdTracker.increment();
-        memberInfoes[_memberAddress] = MemberInfo(_name,_memberIdTracker.current());
+        memberIds[_memberAddress] = _memberIdTracker.current();
+        memberInfoes[_memberIdTracker.current()]=MemberInfo(_name,_memberIdTracker.current());
         proposalInfoes[_relatedProposalId].proposalStatus = ProposalStatus.Finished;
         emit MemberAdded(msg.sender, _memberIdTracker.current());
+        _memberIdTracker.increment();
     }
 
     /** 
@@ -152,8 +157,9 @@ contract MasterDAO is ReentrancyGuard{
         require(_memberAddress==proposalInfoes[_relatedProposalId].relatedAddress,"Not proposed.");
         require(proposalInfoes[_relatedProposalId].proposalStatus==ProposalStatus.Running,"Not approved.");
         uint256 _memberId = _memberIdTracker.current();
-        memberInfoes[_memberAddress].name = "";
-        memberInfoes[_memberAddress].memberId = 0;
+        memberInfoes[memberIds[_memberAddress]].name = "";
+        memberInfoes[memberIds[_memberAddress]].memberId = 0;
+        memberIds[_memberAddress] = 0;
         emit MemberDeleted(msg.sender, _memberId);
     }
 
@@ -274,12 +280,25 @@ contract MasterDAO is ReentrancyGuard{
     */
     function getProposalList() public view returns (ProposalInfo[] memory) {
         ProposalInfo[] memory proposalList = new ProposalInfo[](_proposalIdTracker.current() - 1);
-        for (uint256 i=1; i < _proposalIdTracker.current(); i++) {
+        for (uint256 i=0; i < _proposalIdTracker.current() - 1; i++) {
             if (bytes(proposalInfoes[i].title).length!=0){
-                proposalList[i-1] = proposalInfoes[i];
+                proposalList[i] = proposalInfoes[i];
             }
         }
         return proposalList;
+    }
+
+    /**
+    * メンバーの一覧を取得する
+    */
+    function getMemberList() public view returns(MemberInfo[] memory) {
+        MemberInfo[] memory memberList = new MemberInfo[](_memberIdTracker.current() - 1);
+        for (uint256 i=1; i < _memberIdTracker.current(); i++) {
+            if (bytes(memberInfoes[i].name).length!=0){
+                memberList[i-1] = memberInfoes[i];
+            }
+        }
+        return memberList;
     }
 
     /**
@@ -293,7 +312,7 @@ contract MasterDAO is ReentrancyGuard{
     * 投票結果をチェックする。
     */
     function _checkVotingResult(uint256 _proposalId) internal view returns (ProposalStatus){
-        if (votingInfoes[_proposalId].yesCount * 100 / _memberIdTracker.current() >= PROPOSAL_PASS_LINE){   
+        if (votingInfoes[_proposalId].yesCount * 100 / (_memberIdTracker.current() - 1) >= PROPOSAL_PASS_LINE){   
             return ProposalStatus.Running;
         }
         else {
@@ -310,7 +329,7 @@ contract MasterDAO is ReentrancyGuard{
     * Modifiter　メンバーのみ実行可能
     */
     modifier onlyMember(){
-        require(bytes(memberInfoes[msg.sender].name).length!=0,"only member does.");
+        require(memberIds[msg.sender]!=0,"only member does.");
         _;
     }
 
