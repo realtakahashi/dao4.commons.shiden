@@ -1,5 +1,5 @@
 import type { InferGetStaticPropsType } from 'next'
-import { Layout } from '@/components/common'
+import { Layout, SubDAOModal } from '@/components/common'
 import Link from "next/link"
 import { useState } from 'react';
 import { SubDAOData } from "@/types/SubDAO"
@@ -17,10 +17,12 @@ const topLinks = [
 
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const subDAOList = useSubDAOList()
   const displayDAOData = (SubDAOAddress: string) => {
     const target = subDAOList?.find(subDAO => subDAO.daoAddress === SubDAOAddress)
     setTargetSubDAO(target)
+    setIsModalOpen(true)
   }
   return (
     <>
@@ -32,7 +34,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                 href={link.path}
                 key={link.path}>
                 <a
-                  className="button-dao-default text-xl p-4 m-4"
+                  className="button-dao-default p-4 m-2"
                 >
                   {link.label}
                 </a>
@@ -50,11 +52,14 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
               return (
                 <>
                   <div
-                    className="bg-black w-64 my-2 border border-gray-700 hover:border-gray-500 max-w-sm rounded overflow-hidden shadow-lg"
-                    onMouseEnter={() => displayDAOData(dao.daoAddress)}
+                    key={dao.daoAddress}
+                    className="bg-black w-64 my-2 border border-gray-700 hover:border-gray-500 max-w-sm rounded overflow-hidden shadow-lg"                    
                   >
                     <div className="px-6 py-2">
-                      <div className="text-xl mb-2">{dao.daoName}</div>
+                      <div
+                        className="text-xl mb-2"
+                        onClick={() => displayDAOData(dao.daoAddress)}
+                      >{dao.daoName}</div>
                     </div>
                     <hr className='p-1 border-gray-700' />
                     <div className="py-2 flex">
@@ -78,18 +83,15 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
               )
             }) : ""
           }
+
+          {typeof targetSubDAO !== "undefined" ? (
+            <SubDAOModal
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+              subDAO={targetSubDAO}
+            />
+          ) : ""}
         </div>
-      </div>
-
-
-
-      <div className='mt-5'>
-        {typeof targetSubDAO !== "undefined" ? (
-          <div>
-            <p>Name: {targetSubDAO.daoName}</p>
-            <p>Github URL: {targetSubDAO.githubURL}</p>
-          </div>
-        ) : ""}
       </div>
     </>
 
