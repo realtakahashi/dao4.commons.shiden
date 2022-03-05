@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.button-dao-default {
+  @apply shadow rounded-full text-white;
+  opacity: 1;
+  background: #a12bbe;
+  &:hover {
+    background: #a94dc0;
+  }
+}
 
 #overlay{
 /*　画面全体を覆う設定　*/

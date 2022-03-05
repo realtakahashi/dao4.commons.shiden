@@ -10,7 +10,8 @@ export interface AddProposalFormData {
     proposalKind: number
     title: string
     outline: string
-    detail: string
+    details: string
     githubURL: string
+    proposalId:string
     proposalStatus: number
   }

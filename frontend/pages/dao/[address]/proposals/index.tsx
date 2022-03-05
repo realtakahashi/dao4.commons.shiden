@@ -13,20 +13,20 @@ import type {
 } from "next";
 import { useRouter } from "next/router";
 
-export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-  return {
-    props: {
-      address: params?.address,
-    },
-  };
-};
+// export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
+//   return {
+//     props: {
+//       address: params?.address,
+//     },
+//   };
+// };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  return {
-    paths: ["/dao/[address]/proposals"],
-    fallback: true,
-  };
-};
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   return {
+//     paths: ["/dao/[address]/proposals"],
+//     fallback: true,
+//   };
+// };
 
 const PROPOSAL_KIND = [
   "AddAMember",
@@ -45,9 +45,16 @@ const PROPOSAL_STATUS = [
   "Finished",
 ] as const;
 
-function VoteModal({ showVote, setShowVote, selectProposal, subDaoAddress }) {
-  const doVote = async (selectProposal) => {
-    console.log("## subDaoAddress: ", subDaoAddress);
+interface VoteModalProps {
+  showVote:boolean
+  setShowVote:(flg:boolean)=>void
+  selectProposal:ProposalInfo
+  subDaoAddress:string
+}
+
+function VoteModal(props:VoteModalProps) {
+  const doVote = async (selectProposal:ProposalInfo) => {
+    console.log("## subDaoAddress: ", props.subDaoAddress);
     console.log(
       "## selectProposal.proposalId: ",
       parseInt(selectProposal.proposalId)
@@ -55,24 +62,24 @@ function VoteModal({ showVote, setShowVote, selectProposal, subDaoAddress }) {
     console.log("## proposalStatus: ", voteStatus);
 
     await doVoteForProposal(
-      subDaoAddress,
-      voteStatus,
+      props.subDaoAddress,
+      Boolean(Number(voteStatus)),
       parseInt(selectProposal.proposalId)
     );
   };
 
-  const [voteStatus, setVoteStatus] = useState(0);
+  const [voteStatus, setVoteStatus] = useState("0");
 
-  const selectVoteStatus = (status) => {
+  const selectVoteStatus = (status:string) => {
     setVoteStatus(status);
   };
 
-  const changeVoteAndSetShow = async (showVote, proposal) => {
-    setShowVote(showVote);
+  const changeVoteAndSetShow = async (showVote:boolean, proposal:ProposalInfo) => {
+    props.setShowVote(showVote);
     await doVote(proposal);
   };
 
-  if (showVote) {
+  if (props.showVote) {
     return (
       <div id="overlay">
         <div id="content">
@@ -82,24 +89,24 @@ function VoteModal({ showVote, setShowVote, selectProposal, subDaoAddress }) {
             <tr>
               <th className="border px-4 py-2">Kind</th>
               <td className="border px-4 py-2">
-                {PROPOSAL_KIND[selectProposal.proposalKind]}
+                {PROPOSAL_KIND[props.selectProposal.proposalKind]}
               </td>
             </tr>
             <tr>
               <th className="border px-4 py-2">Title</th>
-              <td className="border px-4 py-2">{selectProposal.title}</td>
+              <td className="border px-4 py-2">{props.selectProposal.title}</td>
             </tr>
             <tr>
               <th className="border px-4 py-2">Outline</th>
-              <td className="border px-4 py-2">{selectProposal.outline}</td>
+              <td className="border px-4 py-2">{props.selectProposal.outline}</td>
             </tr>
             <tr>
               <th className="border px-4 py-2">Detail</th>
-              <td className="border px-4 py-2">{selectProposal.details}</td>
+              <td className="border px-4 py-2">{props.selectProposal.details}</td>
             </tr>
             <tr>
               <th className="border px-4 py-2">GithubURL</th>
-              <td className="border px-4 py-2">{selectProposal.githubURL}</td>
+              <td className="border px-4 py-2">{props.selectProposal.githubURL}</td>
             </tr>
             <tr>
               <th className="border px-4 py-2">Status</th>
@@ -120,13 +127,13 @@ function VoteModal({ showVote, setShowVote, selectProposal, subDaoAddress }) {
           <div className="flex items-center justify-end mt-4">
             <button
               className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50 mr-4"
-              onClick={() => changeVoteAndSetShow(false, selectProposal)}
+              onClick={() => changeVoteAndSetShow(false, props.selectProposal)}
             >
               Ok
             </button>
             <button
               className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50"
-              onClick={() => setShowVote(false)}
+              onClick={() => props.setShowVote(false)}
             >
               Chancel
             </button>
@@ -139,9 +146,16 @@ function VoteModal({ showVote, setShowVote, selectProposal, subDaoAddress }) {
   }
 }
 
-function Modal({ show, setShow, selectProposal, subDaoAddress }) {
-  const doChangeProposalStatus = async (selectProposal) => {
-    console.log("## subDaoAddress: ", subDaoAddress);
+interface ModalPropos{
+  show:boolean
+  setShow:(flg:boolean)=>void 
+  selectProposal:ProposalInfo
+  subDaoAddress:string
+}
+
+function Modal(param:ModalPropos) {
+  const doChangeProposalStatus = async (selectProposal:ProposalInfo) => {
+    console.log("## subDaoAddress: ", param.subDaoAddress);
     console.log(
       "## selectProposal.proposalId: ",
       parseInt(selectProposal.proposalId)
@@ -149,24 +163,24 @@ function Modal({ show, setShow, selectProposal, subDaoAddress }) {
     console.log("## proposalStatus: ", proposalStatus);
 
     await changeProposalStatus(
-      subDaoAddress,
-      proposalStatus,
+      param.subDaoAddress,
+      Number(proposalStatus),
       parseInt(selectProposal.proposalId)
     );
   };
 
-  const [proposalStatus, setProposalStatus] = useState(0);
+  const [proposalStatus, setProposalStatus] = useState("0");
 
-  const selectStatus = (status) => {
+  const selectStatus = (status:string) => {
     setProposalStatus(status);
   };
 
-  const changeStatusAndSetShow = async (show, proposal) => {
-    setShow(show);
+  const changeStatusAndSetShow = async (show:boolean, proposal:ProposalInfo) => {
+    param.setShow(show);
     await doChangeProposalStatus(proposal);
   };
 
-  if (show) {
+  if (param.show) {
     return (
       <div id="overlay">
         <div id="content">
@@ -177,24 +191,24 @@ function Modal({ show, setShow, selectProposal, subDaoAddress }) {
               <tr>
                 <th className="border px-4 py-2">Kind</th>
                 <td className="border px-4 py-2">
-                  {PROPOSAL_KIND[selectProposal.proposalKind]}
+                  {PROPOSAL_KIND[param.selectProposal.proposalKind]}
                 </td>
               </tr>
               <tr>
                 <th className="border px-4 py-2">Title</th>
-                <td className="border px-4 py-2">{selectProposal.title}</td>
+                <td className="border px-4 py-2">{param.selectProposal.title}</td>
               </tr>
               <tr>
                 <th className="border px-4 py-2">Outline</th>
-                <td className="border px-4 py-2">{selectProposal.outline}</td>
+                <td className="border px-4 py-2">{param.selectProposal.outline}</td>
               </tr>
               <tr>
                 <th className="border px-4 py-2">Detail</th>
-                <td className="border px-4 py-2">{selectProposal.details}</td>
+                <td className="border px-4 py-2">{param.selectProposal.details}</td>
               </tr>
               <tr>
                 <th className="border px-4 py-2">GithubURL</th>
-                <td className="border px-4 py-2">{selectProposal.githubURL}</td>
+                <td className="border px-4 py-2">{param.selectProposal.githubURL}</td>
               </tr>
               <tr>
                 <th className="border px-4 py-2">Status</th>
@@ -221,13 +235,13 @@ function Modal({ show, setShow, selectProposal, subDaoAddress }) {
             <div className="flex items-center justify-end mt-4">
               <button
                 className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50 mr-4"
-                onClick={() => changeStatusAndSetShow(false, selectProposal)}
+                onClick={() => changeStatusAndSetShow(false, param.selectProposal)}
               >
                 Ok
               </button>
               <button
                 className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50"
-                onClick={() => setShow(false)}
+                onClick={() => param.setShow(false)}
               >
                 Chancel
               </button>
@@ -241,19 +255,16 @@ function Modal({ show, setShow, selectProposal, subDaoAddress }) {
   }
 }
 
-const DaoProposals = (
-  props: InferGetStaticPropsType<typeof getStaticProps>
-) => {
+const DaoProposals = () => {
   const [proposalList, setProposalList] = useState<Array<ProposalInfo>>();
-  const [targetProposal, setTargetProposal] = useState<ProposalInfo>();
   const router = useRouter();
-  const subDAOaddress = router.query.address;
+  const subDAOaddress = String(router.query.address);
 
   const [show, setShow] = useState(false);
   const [showVote, setShowVote] = useState(false);
-  const [selectProposal, setSelectProposal] = useState(null);
+  const [selectProposal, setSelectProposal] = useState({proposalKind:0,title:"",outline:"",details:"",githubURL:"",proposalId:"",proposalStatus:0});
 
-  function setProposal(proposal) {
+  function setProposal(proposal:ProposalInfo) {
     setSelectProposal(proposal);
   }
 

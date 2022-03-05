@@ -11,8 +11,8 @@ export const getStaticProps = async () => {
 
 // mock
 const topLinks = [
-  { type: "link", path: '/dao/create', label: "Create DAO", action: null },
-  { type: "link", path: '/dao/create/signup_mint_nft', label: "Signup DAO", action: null },
+  { type: "link", path: '/dao/create', label: "Create DAO" },
+  { type: "link", path: '/dao/create/signup_mint_nft', label: "Signup DAO" },
 ]
 
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
@@ -24,28 +24,15 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   }
   return (
     <>
-      <div>
+      <div className='block'>
         {
           topLinks.map((link) => {
-            if (link.type === "button") {
-              return (
-                <button
-                  key={link.label}
-                  className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                  font-bold py-2 px-4 m-5 rounded"
-                  onClick={() => link.action}
-                >
-                  {link.label}
-                </button>
-              )
-            }
             return (
               <Link
                 href={link.path}
                 key={link.path}>
                 <a
-                  className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                  font-bold text-2xl py-2 px-4 m-5 rounded"
+                  className="button-dao-default text-xl p-4 m-4"
                 >
                   {link.label}
                 </a>
@@ -62,7 +49,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
               subDAOList.map((dao) => {
                 return (
                   <li
-                    className="cursor-pointer px-6 py-2 border-b border-gray-200 font-bold w-full rounded-t-lg"
+                    className="cursor-pointer px-6 py-2 border-b border-gray-200  w-full rounded-t-lg"
                     key={dao.daoAddress}
                     onMouseEnter={() => displayDAOData(dao.daoAddress)}
                   >

@@ -274,7 +274,7 @@ export const getSubDAOBalance = async (
 {
   const contractConstract = SubDAOContractConstruct
 
-  let response:BigNumber = 0;
+  let response:number = 0;
   if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
