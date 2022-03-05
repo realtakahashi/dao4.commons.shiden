@@ -1,1 +1,2 @@
-export { SubDAOModal } from './Modal';
+export {SubDAOModal} from './Modal'
+export {MemberModal} from './Modal'

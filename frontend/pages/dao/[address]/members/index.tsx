@@ -2,7 +2,7 @@ import type { InferGetStaticPropsType, GetStaticPaths, GetStaticPropsContext } f
 import { listSubDAO, getSubDAOMemberList } from '@/contracts/SubDAO'
 import { SubDAOData } from "@/types/SubDAO"
 import { useEffect, useMemo, useState } from 'react';
-import { Layout } from '@/components/common'
+import { Layout, MemberModal } from '@/components/common'
 import { SubDAOMemberData } from '@/types/SubDAO';
 import Link from 'next/link';
 import { useSubDAOData } from '@/hooks';
@@ -15,6 +15,7 @@ const DaoMembers = () => {
   const targetSubDAO = useSubDAOData(subDAOaddress)
   const [daoMemberList, setDAOMemberList] = useState<Array<SubDAOMemberData>>()
   const [targetDAOMember, setTargetDAOMember] = useState<SubDAOMemberData>()
+  const [isModalOpen, setIsModalOpen] = useState(false)
   useEffect(() => {
     const listMember = async () => {
       const membersList = await getSubDAOMemberList(subDAOaddress)
@@ -29,6 +30,7 @@ const DaoMembers = () => {
   const handleClickDAOmember = (memberID: string) => {
     const target = daoMemberList?.find(member => member.member_id === memberID)
     setTargetDAOMember(target)
+    setIsModalOpen(true)
   }
   return (
     <>
@@ -42,8 +44,8 @@ const DaoMembers = () => {
           }
         </div>
 
-        <div className='mt-5'>
-          <div className="mx-5">
+        
+          <div className="m-5">
             <Link
               href={`/dao/${subDAOaddress}/members/add`}
             >
@@ -55,33 +57,35 @@ const DaoMembers = () => {
             </Link>
           </div>
           <h2>Members</h2>
-          <div className="flex justify-center">
-            <ul className="bg-white rounded-lg border border-gray-200 w-96 text-gray-900">
+          <div className="flex justify-center">          
               {typeof daoMemberList !== "undefined" ?
                 daoMemberList.map((member) => {
                   return (
-                    <li
-                      className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
-                      key={member.name}
-                      onClick={() => handleClickDAOmember(member.member_id)}
-                    >
-                      {member.name}
-                    </li>
+                    <>
+                      <div
+                        key={member.member_id}
+                        className="bg-black w-64 my-2 border border-gray-700 hover:border-gray-500 max-w-sm rounded overflow-hidden shadow-lg"
+                      >
+                        <div className="px-6 py-2">
+                          <div
+                            className="text-xl mb-2 cursor-pointer"
+                            onClick={() => handleClickDAOmember(member.member_id)}
+                          >{member.name}</div>
+                        </div>
+                      </div>
+                    </>
                   )
                 }) : ""
-              }
-            </ul>
+              }            
           </div>
         </div>
-        <div className='mt-5'>
-          {typeof targetDAOMember !== "undefined" ? (
-            <div>
-              <p>Name: {targetDAOMember.name}</p>
-              <p>MemberID: {targetDAOMember.member_id}</p>
-            </div>
-          ) : ""}
-        </div>
-      </div>
+      {typeof targetDAOMember !== "undefined" ? (
+        <MemberModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          member={targetDAOMember}
+        />
+      ) : ""}
     </>
   )
 }
