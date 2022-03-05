@@ -24,27 +24,15 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   }
   return (
     <>
-      <div>
+      <div className='block'>
         {
           topLinks.map((link) => {
-            if (link.type === "button") {
-              return (
-                <button
-                  key={link.label}
-                  className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                   py-2 px-4 m-5 rounded"
-                >
-                  {link.label}
-                </button>
-              )
-            }
             return (
               <Link
                 href={link.path}
                 key={link.path}>
                 <a
-                  className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                   text-2xl py-2 px-4 m-5 rounded"
+                  className="button-dao-default text-xl p-4 m-4"
                 >
                   {link.label}
                 </a>
