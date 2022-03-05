@@ -32,7 +32,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                 <button
                   key={link.label}
                   className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                  font-bold py-2 px-4 m-5 rounded"
+                   py-2 px-4 m-5 rounded"
                 >
                   {link.label}
                 </button>
@@ -44,7 +44,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                 key={link.path}>
                 <a
                   className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                  font-bold text-2xl py-2 px-4 m-5 rounded"
+                   text-2xl py-2 px-4 m-5 rounded"
                 >
                   {link.label}
                 </a>
@@ -61,7 +61,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
               subDAOList.map((dao) => {
                 return (
                   <li
-                    className="cursor-pointer px-6 py-2 border-b border-gray-200 font-bold w-full rounded-t-lg"
+                    className="cursor-pointer px-6 py-2 border-b border-gray-200  w-full rounded-t-lg"
                     key={dao.daoAddress}
                     onMouseEnter={() => displayDAOData(dao.daoAddress)}
                   >

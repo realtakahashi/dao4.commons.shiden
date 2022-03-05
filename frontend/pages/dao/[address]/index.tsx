@@ -52,15 +52,15 @@ const DAOportal = () => {
       {
         typeof targetSubDAO !== "undefined" ? (
           <div>
-            <p className="font-bold text-3xl">{targetSubDAO.daoName}</p>
-            <p className="font-bold text-3xl">{getRewardString()}</p>            
-            <p className="font-bold">
+            <p className=" text-3xl">{targetSubDAO.daoName}</p>
+            <p className=" text-3xl">{getRewardString()}</p>            
+            <p className="">
               <a href={targetSubDAO.githubURL}> 
                 {targetSubDAO.githubURL}
               </a>
             </p>
-            <p className="font-bold">{targetSubDAO.daoAddress}</p>
-            <p className="font-bold text-xl">DAO Balance: {_daoBalnce} ether</p>
+            <p className="">{targetSubDAO.daoAddress}</p>
+            <p className=" text-xl">DAO Balance: {_daoBalnce} ether</p>
           </div>
         ) : ""
       }    
@@ -70,7 +70,7 @@ const DAOportal = () => {
           return (
             <Link href={link.path} key={link.path}>
               <a className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                  font-bold text-2xl py-2 px-4 m-5 rounded">
+                   text-2xl py-2 px-4 m-5 rounded">
                 {link.label}
               </a>
             </Link>

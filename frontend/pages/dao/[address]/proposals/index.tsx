@@ -1,5 +1,5 @@
 import { Layout } from "@/components/common";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC } from "react";
 import { ProposalInfo } from "@/types/Proposal";
 import {
   getProposalListFromContract,
@@ -106,7 +106,7 @@ function VoteModal({ showVote, setShowVote, selectProposal, subDaoAddress }) {
               <td className="border px-4 py-2">
                 You Vote For :
                 <select
-                  className="font-bold"
+                  className=""
                   name="Status"
                   value={voteStatus}
                   onChange={(e) => selectVoteStatus(e.target.value)}
@@ -139,9 +139,19 @@ function VoteModal({ showVote, setShowVote, selectProposal, subDaoAddress }) {
   }
 }
 
-function Modal({ show, setShow, selectProposal, subDaoAddress }) {
+interface ModalProps {
+  show: boolean
+  setShow: boolean
+  selectProposal: (flag: boolean) => void
+  subDaoAddress: string
+}
+
+// function Modal({ show, setShow, selectProposal, subDaoAddress }: ModalProps) {
+// function Modal(props: ModalProps) {
+  const Modal:FC<ModalProps>  = (props) => {
+  
   const doChangeProposalStatus = async (selectProposal) => {
-    console.log("## subDaoAddress: ", subDaoAddress);
+    console.log("## subDaoAddress: ", props.subDaoAddress);
     console.log(
       "## selectProposal.proposalId: ",
       parseInt(selectProposal.proposalId)
@@ -201,7 +211,7 @@ function Modal({ show, setShow, selectProposal, subDaoAddress }) {
                 <td className="border px-4 py-2">
                   Change Status to :
                   <select
-                    className="font-bold"
+                    className=""
                     name="Status"
                     value={proposalStatus}
                     onChange={(e) => selectStatus(e.target.value)}
@@ -276,7 +286,7 @@ const DaoProposals = (
       <div className="">
         <button
           className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-				      font-bold py-2 px-4 m-5 rounded"
+				       py-2 px-4 m-5 rounded"
           type="button"
         >
           <a href={"/dao/" + subDAOaddress + "/proposals/add_proposal"}>
@@ -287,7 +297,7 @@ const DaoProposals = (
 
         <button
           className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-				      font-bold py-2 px-4 m-5 rounded"
+				       py-2 px-4 m-5 rounded"
           type="button"
           onClick={() => setShow(true)}
         >
@@ -302,7 +312,7 @@ const DaoProposals = (
 
         <button
           className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-				      font-bold py-2 px-4 m-5 rounded"
+				       py-2 px-4 m-5 rounded"
           type="button"
           onClick={() => setShowVote(true)}
         >

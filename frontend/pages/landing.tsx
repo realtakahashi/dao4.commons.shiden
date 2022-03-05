@@ -26,7 +26,7 @@ const NewIndex = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
             <p className="text-purple-900 text-4xl font-extrabold leading-10">Let's Start your Activities With DAO. </p>
 
             <p className="p-10"></p>
-            <p className="text-purple-900 text-4xl font-bold leading-10">How to Create DAO </p>
+            <p className="text-purple-900 text-4xl  leading-10">How to Create DAO </p>
             <p className="p-2"></p>
             <p className="text-purple-900 text-2xl leading-10">1. Create a Sub DAO.</p>
             <p className="text-purple-900 text-2xl leading-10">2. Deploy a NFT for as proof of DAO member.</p>
@@ -34,14 +34,14 @@ const NewIndex = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
             <p className="text-purple-900 text-1xl leading-3"># When you create a DAO, it will be added to the Master DAO as a Sub DAO.</p>
 
             <p className="p-10"></p>
-            <p className="text-purple-900 text-4xl font-bold leading-10">How to be DAO Member </p>
+            <p className="text-purple-900 text-4xl  leading-10">How to be DAO Member </p>
             <p className="p-2"></p>
             <p className="text-purple-900 text-2xl leading-10">1. You will need to contact the DAO owner or DAO member for approval.</p>
             <p className="text-purple-900 text-2xl leading-10">2. Ask the DAO owner or DAO member for the NFT address for the member and mint it.</p>
             <p className="text-purple-900 text-2xl leading-10">3. Contact the DAO member with the TokenId and ask them to add the member.</p>
 
             <p className="p-10"></p>
-            <p className="text-purple-900 text-4xl font-bold leading-10">How to submit a Proposal </p>
+            <p className="text-purple-900 text-4xl  leading-10">How to submit a Proposal </p>
             <p className="p-2"></p>
             <p className="text-purple-900 text-2xl leading-10">1. SubDAO has the ability for DAO members to submit proposals.</p>
             <p className="text-purple-900 text-2xl leading-10">2. You can propose a proposal by logging in to the target SubDAO and clicking "Add a Proposal".</p>
@@ -49,7 +49,7 @@ const NewIndex = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
             <p className="text-purple-900 text-2xl leading-10">4. It is a premise that the progress of the discussion will be carried out on github.</p>
 
             <p className="p-10"></p>
-            <p className="text-purple-900 text-4xl font-bold leading-10">How to vote a Proposal </p>
+            <p className="text-purple-900 text-4xl  leading-10">How to vote a Proposal </p>
             <p className="p-2"></p>
             <p className="text-purple-900 text-2xl leading-10">1. When the discussion is exhausted, the authorized person changes the Proposal status to "voting".</p>
             <p className="text-purple-900 text-2xl leading-10">2. All DAO members have equal voting rights and can vote.</p>
@@ -59,17 +59,17 @@ const NewIndex = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
             <p className="text-purple-900 text-2xl leading-10">5. If Proposal is passed, the status will be "running", and if rejected, the status will be "rejected".</p>
 
             <p className="p-10"></p>
-            <p className="text-purple-900 text-4xl font-bold leading-10">How to create a token sale </p>
+            <p className="text-purple-900 text-4xl  leading-10">How to create a token sale </p>
             <p className="p-2"></p>
             <p className="text-purple-900 text-2xl leading-10">........</p>
 
             <p className="p-10"></p>
-            <p className="text-purple-900 text-4xl font-bold leading-10">How to get a basic income as a DAO </p>
+            <p className="text-purple-900 text-4xl  leading-10">How to get a basic income as a DAO </p>
             <p className="p-2"></p>
             <p className="text-purple-900 text-2xl leading-10">........</p>
 
             <p className="p-10"></p>
-            <p className="text-purple-900 text-4xl font-bold leading-10">How to relate other DAO </p>
+            <p className="text-purple-900 text-4xl  leading-10">How to relate other DAO </p>
             <p className="p-2"></p>
             <p className="text-purple-900 text-2xl leading-10">........</p>
 

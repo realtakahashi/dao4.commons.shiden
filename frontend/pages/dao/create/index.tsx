@@ -23,7 +23,7 @@ const CreateDAO = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           return (
             <Link href={link.path} key={link.path}>
               <a className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                  font-bold text-2xl py-2 px-4 m-5 rounded">
+                   text-2xl py-2 px-4 m-5 rounded">
                 {link.label}
               </a>
             </Link>
