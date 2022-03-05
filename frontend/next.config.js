@@ -7,6 +7,6 @@ const nextConfig = {
 module.exports = {
   nextConfig,
   env: {
-    MASTERDAO_CONTRACT_ADDRESS: process.env.MASTERDAO_CONTRACT_ADDRESS
+    NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS: process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS
   }
 }
