@@ -22,8 +22,7 @@ const CreateDAO = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         topLinks.map((link) => {
           return (
             <Link href={link.path} key={link.path}>
-              <a className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-                   text-2xl py-2 px-4 m-5 rounded">
+              <a className="button-dao-default p-4 m-10">
                 {link.label}
               </a>
             </Link>
