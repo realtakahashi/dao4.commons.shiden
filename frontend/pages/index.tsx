@@ -11,8 +11,8 @@ export const getStaticProps = async () => {
 
 // mock
 const topLinks = [
-  { type: "link", path: '/dao/create', label: "Create DAO", action: null },
-  { type: "link", path: '/dao/create/signup_mint_nft', label: "Signup DAO", action: null },
+  { type: "link", path: '/dao/create', label: "Create DAO" },
+  { type: "link", path: '/dao/create/signup_mint_nft', label: "Signup DAO" },
 ]
 
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
@@ -33,7 +33,6 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                   key={link.label}
                   className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
                   font-bold py-2 px-4 m-5 rounded"
-                  onClick={() => link.action}
                 >
                   {link.label}
                 </button>

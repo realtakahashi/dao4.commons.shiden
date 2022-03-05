@@ -12,11 +12,6 @@ import { useRouter } from 'next/router';
 const DaoMembers = () => {
   const router = useRouter()
   const subDAOaddress = router.query.address as string
-  if (typeof subDAOaddress === "undefined") {
-    return (
-      <Loading />
-    )
-  }
   const targetSubDAO = useSubDAOData(subDAOaddress)
   const [daoMemberList, setDAOMemberList] = useState<Array<SubDAOMemberData>>()
   const [targetDAOMember, setTargetDAOMember] = useState<SubDAOMemberData>()

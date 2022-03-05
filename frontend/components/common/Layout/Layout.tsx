@@ -10,6 +10,7 @@ const Layout: FC = ({ children }) => {
         <title>dao4.commons.shiden</title>
         <meta name="description" content="dao4.commons.shiden Project" />
         <link rel="icon" href="/favicon.ico" />
+        <link href="http://fonts.googleapis.com/earlyaccess/notosansjp.css"></link>
       </Head>
       <Header />
       <div className={styles.root}>

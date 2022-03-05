@@ -12,15 +12,9 @@ import { useEffect,useState } from 'react'
 const DAOportal = () => {
   const router = useRouter()
   const subDAOaddress = router.query.address as string
-  if (typeof subDAOaddress === "undefined") {
-    return (
-      <Loading />
-    )
-  }
-
   const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
   const [_daoBalnce, setDAOBalance] = useState("");
-  useEffect(async() => {
+  useEffect(() => {
     const _getDAOInfo = async () => {
       if (targetSubDAO==null){
         const subDAOList = await listSubDAO()      
@@ -37,7 +31,7 @@ const DAOportal = () => {
   }, [])
 
   const getRewardString=():String=> {
-    if (targetSubDAO.rewardApproved==true){
+    if (typeof targetSubDAO !== "undefined" && targetSubDAO.rewardApproved==true){
       return "(#Reward Approved)"
     }
     else{
