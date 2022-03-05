@@ -4,6 +4,7 @@ import Web3 from 'web3';
 import cn from "classnames"
 import HeaderNav from '../HeaderNav/HeaderNav';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const Header: FC = () => {
   const [address, setAddress] = useState("");
@@ -26,7 +27,7 @@ const Header: FC = () => {
       const accounts = await web3.eth.requestAccounts();
       setAddress(accounts[0]);
       setWalletConnected(true)
-      console.log("connected")
+      // console.log("connected")
     } else {
       setWalletConnected(false)
       console.log("failed to connect")
@@ -43,7 +44,11 @@ const Header: FC = () => {
 
 
   const ConnectButton: FC = (): ReactElement => {
-    const buttonClass = "inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-white-500 hover:bg-white mt-4 lg:mt-0"
+    const router = useRouter();
+    router.events?.on('routeChangeStart', () => { 
+      setheaderMenuOpen(false)
+    });
+    const buttonClass = "inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-white-500 hover:bg-black mt-4 lg:mt-0"
     let button: ReactElement
     if (address === "") {
       button = <button className={buttonClass} onClick={connectWallet}>
