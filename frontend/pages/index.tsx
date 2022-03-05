@@ -57,7 +57,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                   >
                     <div className="px-6 py-2">
                       <div
-                        className="text-xl mb-2"
+                        className="text-xl mb-2 cursor-pointer"
                         onClick={() => displayDAOData(dao.daoAddress)}
                       >{dao.daoName}</div>
                     </div>
