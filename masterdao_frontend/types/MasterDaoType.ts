@@ -10,6 +10,7 @@ export interface SubDAOData {
   
 export interface MemberInfo {
   name:string
+  eoaAddress:string
   memberId:Number
 }
 

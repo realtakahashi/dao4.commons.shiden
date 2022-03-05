@@ -143,7 +143,7 @@ function Modal2(props:Moddal2Propos) {
                   </tr>
                   <tr>
                     <th className="border px-4 py-2">Member EOA Address</th>
-                    <td className="border px-4 py-2"></td>
+                    <td className="border px-4 py-2">{props.selectData.eoaAddress}</td>
                   </tr>
                   <tr>
                     <th className="border px-4 py-2">Member Id</th>
@@ -192,7 +192,7 @@ const Members = () => {
   const [dataList, setDataList] = useState<Array<MemberInfo>>();
   const [showDialog1, setShowDialog1] = useState(false);
   const [showDialog2, setShowDialog2] = useState(false);
-  const [selectData, setSelectData] = useState<MemberInfo>({name:"",memberId:0});
+  const [selectData, setSelectData] = useState<MemberInfo>({name:"",eoaAddress:"", memberId:0});
 
   useEffect(() => {
     const getDataList = async () => {
@@ -253,8 +253,7 @@ const Members = () => {
                       onClick={() => setSelectData(data)}
                     >
                       <td className="border px-4 py-2">{data.name}</td>
-                      <td className="border px-4 py-2">member Address</td>
-                      {/* <td className="border px-4 py-2">{data.memberAddress}</td> */}
+                      <td className="border px-4 py-2">{data.eoaAddress}</td>
                       <td className="border px-4 py-2">
                         {String(data.memberId)}
                       </td>

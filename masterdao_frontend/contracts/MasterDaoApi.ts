@@ -108,7 +108,7 @@ export const deleteMember = async (
       signer
     );
     await contract
-      .deleteMember("0xbDA5747bFD65F08deb54cb465eB87D40e51B197E", _proposalId)
+      .deleteMember(_memberInfoData.eoaAddress, _proposalId)
       .catch((err: any) => {
         console.log(err);
         alert(err.data.message);
