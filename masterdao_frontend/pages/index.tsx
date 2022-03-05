@@ -19,7 +19,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <h1 className="flex justify-center font-bold text-3xl p-3">Sub DAO List</h1>
+      <h1 className="flex justify-center  text-3xl p-3">Sub DAO List</h1>
       <div className="p-2 flex justify-center">
         <table className="table-auto">
           <thead>
