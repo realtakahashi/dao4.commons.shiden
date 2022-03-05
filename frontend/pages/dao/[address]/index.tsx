@@ -31,7 +31,7 @@ const DAOportal = () => {
   }, [])
 
   const getRewardString=():String=> {
-    if (targetSubDAO.rewardApproved==true){
+    if (typeof targetSubDAO !== "undefined" && targetSubDAO.rewardApproved==true){
       return "(#Reward Approved)"
     }
     else{
