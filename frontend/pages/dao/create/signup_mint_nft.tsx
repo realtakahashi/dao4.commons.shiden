@@ -46,7 +46,7 @@ const MintMemberNFT = () => {
             <div className="md:w-1/3"></div>
             <div className="md:w-2/3">
               <button
-                className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white  py-2 px-4 rounded"
+                className="button-dao-default px-4 py-2 m-2"
                 type="submit"
               >
                 Mint

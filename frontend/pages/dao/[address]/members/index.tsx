@@ -48,7 +48,7 @@ const DaoMembers = () => {
               href={`/dao/${subDAOaddress}/members/add`}
             >
               <a
-                className="m-2 py-2 px-4 border border-black-700 rounded"
+                className="button-dao-default px-4 py-2 m-2"
               >
                 Add Member
               </a>
