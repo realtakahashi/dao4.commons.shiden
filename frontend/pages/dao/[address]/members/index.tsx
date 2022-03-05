@@ -45,7 +45,7 @@ const DaoMembers = () => {
         </div>
 
         
-          <div className="m-5">
+          <div className="m-5 text-center">
             <Link
               href={`/dao/${subDAOaddress}/members/add`}
             >
