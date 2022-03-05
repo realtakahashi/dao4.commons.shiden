@@ -12,7 +12,7 @@ import {AddProposalFormData, ProposalInfo} from '@/types/Proposal'
 import {AddMemberFormData} from '@/types/MemberNFT'
 
 export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS
   const contractConstract = MasterDAOContractConstruct
   let response: SubDAOData[] = []
   if (typeof window.ethereum !== 'undefined' && masterDAOAddress) {
@@ -96,7 +96,7 @@ export const registerSubDAO = async (
   subDAOContractAddess: string,
   inputData: SubDAODeployFormData
 ) => {
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS
   const contractConstract = MasterDAOContractConstruct
   if (typeof window.ethereum !== 'undefined' && masterDAOAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)

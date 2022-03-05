@@ -43,26 +43,44 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
       </div>
       <div className='mt-5 p-5'>
         <h2 className="">List of Sub DAOs to which you belong</h2>
-        <div className="flex justify-center p-3">
-          <ul className="bg-white rounded-lg border border-gray-200 w-96 text-gray-900">
+        <div className="container my-12 mx-auto px-4 md:px-12">
+          <div className="flex flex-wrap -mx-1 lg:-mx-4">            
+            <div className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3">          
             {typeof subDAOList !== "undefined" ?
               subDAOList.map((dao) => {
                 return (
-                  <li
-                    className="cursor-pointer px-6 py-2 border-b border-gray-200  w-full rounded-t-lg"
-                    key={dao.daoAddress}
-                    onMouseEnter={() => displayDAOData(dao.daoAddress)}
-                  >
-                    <Link href={`/dao/${dao.daoAddress}`}>
-                      <a className='block text-xl'>
-                        {dao.daoName}
-                      </a>
-                    </Link>
-                  </li>
+                  <>                    
+                    <div
+                      className="bg-black my-2 border border-gray-700 hover:border-gray-500 max-w-sm rounded overflow-hidden shadow-lg"
+                      onMouseEnter={() => displayDAOData(dao.daoAddress)}
+                    >
+                      <div className="px-6 py-2">
+                        <div className="text-xl mb-2">{dao.daoName}</div>                  
+                      </div>
+                      <hr className='p-1 border-gray-700' />
+                      <div className="py-2 flex">
+                        <Link href={""}>
+                          <a
+                            className="inline-flex button-dao-default text-sm py-1 px-3"
+                          >
+                              Members
+                          </a>
+                        </Link>                        
+                        <Link href={""}>
+                          <a
+                            className="inline-flex button-dao-default text-sm py-1 px-3"
+                          >
+                            Proposals
+                          </a>
+                        </Link>                        
+                      </div>
+                    </div>
+                  </>
                 )
               }) : ""
             }
-          </ul>
+            </div>
+          </div>
         </div>
       </div>
 
