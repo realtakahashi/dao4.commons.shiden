@@ -54,6 +54,7 @@ describe("All contract", function() {
             const memberId = await masterDao.memberIds(SubDaoOwner1.address)
             const memberInfo = await masterDao.memberInfoes(memberId);
             assert.equal(await memberInfo.memberId,2);
+            assert.equal(await memberInfo.eoaAddress,SubDaoOwner1.address)
             assert.equal(await memberInfo.name,"Keisuke Funatsu");
         });
         it("Add another member to Mastar DAO", async function(){
@@ -68,6 +69,7 @@ describe("All contract", function() {
             const memberId = await masterDao.memberIds(SubDaoOwner2.address)
             const memberInfo = await masterDao.memberInfoes(memberId);
             assert.equal(await memberInfo.memberId,3);
+            assert.equal(await memberInfo.eoaAddress,SubDaoOwner2.address)
             assert.equal(await memberInfo.name,"Saki Takahashi");
         });
         it("Check Member List", async function(){
