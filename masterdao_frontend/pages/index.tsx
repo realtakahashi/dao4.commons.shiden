@@ -5,7 +5,7 @@ import { SubDAOData } from "../types/MasterDaoType";
 
 const Home: NextPage = () => {
   const [subDaoList, setSubDaoList] = useState<Array<SubDAOData>>();;
-  const [selectDao, setSelectDao] = useState(null);
+  const [selectDao, setSelectDao] = useState({ownerAddress:"",daoAddress:"",daoName:"",githubURL:"",rewardApproved:false});
 
   useEffect(() => {
     const getSubDaoList = async () => {

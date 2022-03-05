@@ -10,7 +10,7 @@ export interface SubDAOData {
   
 export interface MemberInfo {
   name:string
-  memberId:BigNumber
+  memberId:Number
 }
 
 export interface MemberFormData {
