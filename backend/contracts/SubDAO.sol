@@ -306,7 +306,7 @@ contract SubDAO is ReentrancyGuard{
     * 投票結果をチェックする。
     */
     function _checkVotingResult(uint256 _proposalId) internal view returns (ProposalStatus){
-        if (votingInfoes[_proposalId].yesCount * 100 / _memberIdTracker.current() >= PROPOSAL_PASS_LINE){   
+        if (votingInfoes[_proposalId].yesCount * 100 / (_memberIdTracker.current() - 1) >= PROPOSAL_PASS_LINE){   
             return ProposalStatus.Running;
         }
         else {
