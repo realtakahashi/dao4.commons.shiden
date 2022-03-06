@@ -102,6 +102,12 @@ describe("All contract", function() {
             assert.equal(await memberInfo.memberId,0);
             assert.equal(await memberInfo.name,"");
         });
+        it("Check ProposalList", async function(){
+            const list = await masterDao.connect(MasterDaoOwner).getProposalList();
+            assert.equal(list.length,4);
+            assert.equal(list[0].title,"add a new member");
+            assert.equal(list[3].title,"delete member");
+        });
         it("Non member is denied to execute some contract functions.", async function(){
             await expect(masterDao.connect(SubDaoOwner4).submitProposal(PROPOSAL_KIND_ADD_MEMBER,"delete member",
                 "I want to delete a member", "Please Approve to delete.", "test.com", 0, SubDaoOwner2.address))
