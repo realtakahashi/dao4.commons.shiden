@@ -24,7 +24,7 @@ function Header() {
           </ul>
           <ul>
             <li>
-              <Link href="/">
+              <Link href="/proposals">
                 <a className="m-5 text-white underline">Proposals</a>
               </Link>
             </li>

@@ -19,3 +19,25 @@ export interface MemberFormData {
   memberAddress:string
   proposalId:Number
 }
+
+export interface AddProposalFormData {
+  proposalKind: number
+  title: string
+  outline: string
+  detail: string
+  githubURL: string
+  relatedId:string
+  relatedAddress:string
+}
+
+export interface ProposalInfo {
+  proposalKind: number
+  title: string
+  outline: string
+  details: string
+  githubURL: string
+  proposalId:string
+  relatedId:string
+  relatedAddress:string
+  proposalStatus: number
+}

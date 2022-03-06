@@ -1,5 +1,5 @@
 import MasterDAOContractConstruct from "./construct/MasterDAO";
-import { MemberInfo, SubDAOData, MemberFormData } from "../types/MasterDaoType";
+import { MemberInfo, SubDAOData, MemberFormData,ProposalInfo,AddProposalFormData } from "../types/MasterDaoType";
 import Web3 from "web3";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
@@ -97,6 +97,7 @@ export const deleteMember = async (
 ) => {
   const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
+  console.log("## masterDAOAddress:", masterDAOAddress);
   console.log("## memberinfo:", _memberInfoData);
   console.log("## proposalId:", _proposalId);
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
@@ -115,3 +116,114 @@ export const deleteMember = async (
       });
   }
 };
+
+export const registerProposal = async (
+  inputData: AddProposalFormData
+): Promise<string> => {
+  console.log('### registerProposal 1')
+  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const contractConstract = MasterDAOContractConstruct;
+  if (typeof window.ethereum !== 'undefined' && masterDAOAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      masterDAOAddress,
+      contractConstract.abi,
+      signer
+    )
+    console.log("## Add Proposal: Detail: ",inputData.detail)
+    const tx = await contract.submitProposal(
+      inputData.proposalKind,
+      inputData.title,
+      inputData.outline,
+      inputData.detail,
+      inputData.githubURL,
+      inputData.relatedId,
+      inputData.relatedAddress
+    )
+    const returnValue = await tx.wait()
+    console.log('### returnValue:', returnValue)
+    console.log('### Proposal ID:', returnValue.events[0].args.proposalId)
+    return returnValue.events[0].args.proposalId.toString()
+  }
+  return ''
+}
+
+export const getProposalListFromContract = async (): Promise<Array<ProposalInfo>> => {
+  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const contractConstract = MasterDAOContractConstruct;
+  let response: ProposalInfo[] = []
+  if (typeof window.ethereum !== 'undefined' && masterDAOAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      masterDAOAddress,
+      contractConstract.abi,
+      signer
+    )
+    response = await contract.getProposalList().catch((err: any) => {
+      console.log(err)
+      alert(err.data.message);
+    })
+    console.log('### getProposalList Return: ', response)
+  }
+  return response
+}
+
+export const changeProposalStatus = async (
+  proposalStatus: number,
+  proposalId: number
+) => {
+  console.log("#### changeProposalStatus ####")
+  console.log("## Proposal Status: ", proposalStatus)
+  console.log("## Proposal Id: ", proposalId)
+  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const contractConstract = MasterDAOContractConstruct;
+  let response: ProposalInfo[] = []
+  if (typeof window.ethereum !== 'undefined' && masterDAOAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      masterDAOAddress,
+      contractConstract.abi,
+      signer
+    )
+    response = await contract
+      .changeProposalStatus(proposalId,proposalStatus)
+      .catch((err: any) => {
+        console.log(err)
+        alert(err.data.message);
+      })
+    console.log("### changeProposalStatus Return: ",response)
+    alert('Chainging proposal status is succeeded.')
+  }
+  return response
+}
+
+export const doVoteForProposal = async (
+  yes: boolean,
+  proposalId: number
+) => {
+  console.log("## doVote:yes: ",yes)
+  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const contractConstract = MasterDAOContractConstruct;
+  let response: ProposalInfo[] = []
+  if (typeof window.ethereum !== 'undefined' && masterDAOAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      masterDAOAddress,
+      contractConstract.abi,
+      signer
+    )
+    response = await contract
+      .voteForProposal(proposalId,yes)
+      .catch((err: any) => {
+        console.log(err)
+        alert(err.data.message);
+      })
+    console.log("### voteForProposal Return: ",response)
+    alert('Voting proposal status is succeeded.')
+  }
+  return response
+}
