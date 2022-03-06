@@ -184,7 +184,7 @@ function Modal(param:ModalPropos) {
     return (
       <div id="overlay">
         <div id="content">
-          <div className="shadow-lg rounded p-8 bg-white">
+          <div className="shadow-lg rounded p-8">
             <h1 className="text-3xl">Chang Proposal Status to ...</h1>
             <div className="p-3"></div>
             <table className="table-auto">

@@ -6,7 +6,7 @@ import { checkNFTMinted, mintMemberNFT } from "@/contracts/MemberNFT";
 
 const MintMemberNFT = () => {
   const [memberNFTTokenID, setMemberNFTTokenID] = useState("");
-  const [chekMemberNFTId, setChekMemberNFTId] = useState("");
+  const [checkMemberNFTId, setCheckMemberNFTId] = useState("");
 
   const [formValue, setFormValue] = useState<MemberNFTMintFormData>({
     token_address: "",
@@ -22,7 +22,7 @@ const MintMemberNFT = () => {
   ) => {
     event.preventDefault();
     const checkId = await checkNFTMinted(formValue.token_address);
-    setChekMemberNFTId(checkId);
+    setCheckMemberNFTId(checkId);
     if (checkId == "") {
       const id = await mintMemberNFT(formValue.token_address);
       console.log(id);
@@ -33,9 +33,10 @@ const MintMemberNFT = () => {
   };
   return (
     <>
-      <div>
+      <div className="w-full form-container">
         <h2 className="text-xl">Signup with Token address</h2>
-        <form className="w-full max-w-sm" onSubmit={onSubmitMemberNFTForm}>
+        <form
+          onSubmit={onSubmitMemberNFTForm}>
           <FormInputText
             label="Token Contract Address"
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
@@ -64,11 +65,11 @@ const MintMemberNFT = () => {
         ) : (
           ""
         )}
-        {chekMemberNFTId !== "" ? (
+        {checkMemberNFTId !== "" ? (
           <div className="mt-10">
             <p className="text-lg">You have already minted.</p>
             <p className="text-lg">
-              Your Member NFT TokenID: {chekMemberNFTId}
+              Your Member NFT TokenID: {checkMemberNFTId}
             </p>
           </div>
         ) : (

@@ -1,21 +1,14 @@
 import type { InferGetStaticPropsType, NextPage } from 'next'
 import { Layout } from '@/components/common'
 import Link from "next/link"
-import { ReactElement } from 'react';
-import { FC } from 'react';
 
-export const getStaticProps = async () => {
-  return { props: {} }
-}
-
-// mock
 const topLinks = [
   { path: '/dao/create/subdao', label: "Deploy SubDAO" },
   { path: '/dao/create/member_nft', label: "Deploy MemberNFT" },
   { path: '/dao/create/signup_mint_nft', label: "Mint MemberNFT" },
 ]
 
-const CreateDAO = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+const CreateDAO = () => {
   return (
     <>
       {

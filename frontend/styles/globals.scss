@@ -11,6 +11,10 @@
   }
 }
 
+.form-container {
+  @apply w-full max-w-screen-lg mx-10 px-5;
+}
+
 #overlay{
 /*　画面全体を覆う設定　*/
   position:fixed;
@@ -31,5 +35,5 @@
     z-index:2;
     width:50%;
     padding: 1em;
-    background:#fff;
+    background:rgb(26, 24, 24);
   }
