@@ -47,4 +47,5 @@ export interface ProposalInfo {
 
 export interface DonateInfo {
   amount: number
+  relatedProposalId:number
 }

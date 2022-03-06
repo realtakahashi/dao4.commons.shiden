@@ -94,6 +94,7 @@ interface DaoDonateModalPropos {
 function DaoDonateModal(props: DaoDonateModalPropos) {
   const [formValue, setFormValue] = useState<DonateInfo>({
     amount: 0,
+    relatedProposalId: 0,
   });
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,6 +142,18 @@ function DaoDonateModal(props: DaoDonateModalPropos) {
                         className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
                         leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
                         name="amount"
+                        type="text"
+                        onChange={onChangeInput}
+                      ></input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th className="border px-4 py-2">Related Proposal Id</th>
+                    <td className="border px-4 py-2">
+                      <input
+                        className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
+                        leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                        name="relatedProposalId"
                         type="text"
                         onChange={onChangeInput}
                       ></input>

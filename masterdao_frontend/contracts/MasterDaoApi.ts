@@ -278,7 +278,7 @@ export const doDonateSelectedDao = async (donateInfo:DonateInfo,subDaoData: SubD
     console.log("## donateInfo.amount:", donateInfo.amount)
     console.log("## donateInfo.amount ETH:", Number(Web3.utils.toWei(String(donateInfo.amount))))
     await contract
-      .divide(subDaoData.daoAddress, donateInfo.amount,{value:ethers.utils.parseEther(String(donateInfo.amount))})
+      .divide(subDaoData.daoAddress, ethers.utils.parseEther(String(donateInfo.amount)),donateInfo.relatedProposalId)
       .catch((err: any) => {
         console.log(err);
         alert(err.data.message);
