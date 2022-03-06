@@ -31,7 +31,7 @@ const DaoMembers = () => {
 
 
   const handleClickDAOmember = (memberID: string) => {
-    const target = daoMemberList?.find(member => member.memberId === memberID)
+    const target = daoMemberList?.find(member => member.memberId._hex === memberID)
     setTargetDAOMember(target)
     setIsModalOpen(true)
   }
@@ -72,7 +72,7 @@ const DaoMembers = () => {
                     <div className="px-6 py-2">
                       <div
                         className="text-xl mb-2 cursor-pointer"
-                        onClick={() => handleClickDAOmember(member.memberId)}
+                        onClick={() => handleClickDAOmember(member.memberId._hex)}
                       >{member.name}</div>
                     </div>
                   </div>
