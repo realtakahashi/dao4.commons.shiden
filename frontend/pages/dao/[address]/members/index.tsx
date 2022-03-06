@@ -66,7 +66,7 @@ const DaoMembers = () => {
               return (
                 <>
                   <div
-                    key={member.memberId}
+                    key={member.memberId._hex}
                     className="bg-black w-64 my-2 border border-gray-700 hover:border-gray-500 max-w-sm rounded overflow-hidden shadow-lg"
                   >
                     <div className="px-6 py-2">

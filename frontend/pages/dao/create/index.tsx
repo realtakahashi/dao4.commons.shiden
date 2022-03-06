@@ -1,17 +1,27 @@
 import type { InferGetStaticPropsType, NextPage } from 'next'
 import { Layout } from '@/components/common'
 import Link from "next/link"
-import { ReactElement } from 'react';
-import { FC } from 'react';
+
+const topLinks = [
+  { path: '/dao/create/subdao', label: "Deploy SubDAO" },
+  { path: '/dao/create/member_nft', label: "Deploy MemberNFT" },
+  { path: '/dao/create/signup_mint_nft', label: "Mint MemberNFT" },
+]
 
 const CreateDAO = () => {
   return (
     <>
-      <Link href="/">
-        <a className="button-dao-default p-4 m-10">
-          Back to Top
-        </a>
-      </Link>
+      {
+        topLinks.map((link) => {
+          return (
+            <Link href={link.path} key={link.path}>
+              <a className="button-dao-default p-4 m-10">
+                {link.label}
+              </a>
+            </Link>
+          )
+        })
+      }
     </>
   )
 }
