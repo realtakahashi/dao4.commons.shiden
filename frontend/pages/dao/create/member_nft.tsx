@@ -36,9 +36,9 @@ const DeployMemberNFT = () => {
   }
   return (
     <>
-      <div>
+      <div className="w-full max-w-sm">
         <h2 className="text-xl">Deploy Your MemberNFT</h2>
-        <form className="w-full max-w-sm"
+        <form
           onSubmit={onSubmitMemberNFTForm}
         >
           <FormInputText

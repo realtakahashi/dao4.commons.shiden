@@ -33,9 +33,10 @@ const MintMemberNFT = () => {
   };
   return (
     <>
-      <div>
+      <div className="w-full max-w-sm">
         <h2 className="text-xl">Signup with Token address</h2>
-        <form className="w-full max-w-sm" onSubmit={onSubmitMemberNFTForm}>
+        <form
+          onSubmit={onSubmitMemberNFTForm}>
           <FormInputText
             label="Token Contract Address"
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"

@@ -46,11 +46,10 @@ const AddProposal = () => {
 
   return (
     <>
-      <div>
+      <div className="w-full max-w-screen-sm">
         <h1 className="text-3xl">Add A Proposal</h1>
         <div className="p-5"></div>
-        <form
-          className="w-full max-w-screen-sm"
+        <form          
           onSubmit={onSubmitAddProposalForm}
         >
           <div className="md:flex md:items-center mb-6">
