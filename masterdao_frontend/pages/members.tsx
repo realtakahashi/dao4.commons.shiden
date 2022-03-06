@@ -6,8 +6,14 @@ import {
   getMemberList,
   deleteMember,
 } from "../contracts/MasterDaoApi";
+import { stringify } from "querystring";
 
-function Modal1({ show, setShow }) {
+interface Modal1Props{
+  show:boolean
+  setShow:(flg:boolean)=>void
+}
+
+function Modal1( props:Modal1Props ) {
   const [formValue, setFormValue] = useState<MemberFormData>({
     name: "",
     memberAddress: "",
@@ -26,10 +32,10 @@ function Modal1({ show, setShow }) {
     console.log("#### Submit 1");
     event.preventDefault();
     await addMember(formValue);
-    setShow(false);
+    props.setShow(false);
   };
 
-  if (show) {
+  if (props.show) {
     return (
       <div id="overlay">
         <div id="content">
@@ -89,7 +95,7 @@ function Modal1({ show, setShow }) {
                 <button
                   className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 
                     active:bg-gray-200 disabled:opacity-50"
-                  onClick={() => setShow(false)}
+                  onClick={() => props.setShow(false)}
                 >
                   Chancel
                 </button>
@@ -104,18 +110,24 @@ function Modal1({ show, setShow }) {
   }
 }
 
-function Modal2({ show, setShow, selectData }) {
+interface Moddal2Propos {
+  show:boolean
+  setShow:(flg:boolean)=>void
+  selectData:MemberInfo
+}
+
+function Modal2(props:Moddal2Propos) {
 
     const [_proposalId, _setProposalId] = useState("")
  
     const onInputProposalId = (event: React.ChangeEvent<HTMLInputElement>): void => _setProposalId(event.target.value);
   const doDeleteFunction = async () => {
     console.log("#### delete Submit 1");
-    await deleteMember(selectData,Number(_proposalId));
-    setShow(false);
+    await deleteMember(props.selectData,Number(_proposalId));
+    props.setShow(false);
   };
 
-  if (show && selectData!==null) {
+  if (props.show && props.selectData!==null) {
     return (
       <div id="overlay">
         <div id="content">
@@ -127,15 +139,15 @@ function Modal2({ show, setShow, selectData }) {
                 <tbody>
                   <tr>
                     <th className="border px-4 py-2">Name</th>
-                    <td className="border px-4 py-2">{selectData.name}</td>
+                    <td className="border px-4 py-2">{props.selectData.name}</td>
                   </tr>
                   <tr>
                     <th className="border px-4 py-2">Member EOA Address</th>
-                    <td className="border px-4 py-2"></td>
+                    <td className="border px-4 py-2">{props.selectData.eoaAddress}</td>
                   </tr>
                   <tr>
                     <th className="border px-4 py-2">Member Id</th>
-                    <td className="border px-4 py-2">{String(selectData.memberId)}</td>
+                    <td className="border px-4 py-2">{String(props.selectData.memberId)}</td>
                   </tr>
                   <tr>
                     <th className="border px-4 py-2">Proposal Id</th>
@@ -162,7 +174,7 @@ function Modal2({ show, setShow, selectData }) {
                 <button
                   className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 
                       active:bg-gray-200 disabled:opacity-50"
-                  onClick={() => setShow(false)}
+                  onClick={() => props.setShow(false)}
                 >
                   Chancel
                 </button>
@@ -180,7 +192,7 @@ const Members = () => {
   const [dataList, setDataList] = useState<Array<MemberInfo>>();
   const [showDialog1, setShowDialog1] = useState(false);
   const [showDialog2, setShowDialog2] = useState(false);
-  const [selectData, setSelectData] = useState(null);
+  const [selectData, setSelectData] = useState<MemberInfo>({name:"",eoaAddress:"", memberId:0});
 
   useEffect(() => {
     const getDataList = async () => {
@@ -241,8 +253,7 @@ const Members = () => {
                       onClick={() => setSelectData(data)}
                     >
                       <td className="border px-4 py-2">{data.name}</td>
-                      <td className="border px-4 py-2">member Address</td>
-                      {/* <td className="border px-4 py-2">{data.memberAddress}</td> */}
+                      <td className="border px-4 py-2">{data.eoaAddress}</td>
                       <td className="border px-4 py-2">
                         {String(data.memberId)}
                       </td>
