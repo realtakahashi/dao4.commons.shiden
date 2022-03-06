@@ -6,7 +6,7 @@ import { checkNFTMinted, mintMemberNFT } from "@/contracts/MemberNFT";
 
 const MintMemberNFT = () => {
   const [memberNFTTokenID, setMemberNFTTokenID] = useState("");
-  const [chekMemberNFTId, setChekMemberNFTId] = useState("");
+  const [checkMemberNFTId, setCheckMemberNFTId] = useState("");
 
   const [formValue, setFormValue] = useState<MemberNFTMintFormData>({
     token_address: "",
@@ -22,7 +22,7 @@ const MintMemberNFT = () => {
   ) => {
     event.preventDefault();
     const checkId = await checkNFTMinted(formValue.token_address);
-    setChekMemberNFTId(checkId);
+    setCheckMemberNFTId(checkId);
     if (checkId == "") {
       const id = await mintMemberNFT(formValue.token_address);
       console.log(id);
@@ -65,11 +65,11 @@ const MintMemberNFT = () => {
         ) : (
           ""
         )}
-        {chekMemberNFTId !== "" ? (
+        {checkMemberNFTId !== "" ? (
           <div className="mt-10">
             <p className="text-lg">You have already minted.</p>
             <p className="text-lg">
-              Your Member NFT TokenID: {chekMemberNFTId}
+              Your Member NFT TokenID: {checkMemberNFTId}
             </p>
           </div>
         ) : (

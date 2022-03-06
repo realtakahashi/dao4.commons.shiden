@@ -38,7 +38,10 @@ interface SelectProps {
   handleOnChangeSelect: (event: React.ChangeEvent<HTMLSelectElement>) => void
   label: string
   name: string
-  subDAOList: SubDAOData[]
+  selectList: any[]
+  optionLabelKey: string
+  optionValueKey: string
+  itemName: string
 }
 export const FormInputSelect: FC<SelectProps> = (props) => {
   return (
@@ -57,15 +60,15 @@ export const FormInputSelect: FC<SelectProps> = (props) => {
             onChange={props.handleOnChangeSelect}
             name={props.name}
           >
-            <option value="">Please Choose SubDAO</option>
+            <option value="">Please Choose { props.itemName}</option>
             {
-              props.subDAOList.length > 0 ?
-                props.subDAOList.map((subDAO) => {
+              props.selectList.length > 0 ?
+                props.selectList.map((item) => {
                   return (
                     <option
-                      key={subDAO.daoAddress}
-                      value={subDAO.daoAddress}>
-                      {subDAO.daoName}
+                      key={item[props.optionValueKey]}
+                      value={item[props.optionValueKey]}>
+                      {item[props.optionLabelKey]}
                     </option>
                   )
                 })

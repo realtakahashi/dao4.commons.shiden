@@ -25,10 +25,6 @@ const MintMemberNFT = () => {
     return <Loading/>
   }
 
-  
-
-
-
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormValue({
       ...formValue,

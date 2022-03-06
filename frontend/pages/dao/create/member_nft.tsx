@@ -64,7 +64,10 @@ const DeployMemberNFT = () => {
             className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="subdaoAddress"
             handleOnChangeSelect={onChangeSelect}
-            subDAOList={subDAOList? subDAOList: []}
+            selectList={subDAOList ? subDAOList : []}
+            optionLabelKey={"daoName"}
+            optionValueKey={"daoAddress"}
+            itemName={"SubDAO"}
           />
           <div className="">
             <div className="md:w-1/3"></div>
