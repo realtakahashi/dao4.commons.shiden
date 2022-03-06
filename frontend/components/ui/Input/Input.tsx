@@ -5,9 +5,11 @@ import { SubDAOData } from '@/types/SubDAO';
 
 interface InputProps {
   className: string | undefined
-  handleOnChangeInput: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleOnChangeInput?: (event: React.ChangeEvent<HTMLInputElement>) => void
   name: string
   label: string
+  isTextArea?: boolean
+  handleOnChangeTextArea?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
 export const FormInputText: FC<InputProps> = (props) => {
   return (
@@ -21,12 +23,23 @@ export const FormInputText: FC<InputProps> = (props) => {
           </label>
         </div>
         <div className="md:w-2/3">
-          <input
-            className={cn(props.className)}
-            name={props.name}
-            type="text"
-            onChange={props.handleOnChangeInput}
-          />
+          {
+            props.isTextArea ? (
+              <textarea
+                className={cn(props.className)}
+                name={props.name}
+                onChange={props.handleOnChangeTextArea}
+              />
+            ) : (
+                <input
+                  className={cn(props.className)}
+                  name={props.name}
+                  type="text"
+                  onChange={props.handleOnChangeInput}
+                />                
+            )
+          }
+          
         </div>
       </div>
     </>

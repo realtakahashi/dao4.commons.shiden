@@ -23,14 +23,21 @@ const AddProposal = () => {
       ...formValue,
       [event.target.name]: event.target.value,
     });
-    // console.log(formValue)
+    console.log(formValue)
+  };
+  const onChangeTextArea = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormValue({
+      ...formValue,
+      [event.target.name]: event.target.value,
+    });
+    console.log(formValue)
   };
   const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setFormValue({
       ...formValue,
       [event.target.name]: event.target.value,
     });
-    // console.log(formValue)
+    console.log(formValue)
   };
 
   const onSubmitAddProposalForm = async (
@@ -83,14 +90,16 @@ const AddProposal = () => {
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="outline"
-            handleOnChangeInput={onChangeInput}
+            handleOnChangeTextArea={onChangeTextArea}
+            isTextArea={true}
           />
           <FormInputText
             label="Detail"
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="detail"
-            handleOnChangeInput={onChangeInput}
+            handleOnChangeTextArea={onChangeTextArea}
+            isTextArea={true}
           />
           <FormInputText
             label="Github URL"
