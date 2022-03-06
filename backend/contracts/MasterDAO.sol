@@ -283,7 +283,7 @@ contract MasterDAO is ReentrancyGuard{
     */
     function getProposalList() public view returns (ProposalInfo[] memory) {
         ProposalInfo[] memory proposalList = new ProposalInfo[](_proposalIdTracker.current() - 1);
-        for (uint256 i=0; i < _proposalIdTracker.current() - 1; i++) {
+        for (uint256 i=1; i < _proposalIdTracker.current(); i++) {
             if (bytes(proposalInfoes[i].title).length!=0){
                 proposalList[i] = proposalInfoes[i];
             }
