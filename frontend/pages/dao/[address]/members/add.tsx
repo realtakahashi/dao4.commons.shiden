@@ -40,7 +40,7 @@ const MintMemberNFT = () => {
   }
   return (
     <>
-      <div className="w-full max-w-sm">
+      <div className="w-full form-container">
         {
           typeof targetSubDAO !== "undefined" ?
             (<h2>

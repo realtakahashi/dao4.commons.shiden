@@ -11,6 +11,10 @@
   }
 }
 
+.form-container {
+  @apply w-full max-w-screen-lg;
+}
+
 #overlay{
 /*　画面全体を覆う設定　*/
   position:fixed;

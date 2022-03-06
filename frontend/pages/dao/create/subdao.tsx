@@ -26,7 +26,7 @@ const DeploySubDAO = () => {
   }
   return (
     <>
-      <div className="w-full max-w-sm">
+      <div className="w-full form-container">
         <h2 className="text-xl">Deploy Your SubDAO</h2>
         <form 
           onSubmit={onSubmitSubDAOForm}

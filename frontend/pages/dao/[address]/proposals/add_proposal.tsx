@@ -49,11 +49,10 @@ const AddProposal = () => {
   ]
   return (
     <>
-      <div>
+      <div className="w-full form-container">
         <h1 className="text-3xl">Add A Proposal</h1>
         <div className="p-5"></div>
-        <form
-          className="w-full max-w-screen-sm"
+        <form          
           onSubmit={onSubmitAddProposalForm}
         >
           <FormInputSelect
@@ -75,7 +74,7 @@ const AddProposal = () => {
           />
           <FormInputText
             label="Outline"
-            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
+            className="h-48 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="outline"
             handleOnChangeTextArea={onChagngeInput}
@@ -83,7 +82,7 @@ const AddProposal = () => {
           />
           <FormInputText
             label="Detail"
-            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
+            className="h-48 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="detail"
             handleOnChangeTextArea={onChagngeInput}
