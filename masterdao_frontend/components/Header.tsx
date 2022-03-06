@@ -17,7 +17,7 @@ function Header() {
           </ul>
           <ul>
             <li>
-              <Link href="/">
+              <Link href="/members">
                 <a className="m-5 text-white underline">Members</a>
               </Link>
             </li>

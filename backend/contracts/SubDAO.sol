@@ -119,6 +119,13 @@ contract SubDAO is ReentrancyGuard{
     }
 
     /**
+    * SubDAOに関連付けられたメンバーNFTのアドレスを取得する
+    */
+    function getMemberNFTAddress() public view onlyMember returns (address) {
+        return erc721Address;
+    }
+
+    /**
     * メンバーを追加する。
     * 正しくないdaoAddressにてコールした場合に対処するために、NFTのAddressをチェックする。
     */
@@ -306,7 +313,7 @@ contract SubDAO is ReentrancyGuard{
     * 投票結果をチェックする。
     */
     function _checkVotingResult(uint256 _proposalId) internal view returns (ProposalStatus){
-        if (votingInfoes[_proposalId].yesCount * 100 / _memberIdTracker.current() >= PROPOSAL_PASS_LINE){   
+        if (votingInfoes[_proposalId].yesCount * 100 / (_memberIdTracker.current() - 1) >= PROPOSAL_PASS_LINE){   
             return ProposalStatus.Running;
         }
         else {

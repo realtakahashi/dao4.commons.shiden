@@ -23,6 +23,7 @@ contract MasterDAO is ReentrancyGuard{
 
     struct MemberInfo {
         string name;
+        address eoaAddress;
         uint256 memberId;
     }
 
@@ -108,10 +109,11 @@ contract MasterDAO is ReentrancyGuard{
         // initial id is started 1.
         _daoIdTracker.increment();
         _memberIdTracker.increment();
+        _proposalIdTracker.increment();
 
         githubURL = _githubURL;
         memberIds[msg.sender] = _memberIdTracker.current();
-        memberInfoes[_memberIdTracker.current()]=MemberInfo(_ownerName,_memberIdTracker.current());
+        memberInfoes[_memberIdTracker.current()]=MemberInfo(_ownerName,msg.sender,_memberIdTracker.current());
         _memberIdTracker.increment();
     }
 
@@ -144,7 +146,7 @@ contract MasterDAO is ReentrancyGuard{
         require(_memberAddress==proposalInfoes[_relatedProposalId].relatedAddress,"Not proposed.");
         require(proposalInfoes[_relatedProposalId].proposalStatus==ProposalStatus.Running,"Not approved.");
         memberIds[_memberAddress] = _memberIdTracker.current();
-        memberInfoes[_memberIdTracker.current()]=MemberInfo(_name,_memberIdTracker.current());
+        memberInfoes[_memberIdTracker.current()]=MemberInfo(_name, _memberAddress, _memberIdTracker.current());
         proposalInfoes[_relatedProposalId].proposalStatus = ProposalStatus.Finished;
         emit MemberAdded(msg.sender, _memberIdTracker.current());
         _memberIdTracker.increment();
@@ -159,6 +161,7 @@ contract MasterDAO is ReentrancyGuard{
         uint256 _memberId = _memberIdTracker.current();
         memberInfoes[memberIds[_memberAddress]].name = "";
         memberInfoes[memberIds[_memberAddress]].memberId = 0;
+        memberInfoes[memberIds[_memberAddress]].eoaAddress = address(0);
         memberIds[_memberAddress] = 0;
         emit MemberDeleted(msg.sender, _memberId);
     }
@@ -280,9 +283,9 @@ contract MasterDAO is ReentrancyGuard{
     */
     function getProposalList() public view returns (ProposalInfo[] memory) {
         ProposalInfo[] memory proposalList = new ProposalInfo[](_proposalIdTracker.current() - 1);
-        for (uint256 i=0; i < _proposalIdTracker.current() - 1; i++) {
+        for (uint256 i=1; i < _proposalIdTracker.current(); i++) {
             if (bytes(proposalInfoes[i].title).length!=0){
-                proposalList[i] = proposalInfoes[i];
+                proposalList[i-1] = proposalInfoes[i];
             }
         }
         return proposalList;

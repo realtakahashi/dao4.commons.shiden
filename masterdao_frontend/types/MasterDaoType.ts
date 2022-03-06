@@ -1,3 +1,5 @@
+import { BigNumber } from "@ethersproject/bignumber";
+
 export interface SubDAOData {
     ownerAddress:string
     daoAddress: string
@@ -6,3 +8,13 @@ export interface SubDAOData {
     rewardApproved:boolean
   }
   
+export interface MemberInfo {
+  name:string
+  memberId:BigNumber
+}
+
+export interface MemberFormData {
+  name:string
+  memberAddress:string
+  proposalId:Number
+}
