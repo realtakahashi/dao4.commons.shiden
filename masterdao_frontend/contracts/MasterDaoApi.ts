@@ -5,6 +5,8 @@ import {
   MemberFormData,
   ProposalInfo,
   AddProposalFormData,
+  ApproveDaoData,
+  DonateInfo
 } from "../types/MasterDaoType";
 import Web3 from "web3";
 import { ethers } from "ethers";
@@ -234,6 +236,93 @@ export const doVoteForProposal = async (yes: boolean, proposalId: number) => {
         alert(err.data.message);
       });
     console.log("### voteForProposal Return: ", response);
+  }
+  return response;
+};
+
+
+export const changeDaoReward = async (approveDaoData: ApproveDaoData, subDaoData: SubDAOData) => {
+  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const contractConstract = MasterDAOContractConstruct;
+  let response: ProposalInfo[] = [];
+  if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      masterDAOAddress,
+      contractConstract.abi,
+      signer
+    );
+    response = await contract
+      .changeDaoReward(subDaoData.daoAddress, approveDaoData.relatedProposalId,approveDaoData.doReward)
+      .catch((err: any) => {
+        console.log(err);
+        alert(err.data.message);
+      });
+  }
+  return response;
+};
+
+export const doDonateSelectedDao = async (donateInfo:DonateInfo,subDaoData: SubDAOData) => {
+  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const contractConstract = MasterDAOContractConstruct;
+  if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      masterDAOAddress,
+      contractConstract.abi,
+      signer
+    );
+    console.log("## subDaoData.daoAddress:",subDaoData.daoAddress)
+    console.log("## donateInfo.amount:", donateInfo.amount)
+    console.log("## donateInfo.amount ETH:", Number(Web3.utils.toWei(String(donateInfo.amount))))
+    await contract
+      .divide(subDaoData.daoAddress, donateInfo.amount,{value:ethers.utils.parseEther(String(donateInfo.amount))})
+      .catch((err: any) => {
+        console.log(err);
+        alert(err.data.message);
+      });
+  }
+};
+
+export const doDonateMasterDao = async (donateInfo:DonateInfo) => {
+  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const contractConstract = MasterDAOContractConstruct;
+  if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      masterDAOAddress,
+      contractConstract.abi,
+      signer
+    );
+    await contract
+      .donate({value:ethers.utils.parseEther(String(donateInfo.amount))})
+      .catch((err: any) => {
+        console.log(err);
+        alert(err.data.message);
+      });
+  }
+};
+
+export const getBalance = async (): Promise<number> => {
+  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const contractConstract = MasterDAOContractConstruct;
+  let response: number = 0;
+  if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      masterDAOAddress,
+      contractConstract.abi,
+      signer
+    );
+    response = await contract.getContractBalance().catch((err: any) => {
+      console.log(err);
+      alert(err.data.message);
+    });
+    console.log("### getProposalList Return: ", response);
   }
   return response;
 };

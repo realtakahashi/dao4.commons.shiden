@@ -1,11 +1,14 @@
-import { BigNumber } from "@ethersproject/bignumber";
-
 export interface SubDAOData {
     ownerAddress:string
     daoAddress: string
     daoName: string
     githubURL: string
     rewardApproved:boolean
+  }
+
+  export interface ApproveDaoData {
+    relatedProposalId:number
+    doReward:boolean
   }
   
 export interface MemberInfo {
@@ -40,4 +43,8 @@ export interface ProposalInfo {
   relatedId:string
   relatedAddress:string
   proposalStatus: number
+}
+
+export interface DonateInfo {
+  amount: number
 }
