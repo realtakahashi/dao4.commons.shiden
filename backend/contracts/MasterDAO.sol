@@ -109,6 +109,7 @@ contract MasterDAO is ReentrancyGuard{
         // initial id is started 1.
         _daoIdTracker.increment();
         _memberIdTracker.increment();
+        _proposalIdTracker.increment();
 
         githubURL = _githubURL;
         memberIds[msg.sender] = _memberIdTracker.current();
