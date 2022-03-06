@@ -286,8 +286,7 @@ const DaoProposals = () => {
       </div>
       <div className="">
         <button
-          className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-				      font-bold py-2 px-4 m-5 rounded"
+          className="button-dao-default px-4 py-2 m-2"
           type="button"
         >
           <a href={"/dao/" + subDAOaddress + "/proposals/add_proposal"}>
@@ -297,8 +296,7 @@ const DaoProposals = () => {
         </button>
 
         <button
-          className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-				      font-bold py-2 px-4 m-5 rounded"
+          className="button-dao-default px-4 py-2 m-2"
           type="button"
           onClick={() => setShow(true)}
         >
@@ -312,8 +310,7 @@ const DaoProposals = () => {
         />
 
         <button
-          className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
-				      font-bold py-2 px-4 m-5 rounded"
+          className="button-dao-default px-4 py-2 m-2"
           type="button"
           onClick={() => setShowVote(true)}
         >
