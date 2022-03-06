@@ -18,27 +18,15 @@ const AddProposal = () => {
     githubURL: "",
   });
 
-  const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+  function onChagngeInput<T extends React.ChangeEvent<HTMLSelectElement>
+    | React.ChangeEvent<HTMLInputElement>
+    | React.ChangeEvent<HTMLTextAreaElement>>(event: T) {
     setFormValue({
       ...formValue,
       [event.target.name]: event.target.value,
     });
     console.log(formValue)
-  };
-  const onChangeTextArea = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setFormValue({
-      ...formValue,
-      [event.target.name]: event.target.value,
-    });
-    console.log(formValue)
-  };
-  const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormValue({
-      ...formValue,
-      [event.target.name]: event.target.value,
-    });
-    console.log(formValue)
-  };
+  }
 
   const onSubmitAddProposalForm = async (
     event: React.FormEvent<HTMLFormElement>
@@ -72,7 +60,7 @@ const AddProposal = () => {
             label='Proposal Kind'
             className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="proposalKind"
-            handleOnChangeSelect={onChangeSelect}
+            handleOnChangeSelect={onChagngeInput}
             selectList={proposalKind}
             optionLabelKey={"key"}
             optionValueKey={"value"}
@@ -83,14 +71,14 @@ const AddProposal = () => {
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			  	leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="title"
-            handleOnChangeInput={onChangeInput}
+            handleOnChangeInput={onChagngeInput}
           />
           <FormInputText
             label="Outline"
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="outline"
-            handleOnChangeTextArea={onChangeTextArea}
+            handleOnChangeTextArea={onChagngeInput}
             isTextArea={true}
           />
           <FormInputText
@@ -98,7 +86,7 @@ const AddProposal = () => {
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="detail"
-            handleOnChangeTextArea={onChangeTextArea}
+            handleOnChangeTextArea={onChagngeInput}
             isTextArea={true}
           />
           <FormInputText
@@ -106,7 +94,7 @@ const AddProposal = () => {
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="githubURL"
-            handleOnChangeInput={onChangeInput}
+            handleOnChangeInput={onChagngeInput}
           />
           <div className="p-5">
             <div className="md:w-1/3"></div>
