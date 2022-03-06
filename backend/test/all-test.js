@@ -120,7 +120,7 @@ describe("All contract", function() {
                 .to.be.revertedWith("only member does.");
             await expect(masterDao.connect(SubDaoOwner4).deleteMember(SubDaoOwner2.address,5))
                 .to.be.revertedWith("only member does.");
-            await expect(masterDao.connect(SubDaoOwner4).divide(masterDao.address,200))
+            await expect(masterDao.connect(SubDaoOwner4).divide(masterDao.address,200,masterDao.address))
                 .to.be.revertedWith("only member does.");
             await expect(masterDao.connect(SubDaoOwner4).changeDaoReward(masterDao.address,5,true))
                 .to.be.revertedWith("only member does.");
@@ -370,8 +370,16 @@ describe("All contract", function() {
             assert.equal(daoList[0].daoAddress,subDao.address);
 
             const beforedaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
+
+            await masterDao.connect(MasterDaoOwner).submitProposal(PROPOSAL_KIND_COMMUNITY_MANAGEMENT,"divide the dao",
+                "I want to divide", "Please divide to reward.", "test.com", 0, subDao.address);
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(6,PROPOSAL_STATUS_VOTING);
+            await masterDao.connect(MasterDaoOwner).voteForProposal(6,true);
+            await masterDao.connect(SubDaoOwner1).voteForProposal(6,true);            
+            await masterDao.connect(MasterDaoOwner).changeProposalStatus(6,PROPOSAL_STATUS_FINISHED_VOTING);
+
             await masterDao.connect(MasterDaoOwner).donate({value:ethers.utils.parseEther("10.0")});
-            await masterDao.connect(MasterDaoOwner).divide(subDao.address,ethers.utils.parseEther("2.0"));
+            await masterDao.connect(MasterDaoOwner).divide(subDao.address,ethers.utils.parseEther("2.0"),6);
             const afterdaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
             assert.equal(afterdaobalance-beforedaobalance > 1,true);
 

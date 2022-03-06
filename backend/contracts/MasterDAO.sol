@@ -175,10 +175,12 @@ contract MasterDAO is ReentrancyGuard{
     }
 
     /** 
-    * 分配する
+    * MasterDAOの残高を分配する
     */
-    function divide(address to, uint256 amount) public payable onlyMember {
+    function divide(address to, uint256 amount,uint256 relatedProposalId) public onlyMember {
         require(daoIds[to]!=0 && daoInfoes[daoIds[to]].rewardApproved==true,"only approved dao can get.");
+        require(proposalInfoes[relatedProposalId].proposalStatus==ProposalStatus.Running,"not Approved");
+        require(proposalInfoes[relatedProposalId].relatedAddress==to,"not Related");
         payable(to).transfer(amount);
         emit Divided(msg.sender, to, amount);
     }
