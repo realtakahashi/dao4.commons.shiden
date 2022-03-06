@@ -69,7 +69,7 @@ function AddProposalModal(props: AddProposalProps) {
         <div id="content">
           <div className="flex justify-center">
             <form className="" onSubmit={onSubmitForm}>
-              <h1 className="text-3xl">Add the member</h1>
+              <h1 className="text-3xl">Add a proposal</h1>
               <div className="p-3"></div>
               <table className="table-auto">
                 <thead></thead>
@@ -487,6 +487,7 @@ const MasterDaoProposals = () => {
           <thead>
             <tr>
               <th className="border px-4 py-2">Kind</th>
+              <th className="border px-4 py-2">Proposal Id</th>
               <th className="border px-4 py-2">Title</th>
               <th className="border px-4 py-2">Outline</th>
               <th className="border px-4 py-2">GithubURL</th>
@@ -513,6 +514,7 @@ const MasterDaoProposals = () => {
                       <td className="border px-4 py-2">
                         {PROPOSAL_KIND[proposal.proposalKind]}
                       </td>
+                      <td className="border px-4 py-2">{String(proposal.proposalId)}</td>
                       <td className="border px-4 py-2">{proposal.title}</td>
                       <td className="border px-4 py-2">{proposal.outline}</td>
                       <td className="border px-4 py-2">{proposal.githubURL}</td>
