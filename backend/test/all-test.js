@@ -143,7 +143,6 @@ describe("All contract", function() {
             assert.equal(await memberERC721.name(),"TEST");
             assert.equal(await memberERC721.symbol(),"TEST");
         });
-        let balanceOfSubDaoOwner1;
         it("Mint MemberToken", async function() {
             await memberERC721.connect(SubDaoOwner1).original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("10.0")});
             assert.equal(await memberERC721.balanceOf(SubDaoOwner1.address),1);
@@ -216,6 +215,7 @@ describe("All contract", function() {
             assert.equal(member.name, "Shin Takahashi");
             assert.equal(member.memberId,1);
             assert.equal(member.tokenId,1);
+            assert.equal(await subDao.connect(SubDaoOwner1).getMemberNFTAddress(),memberERC721a.address)
         });
         it("Add Member", async function() {
             // Mint Member Token
@@ -228,6 +228,11 @@ describe("All contract", function() {
             assert.equal(member.name, "Keisuke Funatsu");
             assert.equal(member.tokenId,2);
             assert.equal(member.memberId,2);
+            assert.equal(await subDao.connect(SubDaoOwner2).getMemberNFTAddress(),memberERC721a.address)
+        });
+        it("Non member can not get member token address.", async function() {
+            await expect(subDao.connect(SubDaoOwner3).getMemberNFTAddress())
+                .to.be.revertedWith("only member does.");
         });
         it("Get Member List", async function() {
             const list = await subDao.getMemberList();
