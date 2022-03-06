@@ -2,7 +2,7 @@ import { Layout } from '@/components/common';
 import { useState } from 'react';
 import { FormInputSelect, FormInputText } from '@/components/ui';
 import { MemberNFTDeployFormData } from "@/types/MemberNFT"
-import { deployMemberNFT, mintMemberNFT } from '@/contracts/MemberNFT';
+import { deployMemberNFT, mintMemberNFT, updateNftAddressAndOwnerTokenId } from '@/contracts/MemberNFT';
 import { useSubDAOList } from '@/hooks';
 
 const DeployMemberNFT = () => {
@@ -28,11 +28,12 @@ const DeployMemberNFT = () => {
   }
   const onSubmitMemberNFTForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const address = await deployMemberNFT(formValue)
-    if (address !== "") {
-      setmemberNFTAddress(address)
+    const nftContractAddress = await deployMemberNFT(formValue)
+    if (nftContractAddress !== "") {
+      setmemberNFTAddress(nftContractAddress)
     }
-    await mintMemberNFT(address)
+    await mintMemberNFT(nftContractAddress)
+    await updateNftAddressAndOwnerTokenId(formValue.subdaoAddress,nftContractAddress,1)
   }
   return (
     <>
