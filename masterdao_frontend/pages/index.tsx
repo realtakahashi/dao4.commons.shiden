@@ -11,6 +11,7 @@ interface DaoDonateMasterDaoModalPropos {
 function DaoDonateMasterDaoModal(props: DaoDonateMasterDaoModalPropos) {
   const [formValue, setFormValue] = useState<DonateInfo>({
     amount: 0,
+    relatedProposalId:0,
   });
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
