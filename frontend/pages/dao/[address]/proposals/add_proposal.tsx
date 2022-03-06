@@ -2,7 +2,7 @@ import { Layout } from "@/components/common";
 import { AddProposalFormData } from "@/types/Proposal";
 import { useState } from "react";
 import { registerProposal } from "contracts/SubDAO";
-import { FormInputText } from "@/components/ui";
+import { FormInputText, FormInputSelect } from "@/components/ui";
 import { useRouter } from "next/router";
 
 const AddProposal = () => {
@@ -18,25 +18,20 @@ const AddProposal = () => {
     githubURL: "",
   });
 
-  const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+  function onChagngeInput<T extends React.ChangeEvent<HTMLSelectElement>
+    | React.ChangeEvent<HTMLInputElement>
+    | React.ChangeEvent<HTMLTextAreaElement>>(event: T) {
     setFormValue({
       ...formValue,
       [event.target.name]: event.target.value,
     });
-    // console.log(formValue)
-  };
-  const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormValue({
-      ...formValue,
-      [event.target.name]: event.target.value,
-    });
-    // console.log(formValue)
-  };
+    console.log(formValue)
+  }
 
   const onSubmitAddProposalForm = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
-    console.log("#### Submit 1");
+    // console.log("#### Submit 1");
     event.preventDefault();
     const proposalId = await registerProposal(subDAOaddress, formValue);
     if (proposalId !== "") {
@@ -44,64 +39,68 @@ const AddProposal = () => {
     }
   };
 
+  const proposalKind = [
+    { value: 0, key: "Add A Member" },
+    { value: 1, key: "Delete A Member" },
+    { value: 2, key: "Use Of Funds" },
+    { value: 3, key: "Community Management" },
+    { value: 4, key: "Activities" },
+
+  ]
   return (
     <>
-      <div>
+      <div className="w-full form-container">
         <h1 className="text-3xl">Add A Proposal</h1>
         <div className="p-5"></div>
-        <form
-          className="w-full max-w-screen-sm"
+        <form          
           onSubmit={onSubmitAddProposalForm}
         >
-          <div className="md:flex md:items-center mb-6">
-            <div className="md:w-1/3">
-              <label className="block text-gray-500  md:text-right mb-1 md:mb-0 pr-4">
-                Proposal Kind
-              </label>
-            </div>
-            <div className="md:w-2/3">
-              <select name="proposalKind" onChange={onChangeSelect}>
-                <option value="0">Add A Member</option>
-                <option value="1">Delete A Member</option>
-                <option value="2">Use Of Funds</option>
-                <option value="3">Community Management</option>
-                <option value="4">Activities</option>
-              </select>
-            </div>
-          </div>
+          <FormInputSelect
+            label='Proposal Kind'
+            className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="proposalKind"
+            handleOnChangeSelect={onChagngeInput}
+            selectList={proposalKind}
+            optionLabelKey={"key"}
+            optionValueKey={"value"}
+            itemName={"Proposal Kind"}
+          />
           <FormInputText
             label="Title"
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			  	leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="title"
-            handleOnChangeInput={onChangeInput}
+            handleOnChangeInput={onChagngeInput}
           />
           <FormInputText
             label="Outline"
-            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
+            className="h-48 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="outline"
-            handleOnChangeInput={onChangeInput}
+            handleOnChangeTextArea={onChagngeInput}
+            isTextArea={true}
           />
           <FormInputText
             label="Detail"
-            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
+            className="h-48 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="detail"
-            handleOnChangeInput={onChangeInput}
+            handleOnChangeTextArea={onChagngeInput}
+            isTextArea={true}
           />
           <FormInputText
             label="Github URL"
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="githubURL"
-            handleOnChangeInput={onChangeInput}
+            handleOnChangeInput={onChagngeInput}
           />
           <div className="p-5">
             <div className="md:w-1/3"></div>
             <div className="md:w-2/3">
               <button
-                className="button-dao-default px-4 py-2 m-2"
+                className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white 
+				font-bold py-2 px-4 rounded"
                 type="submit"
               >
                 Add a Proposal

@@ -1,15 +1,15 @@
 import { FC, Dispatch, SetStateAction } from "react"
 import cn from "classnames"
-import { SubDAOData } from '@/types/SubDAO';
-import { SubDAOMemberData } from '../../../types/SubDAO';
+import { SubDAOData, SubDAOMemberData } from '@/types/SubDAO';
 
 interface SubDAOProps {
   isModalOpen: boolean
   setIsModalOpen: Dispatch<SetStateAction<boolean>>
   subDAO: SubDAOData
+  subDAOBalance: number
 }
 
-export const SubDAOModal: FC<SubDAOProps> = ({ isModalOpen, setIsModalOpen, subDAO }) => {
+export const SubDAOModal: FC<SubDAOProps> = ({ isModalOpen, setIsModalOpen, subDAO,subDAOBalance }) => {
 
 
   const handleModalClose = () => {
@@ -44,8 +44,11 @@ export const SubDAOModal: FC<SubDAOProps> = ({ isModalOpen, setIsModalOpen, subD
             <div className="p-6 space-y-6">
               <p className="text-base leading-relaxed text-white dark:text-white">
                 {
-                  subDAO.rewardApproved? `Reward Approved`: "Reward Not Approved"
+                  subDAO.rewardApproved ? `Reward Approved` : "Reward Not Approved"
                 }
+              </p>
+              <p className="text-base leading-relaxed text-white dark:text-white">
+                Balance: {subDAOBalance}
               </p>
               <p className="text-base leading-relaxed text-white dark:text-white">
                 Owner Address: {subDAO.ownerAddress}
@@ -86,7 +89,7 @@ export const MemberModal: FC<MemberProps> = ({ isModalOpen, setIsModalOpen, memb
     "overflow-y-auto overflow-x-hidden fixed right-0 left-0 top-4 z-50 justify-center items-center h-modal md:h-full md:inset-0",
     { "hidden": !isModalOpen }
   )
-
+  console.log(member)
   return (
     <>
       <div id="defaultModal" aria-hidden="true"
@@ -108,12 +111,12 @@ export const MemberModal: FC<MemberProps> = ({ isModalOpen, setIsModalOpen, memb
               </button>
             </div>
 
-            <div className="p-6 space-y-6">              
+            <div className="p-6 space-y-6">
               <p className="text-base leading-relaxed text-white dark:text-white">
-                MemberID: {member.member_id}
+                MemberID: {member.memberId._hex}
               </p>
               <p className="text-base leading-relaxed text-white dark:text-white">
-                TokenID: {member.token_id}
+                TokenID: {member.tokenId._hex}
               </p>
 
             </div>

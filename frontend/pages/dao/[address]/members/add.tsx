@@ -25,10 +25,6 @@ const MintMemberNFT = () => {
     return <Loading/>
   }
 
-  
-
-
-
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormValue({
       ...formValue,
@@ -44,7 +40,7 @@ const MintMemberNFT = () => {
   }
   return (
     <>
-      <div>
+      <div className="w-full form-container">
         {
           typeof targetSubDAO !== "undefined" ?
             (<h2>
@@ -52,7 +48,7 @@ const MintMemberNFT = () => {
             </h2>) : ''
         }
         <h2 className="text-xl">Add DAO member</h2>
-        <form className="w-full max-w-sm"
+        <form
           onSubmit={onSubmitAddMemberForm}
         >
           <FormInputText

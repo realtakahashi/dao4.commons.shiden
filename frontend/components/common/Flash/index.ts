@@ -1,0 +1,2 @@
+export { InfoFlash } from "./Flash";
+

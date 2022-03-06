@@ -2,7 +2,7 @@ import { Layout } from '@/components/common';
 import { useState } from 'react';
 import { FormInputSelect, FormInputText } from '@/components/ui';
 import { MemberNFTDeployFormData } from "@/types/MemberNFT"
-import { deployMemberNFT, mintMemberNFT } from '@/contracts/MemberNFT';
+import { deployMemberNFT, mintMemberNFT, updateNftAddressAndOwnerTokenId } from '@/contracts/MemberNFT';
 import { useSubDAOList } from '@/hooks';
 
 const DeployMemberNFT = () => {
@@ -28,17 +28,18 @@ const DeployMemberNFT = () => {
   }
   const onSubmitMemberNFTForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const address = await deployMemberNFT(formValue)
-    if (address !== "") {
-      setmemberNFTAddress(address)
+    const nftContractAddress = await deployMemberNFT(formValue)
+    if (nftContractAddress !== "") {
+      setmemberNFTAddress(nftContractAddress)
     }
-    await mintMemberNFT(address)
+    await mintMemberNFT(nftContractAddress)
+    await updateNftAddressAndOwnerTokenId(formValue.subdaoAddress,nftContractAddress,1)
   }
   return (
     <>
-      <div>
+      <div className="w-full form-container">
         <h2 className="text-xl">Deploy Your MemberNFT</h2>
-        <form className="w-full max-w-sm"
+        <form
           onSubmit={onSubmitMemberNFTForm}
         >
           <FormInputText
@@ -64,7 +65,10 @@ const DeployMemberNFT = () => {
             className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="subdaoAddress"
             handleOnChangeSelect={onChangeSelect}
-            subDAOList={subDAOList? subDAOList: []}
+            selectList={subDAOList ? subDAOList : []}
+            optionLabelKey={"daoName"}
+            optionValueKey={"daoAddress"}
+            itemName={"SubDAO"}
           />
           <div className="">
             <div className="md:w-1/3"></div>

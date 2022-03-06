@@ -14,6 +14,10 @@ export interface SubDAOData {
 
 export interface SubDAOMemberData {
   name: string
-  token_id: string
-  member_id:string
+  tokenId: {
+    _hex: string
+  }
+  memberId: {
+    _hex: string
+  }
 }

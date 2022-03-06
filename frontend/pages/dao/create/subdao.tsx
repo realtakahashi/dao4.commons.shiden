@@ -26,9 +26,9 @@ const DeploySubDAO = () => {
   }
   return (
     <>
-      <div>
+      <div className="w-full form-container">
         <h2 className="text-xl">Deploy Your SubDAO</h2>
-        <form className="w-full max-w-sm"
+        <form 
           onSubmit={onSubmitSubDAOForm}
         >
           <FormInputText
@@ -49,7 +49,6 @@ const DeploySubDAO = () => {
             name="ownerName"
             handleOnChangeInput={onChangeInput}
           />
-          <div className="">
             <div className="md:w-1/3"></div>
             <div className="md:w-2/3">
               <button
@@ -59,8 +58,6 @@ const DeploySubDAO = () => {
                 Deploy
               </button>
             </div>
-          </div>
-
         </form>
         {sudDAOAddress !== "" ? (
           <div className='mt-10'>
@@ -68,7 +65,7 @@ const DeploySubDAO = () => {
               Deploy Succeeded!!
             </p>
             <p className="text-lg">
-              Your DAO Contract Address: {sudDAOAddress}
+              Your DAO Contract Address: 0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1
             </p>
           </div>
         ) : ""}

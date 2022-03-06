@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState } from 'react';
 import { SubDAOData } from "@/types/SubDAO"
 import { useSubDAOList } from '@/hooks';
+import { getSubDAOBalance } from '@/contracts/SubDAO';
 
 export const getStaticProps = async () => {
   return { props: {} }
@@ -18,12 +19,24 @@ const topLinks = [
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [subDAOBalance, setSubDAOBalance] = useState<number>()
   const subDAOList = useSubDAOList()
   const displayDAOData = (SubDAOAddress: string) => {
     const target = subDAOList?.find(subDAO => subDAO.daoAddress === SubDAOAddress)
-    setTargetSubDAO(target)
-    setIsModalOpen(true)
-  }
+    if (typeof target !== "undefined") {
+      setTargetSubDAO(target)
+      const setBalance = async () => { 
+        await getSubDAOBalance(target?.daoAddress)
+          .then((response) => {
+            if (typeof response !== "undefined") {
+              setSubDAOBalance(response)      
+            }                    
+        })
+      }    
+      setBalance()
+      setIsModalOpen(true)
+    }    
+  }  
   return (
     <>
       <div className='block'>
@@ -84,11 +97,12 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
             }) : ""
           }
 
-          {typeof targetSubDAO !== "undefined" ? (
+          {typeof targetSubDAO !== "undefined" && typeof subDAOBalance !== "undefined"? (
             <SubDAOModal
               isModalOpen={isModalOpen}
               setIsModalOpen={setIsModalOpen}
               subDAO={targetSubDAO}
+              subDAOBalance={subDAOBalance}
             />
           ) : ""}
         </div>

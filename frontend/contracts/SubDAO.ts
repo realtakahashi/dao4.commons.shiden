@@ -63,6 +63,7 @@ export const getSubDAOMemberList = async (
   }
   return response
 }
+
 export const deploySubDAO = async (
   inputData: SubDAODeployFormData
 ): Promise<string> => {
@@ -270,7 +271,7 @@ export const doVoteForProposal = async (
 
 export const getSubDAOBalance = async (
   subDAOContractAddess: string,
-  ):Promise<string> => 
+  ):Promise<number> => 
 {
   const contractConstract = SubDAOContractConstruct
 
@@ -290,8 +291,8 @@ export const getSubDAOBalance = async (
         alert('failed getSubDAOBalance.')
       })
     console.log("### getSubDAOBalance Return: ",ethers.utils.formatEther(response))
-    return ethers.utils.formatEther(response)
+    return parseInt(ethers.utils.formatEther(response))
     // alert('Voting proposal status is succeeded.')
   }
-  return ""
+  return response
 }
