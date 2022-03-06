@@ -382,6 +382,8 @@ describe("All contract", function() {
             await masterDao.connect(MasterDaoOwner).divide(subDao.address,ethers.utils.parseEther("2.0"),6);
             const afterdaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
             assert.equal(afterdaobalance-beforedaobalance > 1,true);
+            const proposal = await masterDao.connect(MasterDaoOwner).proposalInfoes(6);
+            assert.equal(proposal.proposalStatus,PROPOSAL_STATUS_FINISHED);
 
         });
     });

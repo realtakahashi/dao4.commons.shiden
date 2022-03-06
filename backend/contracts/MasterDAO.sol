@@ -182,6 +182,7 @@ contract MasterDAO is ReentrancyGuard{
         require(proposalInfoes[relatedProposalId].proposalStatus==ProposalStatus.Running,"not Approved");
         require(proposalInfoes[relatedProposalId].relatedAddress==to,"not Related");
         payable(to).transfer(amount);
+        proposalInfoes[relatedProposalId].proposalStatus = ProposalStatus.Finished;
         emit Divided(msg.sender, to, amount);
     }
 
