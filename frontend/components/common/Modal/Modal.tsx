@@ -1,15 +1,15 @@
 import { FC, Dispatch, SetStateAction } from "react"
 import cn from "classnames"
-import { SubDAOData } from '@/types/SubDAO';
-import { SubDAOMemberData } from '../../../types/SubDAO';
+import { SubDAOData, SubDAOMemberData } from '@/types/SubDAO';
 
 interface SubDAOProps {
   isModalOpen: boolean
   setIsModalOpen: Dispatch<SetStateAction<boolean>>
   subDAO: SubDAOData
+  subDAOBalance: number
 }
 
-export const SubDAOModal: FC<SubDAOProps> = ({ isModalOpen, setIsModalOpen, subDAO }) => {
+export const SubDAOModal: FC<SubDAOProps> = ({ isModalOpen, setIsModalOpen, subDAO,subDAOBalance }) => {
 
 
   const handleModalClose = () => {
@@ -46,6 +46,9 @@ export const SubDAOModal: FC<SubDAOProps> = ({ isModalOpen, setIsModalOpen, subD
                 {
                   subDAO.rewardApproved ? `Reward Approved` : "Reward Not Approved"
                 }
+              </p>
+              <p className="text-base leading-relaxed text-white dark:text-white">
+                Balance: {subDAOBalance}
               </p>
               <p className="text-base leading-relaxed text-white dark:text-white">
                 Owner Address: {subDAO.ownerAddress}
