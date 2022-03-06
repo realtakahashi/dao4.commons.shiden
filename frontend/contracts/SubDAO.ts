@@ -77,7 +77,7 @@ export const deploySubDAO = async (
       signer
     )
     await factory
-      .deploy(inputData.name, inputData.github_url, inputData.owner_name)
+      .deploy(inputData.name, inputData.githubUrl, inputData.ownerName)
       .then((res: any) => {
         console.log(res)
         subDAOContractAddess = res.address
@@ -107,7 +107,7 @@ export const registerSubDAO = async (
       signer
     )
     await contract
-      .registerDAO(subDAOContractAddess, inputData.name, inputData.github_url)
+      .registerDAO(subDAOContractAddess, inputData.name, inputData.githubUrl)
       .then((r: any) => {
         console.log(r)
         alert('Succeeded to connect SubDAO and MasterDAO')

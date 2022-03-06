@@ -6,8 +6,8 @@ import { SubDAODeployFormData } from "@/types/SubDAO"
 const DeploySubDAO = () => {
   const [sudDAOAddress, setSubDAOAddress] = useState("")
   const [formValue, setFormValue] = useState<SubDAODeployFormData>({
-    github_url: "",
-    owner_name: "",
+    githubUrl: "",
+    ownerName: "",
     name: ""
   })
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,6 +15,7 @@ const DeploySubDAO = () => {
       ...formValue,
       [event.target.name]: event.target.value
     })
+    console.log(formValue)
   }
   const onSubmitSubDAOForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -39,20 +40,20 @@ const DeploySubDAO = () => {
           <FormInputText
             label='GithubURL'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-            name="github_url"
+            name="githubUrl"
             handleOnChangeInput={onChangeInput}
           />
           <FormInputText
             label='Owner Name'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-            name="owner_name"
+            name="ownerName"
             handleOnChangeInput={onChangeInput}
           />
           <div className="">
             <div className="md:w-1/3"></div>
             <div className="md:w-2/3">
               <button
-                className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white  py-2 px-4 rounded"
+                className="button-dao-default px-4 py-2 m-2"
                 type="submit"
               >
                 Deploy
