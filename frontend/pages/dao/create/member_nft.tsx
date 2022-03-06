@@ -10,8 +10,8 @@ const DeployMemberNFT = () => {
   const [formValue, setFormValue] = useState<MemberNFTDeployFormData>({
     name: "",
     symbol: "",
-    tokenURI: "",
-    tokenURI: ""
+    token_uri: "",
+    subdao_address: ""
   })
   const subDAOList = useSubDAOList()
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,13 +56,13 @@ const DeployMemberNFT = () => {
           <FormInputText
             label='Token URI'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-            name="tokenURI"
+            name="token_uri"
             handleOnChangeInput={onChangeInput}
           />
           <FormInputSelect
             label='SubDAO Address'
             className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-            name="tokenURI"
+            name="subdao_address"
             handleOnChangeSelect={onChangeSelect}
             subDAOList={subDAOList? subDAOList: []}
           />

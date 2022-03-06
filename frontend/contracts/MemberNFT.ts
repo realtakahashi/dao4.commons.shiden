@@ -19,8 +19,8 @@ export const deployMemberNFT = async (
       .deploy(
         inputData.name,
         inputData.symbol,
-        inputData.tokenURI,
-        inputData.tokenURI
+        inputData.token_uri,
+        inputData.subdao_address
       )
       .then((res: any) => {
         console.log(res)
