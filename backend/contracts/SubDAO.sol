@@ -119,6 +119,13 @@ contract SubDAO is ReentrancyGuard{
     }
 
     /**
+    * SubDAOに関連付けられたメンバーNFTのアドレスを取得する
+    */
+    function getMemberNFTAddress() public view onlyMember returns (address) {
+        return erc721Address;
+    }
+
+    /**
     * メンバーを追加する。
     * 正しくないdaoAddressにてコールした場合に対処するために、NFTのAddressをチェックする。
     */
