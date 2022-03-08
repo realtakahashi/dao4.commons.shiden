@@ -24,7 +24,7 @@ const DAOportal = () => {
       if (_daoBalnce==""){
       const balance = await getSubDAOBalance(subDAOaddress)
       console.log("## dao balance:",balance)
-      setDAOBalance(balance)
+      setDAOBalance(String(balance))
       }
     }
     _getDAOInfo()
