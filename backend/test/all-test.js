@@ -144,13 +144,13 @@ describe("All contract", function() {
             assert.equal(await memberERC721.symbol(),"TEST");
         });
         it("Mint MemberToken", async function() {
-            await memberERC721.connect(SubDaoOwner1).original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("10.0")});
+            await memberERC721.connect(SubDaoOwner1).original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("2.0")});
             assert.equal(await memberERC721.balanceOf(SubDaoOwner1.address),1);
             assert.equal(await memberERC721.ownerOf(1),SubDaoOwner1.address);
         });
         it("Mint fail for without depositing.",async function() {
             await expect(memberERC721.connect(SubDaoOwner3)
-                .original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("9.0")}))
+                .original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("1.9")}))
                 .to.be.revertedWith('10 token is needed as deposit.');
         });
         it("Burn fail because without minting.",async function(){
@@ -160,7 +160,7 @@ describe("All contract", function() {
         });
         it("Normal Burn", async function() {
             beforeBalanceOfSubDaoOwner3 = parseInt(ethers.utils.formatEther(await SubDaoOwner3.getBalance()));
-            await memberERC721.connect(SubDaoOwner3).original_mint(SubDaoOwner3.address,{value:ethers.utils.parseEther("10.0")});
+            await memberERC721.connect(SubDaoOwner3).original_mint(SubDaoOwner3.address,{value:ethers.utils.parseEther("2.0")});
             assert.equal(await memberERC721.balanceOf(SubDaoOwner3.address),1);
             assert.equal(await memberERC721.ownerOf(2),SubDaoOwner3.address);
             await memberERC721.connect(SubDaoOwner3).burn(2);
@@ -172,11 +172,11 @@ describe("All contract", function() {
         it("Deny Double minting & Get My Token Id.", async function() {
             const MemberERC721 = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
             memberERC721b = await MemberERC721.connect(SubDaoOwner5).deploy("TEST","TEST","test.com",subDaoa.address);
-            await memberERC721b.connect(SubDaoOwner5).original_mint(SubDaoOwner5.address,{value:ethers.utils.parseEther("10.0")});
+            await memberERC721b.connect(SubDaoOwner5).original_mint(SubDaoOwner5.address,{value:ethers.utils.parseEther("2.0")});
             assert.equal(await memberERC721b.balanceOf(SubDaoOwner5.address),1);
             assert.equal(await memberERC721b.ownerOf(1),SubDaoOwner5.address);
             await expect(memberERC721b.connect(SubDaoOwner5).original_mint(SubDaoOwner5.address,{value:ethers.utils.
-                parseEther("10.0")}))
+                parseEther("2.0")}))
                 .to.be.revertedWith("Already minted.");
             assert.equal(await memberERC721b.ownedTokenId(SubDaoOwner5.address),1);
         });
@@ -185,7 +185,7 @@ describe("All contract", function() {
             assert.equal(await memberERC721b.balanceOf(SubDaoOwner5.address),0);
             await expect(memberERC721b.ownerOf(1)).to.be.revertedWith("ERC721: owner query for nonexistent token");
             assert.equal(await memberERC721b.ownedTokenId(SubDaoOwner5.address),0);
-            await memberERC721b.connect(SubDaoOwner5).original_mint(SubDaoOwner5.address,{value:ethers.utils.parseEther("10.0")});
+            await memberERC721b.connect(SubDaoOwner5).original_mint(SubDaoOwner5.address,{value:ethers.utils.parseEther("2.0")});
             assert.equal(await memberERC721b.balanceOf(SubDaoOwner5.address),1);
             assert.equal(await memberERC721b.ownerOf(2),SubDaoOwner5.address);
             assert.equal(await memberERC721b.ownedTokenId(SubDaoOwner5.address),2);
@@ -209,17 +209,19 @@ describe("All contract", function() {
             assert.equal(await memberERC721a.symbol(),"TEST1");
         });
         it("Update NftAddress & OwnerTokenId", async function() {
-            await memberERC721a.connect(SubDaoOwner1).original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("10.0")});
+            await memberERC721a.connect(SubDaoOwner1).original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("2.0")});
             await subDao.connect(SubDaoOwner1).updateNftAddressAndOwnerTokenId(memberERC721a.address,1);
             const member = await subDao.memberInfoes(SubDaoOwner1.address);
             assert.equal(member.name, "Shin Takahashi");
             assert.equal(member.memberId,1);
             assert.equal(member.tokenId,1);
             assert.equal(await subDao.connect(SubDaoOwner1).getMemberNFTAddress(),memberERC721a.address)
+            await expect(subDao.connect(SubDaoOwner1).updateNftAddressAndOwnerTokenId(memberERC721a.address,1))
+                .to.be.revertedWith("already set.");
         });
         it("Add Member", async function() {
             // Mint Member Token
-            await memberERC721a.connect(SubDaoOwner2).original_mint(SubDaoOwner2.address,{value:ethers.utils.parseEther("10.0")});
+            await memberERC721a.connect(SubDaoOwner2).original_mint(SubDaoOwner2.address,{value:ethers.utils.parseEther("2.0")});
             assert.equal(await memberERC721a.balanceOf(SubDaoOwner2.address),1);
             assert.equal(await memberERC721a.ownerOf(2),SubDaoOwner2.address);
 
