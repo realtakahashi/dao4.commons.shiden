@@ -4,6 +4,8 @@ import {MemberERC721ContractConstruct} from '@/contracts/construct'
 import {MemberNFTDeployFormData} from '@/types/MemberNFT'
 import SubDAOContractConstruct from './construct/SubDAO';
 
+const DEPOSIT_TOKEN_BALANCE = '2'
+
 export const deployMemberNFT = async (
   inputData: MemberNFTDeployFormData
 ): Promise<string> => {
@@ -56,7 +58,7 @@ export const mintMemberNFT = async (
     )
 
     contract
-      .original_mint(signerAddress, {value: Web3.utils.toWei('10')})
+      .original_mint(signerAddress, {value: Web3.utils.toWei(DEPOSIT_TOKEN_BALANCE)})
       .then((d: any) => {
         console.log(d)
         id = d.address
