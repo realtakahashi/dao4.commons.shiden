@@ -113,6 +113,7 @@ contract SubDAO is ReentrancyGuard{
     * SubDao用のNFTのアドレス、オーナーのTokenIdを設定する
     */
     function updateNftAddressAndOwnerTokenId(address _nftAddress, uint256 _ownerTokenId) public onlyOwner {
+        require(erc721Address==address(0),"already set.");
         erc721Address = _nftAddress;
         memberInfoes[msg.sender].tokenId = _ownerTokenId;
         emit UpdatedOwnerInfo(_nftAddress,_ownerTokenId);

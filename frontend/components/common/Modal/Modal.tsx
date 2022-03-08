@@ -27,10 +27,10 @@ export const SubDAOModal: FC<SubDAOProps> = ({ isModalOpen, setIsModalOpen, subD
       >
         <div className="relative px-4 w-full max-w-2xl h-full md:h-auto">
 
-          <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+          <div className="relative bg-gray-700 rounded-lg shadow dark:bg-gray-700">
 
             <div className="flex justify-between items-start p-5 rounded-t border-b dark:border-gray-600">
-              <h3 className="text-xl font-semibold text-gray-900 lg:text-2xl dark:text-white">
+              <h3 className="text-xl font-semibold text-white lg:text-2xl dark:text-white">
                 SubDAO Name: {subDAO.daoName}
               </h3>
               <button
@@ -97,10 +97,10 @@ export const MemberModal: FC<MemberProps> = ({ isModalOpen, setIsModalOpen, memb
       >
         <div className="relative px-4 w-full max-w-2xl h-full md:h-auto">
 
-          <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+          <div className="relative bg-gray-700 rounded-lg shadow dark:bg-gray-700">
 
             <div className="flex justify-between items-start p-5 rounded-t border-b dark:border-gray-600">
-              <h3 className="text-xl font-semibold text-gray-900 lg:text-2xl dark:text-white">
+              <h3 className="text-xl font-semibold text-white lg:text-2xl dark:text-white">
                 Name: {member.name}
               </h3>
               <button
