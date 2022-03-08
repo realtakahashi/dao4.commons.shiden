@@ -126,7 +126,7 @@ export const deleteMember = async (
 
 export const registerProposal = async (
   inputData: AddProposalFormData
-): Promise<string> => {
+) => {
   console.log("### registerProposal 1");
   const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
@@ -139,7 +139,7 @@ export const registerProposal = async (
       signer
     );
     console.log("## Add Proposal: Detail: ", inputData.detail);
-    const tx = await contract
+    await contract
       .submitProposal(
         inputData.proposalKind,
         inputData.title,
@@ -151,17 +151,9 @@ export const registerProposal = async (
       )
       .catch((err: any) => {
         console.log(err);
-        alert(err.data.message);
-        return "";
+        alert(err.message);
       });
-    if (tx) {
-      const returnValue = await tx.wait();
-      console.log("### returnValue:", returnValue);
-      console.log("### Proposal ID:", returnValue.events[0].args.proposalId);
-      return returnValue.events[0].args.proposalId.toString();
-    }
   }
-  return "";
 };
 
 export const getProposalListFromContract = async (): Promise<
