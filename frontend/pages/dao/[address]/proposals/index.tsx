@@ -6,27 +6,7 @@ import {
   changeProposalStatus,
   doVoteForProposal,
 } from "@/contracts/SubDAO";
-import type {
-  InferGetStaticPropsType,
-  GetStaticPaths,
-  GetStaticPropsContext,
-} from "next";
 import { useRouter } from "next/router";
-
-// export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
-//   return {
-//     props: {
-//       address: params?.address,
-//     },
-//   };
-// };
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   return {
-//     paths: ["/dao/[address]/proposals"],
-//     fallback: true,
-//   };
-// };
 
 const PROPOSAL_KIND = [
   "AddAMember",
@@ -113,7 +93,7 @@ function VoteModal(props:VoteModalProps) {
               <td className="border px-4 py-2">
                 You Vote For :
                 <select
-                  className="font-bold"
+                  className="m-5 font-bold text-black"
                   name="Status"
                   value={voteStatus}
                   onChange={(e) => selectVoteStatus(e.target.value)}
@@ -213,9 +193,9 @@ function Modal(param:ModalPropos) {
               <tr>
                 <th className="border px-4 py-2">Status</th>
                 <td className="border px-4 py-2">
-                  Change Status to :
+                  Change Status to : 
                   <select
-                    className="font-bold"
+                    className="m-5 font-bold text-black"
                     name="Status"
                     value={proposalStatus}
                     onChange={(e) => selectStatus(e.target.value)}
@@ -344,7 +324,7 @@ const DaoProposals = () => {
                       style={
                         selectProposal !== null &&
                         proposal.title === selectProposal.title
-                          ? { background: "#ffe4e1" }
+                          ? { background: "#5a67d8" }
                           : {}
                       }
                       onClick={() => setProposal(proposal)}
