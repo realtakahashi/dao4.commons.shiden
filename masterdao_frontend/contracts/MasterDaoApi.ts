@@ -14,7 +14,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 
 export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
   console.log("## MasterDaoApi listSubDAO call 1");
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   console.log("## masterDaoAddress:", masterDAOAddress);
   const contractConstract = MasterDAOContractConstruct;
   let response: SubDAOData[] = [];
@@ -46,7 +46,7 @@ export const listSubDAO = async (): Promise<Array<SubDAOData>> => {
 };
 
 export const getMemberList = async (): Promise<Array<MemberInfo>> => {
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   let response: MemberInfo[] = [];
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
@@ -72,7 +72,7 @@ export const getMemberList = async (): Promise<Array<MemberInfo>> => {
 };
 
 export const addMember = async (_memberFormData: MemberFormData) => {
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   console.log("## add Member");
   console.log("## add Member masterDAOAddress:", masterDAOAddress);
@@ -102,7 +102,7 @@ export const deleteMember = async (
   _memberInfoData: MemberInfo,
   _proposalId: number
 ) => {
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   console.log("## masterDAOAddress:", masterDAOAddress);
   console.log("## memberinfo:", _memberInfoData);
@@ -128,7 +128,7 @@ export const registerProposal = async (
   inputData: AddProposalFormData
 ): Promise<string> => {
   console.log("### registerProposal 1");
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -167,7 +167,7 @@ export const registerProposal = async (
 export const getProposalListFromContract = async (): Promise<
   Array<ProposalInfo>
 > => {
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   let response: ProposalInfo[] = [];
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
@@ -194,7 +194,7 @@ export const changeProposalStatus = async (
   console.log("#### changeProposalStatus ####");
   console.log("## Proposal Status: ", proposalStatus);
   console.log("## Proposal Id: ", proposalId);
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   let response: ProposalInfo[] = [];
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
@@ -218,7 +218,7 @@ export const changeProposalStatus = async (
 
 export const doVoteForProposal = async (yes: boolean, proposalId: number) => {
   console.log("## doVote:yes: ", yes);
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   let response: ProposalInfo[] = [];
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
@@ -242,7 +242,7 @@ export const doVoteForProposal = async (yes: boolean, proposalId: number) => {
 
 
 export const changeDaoReward = async (approveDaoData: ApproveDaoData, subDaoData: SubDAOData) => {
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   let response: ProposalInfo[] = [];
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
@@ -264,7 +264,7 @@ export const changeDaoReward = async (approveDaoData: ApproveDaoData, subDaoData
 };
 
 export const doDonateSelectedDao = async (donateInfo:DonateInfo,subDaoData: SubDAOData) => {
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -287,7 +287,7 @@ export const doDonateSelectedDao = async (donateInfo:DonateInfo,subDaoData: SubD
 };
 
 export const doDonateMasterDao = async (donateInfo:DonateInfo) => {
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -307,7 +307,7 @@ export const doDonateMasterDao = async (donateInfo:DonateInfo) => {
 };
 
 export const getBalance = async (): Promise<number> => {
-  const masterDAOAddress = process.env.MASTERDAO_CONTRACT_ADDRESS;
+  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   let response: number = 0;
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
