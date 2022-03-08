@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId,ReentrancyGuard{
     using Counters for Counters.Counter;
 
-    uint256 DEPOSITE_AMOUNT = 10000000000000000000;
+    uint256 DEPOSITE_AMOUNT = 2000000000000000000;
     
     address owner;
     Counters.Counter private _tokenIdTracker;
