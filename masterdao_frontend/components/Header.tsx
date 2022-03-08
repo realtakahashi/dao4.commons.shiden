@@ -3,11 +3,31 @@ import { useState } from "react";
 import { getBalance } from "../contracts/MasterDaoApi";
 import { useEffect } from "react";
 import { ethers } from "ethers";
+import detectEthereumProvider from "@metamask/detect-provider";
+import Web3 from "web3";
 
 function Header() {
   const [masterDaoBalance, setMasterDaoBalance] = useState(0);
+  const [address, setAddress] = useState("");
+  const [walletConnected, setWalletConnected] = useState(false)
+
+  const connectWallet = async () => {
+    const provider = await detectEthereumProvider({ mustBeMetaMask: true });
+    if (provider && window.ethereum?.isMetaMask) {
+      const web3 = new Web3(Web3.givenProvider);
+      web3.eth.defaultChain = "kovan";
+      const accounts = await web3.eth.requestAccounts();
+      setAddress(accounts[0]);
+      setWalletConnected(true)
+      // console.log("connected")
+    } else {
+      setWalletConnected(false)
+      console.log("failed to connect")
+    }
+  }
 
   useEffect(() => {
+    connectWallet();
     const _getBalance = async () => {
       setMasterDaoBalance(await getBalance());
     };
