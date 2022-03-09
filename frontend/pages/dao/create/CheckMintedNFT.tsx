@@ -46,6 +46,7 @@ const CheckMintedNFT = () => {
               subDaoList.map((item) => {
                   return (
                     <option
+                        key={item.daoAddress}
                         value={item.daoAddress}
                     >
                         {item.daoAddress}
