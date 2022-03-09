@@ -48,7 +48,7 @@ export const SubDAOModal: FC<SubDAOProps> = ({ isModalOpen, setIsModalOpen, subD
                 }
               </p>
               <p className="text-base leading-relaxed text-white dark:text-white">
-                Balance: {subDAOBalance}
+                Balance: {subDAOBalance} SDN
               </p>
               <p className="text-base leading-relaxed text-white dark:text-white">
                 Owner Address: {subDAO.ownerAddress}
