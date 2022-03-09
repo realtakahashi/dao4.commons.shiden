@@ -49,7 +49,7 @@ const CheckMintedNFT = () => {
                         key={item.daoAddress}
                         value={item.daoAddress}
                     >
-                        {item.daoAddress}
+                        {item.daoName}
                     </option>
                   )
                 })
