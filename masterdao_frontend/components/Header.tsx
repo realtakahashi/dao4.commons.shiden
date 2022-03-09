@@ -64,7 +64,7 @@ function Header() {
             </li>
           </ul>
           <p className="px-20 flex justify-end text-blue-100 ">
-            Balance:{ethers.utils.formatEther(masterDaoBalance)} ETH
+            Balance:{ethers.utils.formatEther(masterDaoBalance)} SDN
           </p>
 
         </div>
