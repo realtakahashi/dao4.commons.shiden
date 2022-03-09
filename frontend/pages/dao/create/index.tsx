@@ -5,7 +5,7 @@ import Link from "next/link";
 const topLinks = [
   { path: "/dao/create/subdao", label: "Deploy SubDAO" },
   { path: "/dao/create/member_nft", label: "Deploy MemberNFT" },
-  //  { path: '/dao/create/signup_mint_nft', label: "Mint MemberNFT" },
+  { path: '/dao/create/CheckMintedNFT', label: "Check MemberNFT Address" },
 ];
 
 const CreateDAO = () => {
