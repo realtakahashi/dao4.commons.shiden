@@ -140,7 +140,8 @@ export const addMemberToSubDAO = async (
         inputData.memberAddress,
         inputData.name,
         inputData.nftContractAddress,
-        inputData.tokenID
+        inputData.tokenID,
+        inputData.relatedProposalId,
       )
       .then((r: any) => {
         console.log(r);
@@ -176,7 +177,8 @@ export const registerProposal = async (
       inputData.title,
       inputData.outline,
       inputData.detail,
-      inputData.githubURL
+      inputData.githubURL,
+      inputData.relatedAddress
     );
     const returnValue = await tx.wait();
     console.log("### returnValue:", returnValue);

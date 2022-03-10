@@ -59,6 +59,7 @@ contract SubDAO is ReentrancyGuard{
         string details;
         string githubURL;
         uint256 proposalId;
+        address relatedAddress;
         ProposalStatus proposalStatus;
     }
 
@@ -130,10 +131,13 @@ contract SubDAO is ReentrancyGuard{
     * メンバーを追加する。
     * 正しくないdaoAddressにてコールした場合に対処するために、NFTのAddressをチェックする。
     */
-    function addMember(address eoa, string memory name, address daoERC721Address,uint256 tokenId) public onlyMember {
+    function addMember(address eoa, string memory name, address daoERC721Address,uint256 tokenId,
+        uint256 relatedProposalId) public onlyMember {
         require(erc721Address==daoERC721Address,"NFT address isn't correct.");
+        require(proposalInfoes[relatedProposalId].relatedAddress==eoa,"not approved.");
         memberInfoes[eoa] = MemberInfo(name,tokenId,_memberIdTracker.current());
         memberIds[_memberIdTracker.current()] = eoa;
+        proposalInfoes[relatedProposalId].proposalStatus = ProposalStatus.Finished;
         emit MemberAdded(eoa,_memberIdTracker.current());
         _memberIdTracker.increment();
     }
@@ -141,13 +145,15 @@ contract SubDAO is ReentrancyGuard{
     /**
     * メンバーを削除する。
     */
-    function deleteMember(address eoa) public onlyMember {
+    function deleteMember(address eoa, uint256 relatedProposalId) public onlyMember {
         require(bytes(memberInfoes[eoa].name).length!=0,"not exists.");
+        require(proposalInfoes[relatedProposalId].relatedAddress==eoa,"not approved.");
         uint256 memberId = memberInfoes[eoa].memberId;
         memberInfoes[eoa].name = "";
         memberInfoes[eoa].tokenId = 0;
         memberInfoes[eoa].memberId = 0;
         memberIds[memberId] = address(0);
+        proposalInfoes[relatedProposalId].proposalStatus = ProposalStatus.Finished;
         emit MemberDeleted(eoa,memberId);
     }
 
@@ -198,8 +204,10 @@ contract SubDAO is ReentrancyGuard{
     /** 
     * 分配する
     */
-    function divide(address to, uint256 amount) public payable onlyMember {
+    function divide(address to, uint256 amount, uint256 relatedProposalId) public payable onlyMember {
+        require(proposalInfoes[relatedProposalId].relatedAddress==to,"not approved.");
         payable(to).transfer(amount);
+        proposalInfoes[relatedProposalId].proposalStatus = ProposalStatus.Finished;
         emit Divided(msg.sender, to, amount);
     }
 
@@ -214,10 +222,10 @@ contract SubDAO is ReentrancyGuard{
     * 提案を提出する
     */
     function submitProposal(ProposalKind _proposalKind, string memory _title, string memory _outline, string memory _details, 
-        string memory _githubURL) public onlyMember {
+        string memory _githubURL, address relatedAddress) public onlyMember {
         proposalInfoes[_proposalIdTracker.current()] = 
             ProposalInfo(_proposalKind, _title, _outline, _details, _githubURL, _proposalIdTracker.current()
-            ,ProposalStatus.UnderDiscussionOnGithub);
+            , relatedAddress, ProposalStatus.UnderDiscussionOnGithub);
         emit SubmitedProposal(msg.sender, _title, _proposalIdTracker.current());
         _proposalIdTracker.increment();
     }

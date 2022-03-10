@@ -17,7 +17,8 @@ const MintMemberNFT = () => {
     tokenID: 0,
     nftContractAddress: "",
     name: "",
-    memberAddress: ""
+    memberAddress: "",
+    relatedProposalId: 0,
   })
 
   const targetSubDAO = useSubDAOData(subDAOaddress)
@@ -73,6 +74,12 @@ const MintMemberNFT = () => {
             label='TokenID'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="tokenID"
+            handleOnChangeInput={onChangeInput}
+          />
+          <FormInputText
+            label='Related Proposal Id'
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="relatedProposalId"
             handleOnChangeInput={onChangeInput}
           />
 

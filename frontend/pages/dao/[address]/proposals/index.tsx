@@ -303,10 +303,12 @@ const DaoProposals = () => {
           subDaoAddress={subDAOaddress}
         />
       </div>
+      <div className="p-2"></div>
       <div>
         <table className="table-auto">
           <thead>
             <tr>
+            <th className="border px-4 py-2">Proposal Id</th>
               <th className="border px-4 py-2">Kind</th>
               <th className="border px-4 py-2">Title</th>
               <th className="border px-4 py-2">Outline</th>
@@ -329,6 +331,7 @@ const DaoProposals = () => {
                       }
                       onClick={() => setProposal(proposal)}
                     >
+                      <td className="border px-4 py-2">{String(proposal.proposalId)}</td>
                       <td className="border px-4 py-2">
                         {PROPOSAL_KIND[proposal.proposalKind]}
                       </td>
