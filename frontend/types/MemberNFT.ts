@@ -15,4 +15,5 @@ export interface AddMemberFormData {
   nftContractAddress: string
   name: string
   memberAddress: string
+  relatedProposalId: number
 }

@@ -225,7 +225,13 @@ describe("All contract", function() {
             assert.equal(await memberERC721a.balanceOf(SubDaoOwner2.address),1);
             assert.equal(await memberERC721a.ownerOf(2),SubDaoOwner2.address);
 
-            await subDao.connect(SubDaoOwner1).addMember(SubDaoOwner2.address, "Keisuke Funatsu", memberERC721a.address,2);
+            await subDao.connect(SubDaoOwner1).submitProposal(PROPOSAL_KIND_COMMUNITY_MANAGEMENT, "Add Members", "test", 
+                "test","https://github.com/realtakahashi", SubDaoOwner2.address);
+            await subDao.connect(SubDaoOwner1).changeProposalStatus(1,PROPOSAL_STATUS_VOTING);
+            await subDao.connect(SubDaoOwner1).voteForProposal(1,true);
+            await subDao.connect(SubDaoOwner1).changeProposalStatus(1,PROPOSAL_STATUS_FINISHED_VOTING);
+
+            await subDao.connect(SubDaoOwner1).addMember(SubDaoOwner2.address, "Keisuke Funatsu", memberERC721a.address,2,1);
             const member = await subDao.memberInfoes(SubDaoOwner2.address);
             assert.equal(member.name, "Keisuke Funatsu");
             assert.equal(member.tokenId,2);
@@ -249,90 +255,90 @@ describe("All contract", function() {
             // 1
             await subDao.connect(SubDaoOwner1).submitProposal(PROPOSAL_KIND_COMMUNITY_MANAGEMENT, "Add Members", "I propose to join 2 Members.", 
                 "one:Saki Takahashi. She is a daughter of Shin Takahashi.¥n two:Sei Takaahashi. He is a son of Shin Takahashi.",
-                "https://github.com/realtakahashi");
+                "https://github.com/realtakahashi",SubDaoOwner3.address);
             const proposalList = await subDao.connect(SubDaoOwner3).getProposalList();
-            assert.equal(proposalList[0].proposalKind,3);
-            assert.equal(proposalList[0].title,"Add Members");
-            assert.equal(proposalList[0].outline,"I propose to join 2 Members.");
-            assert.equal(proposalList[0].details,"one:Saki Takahashi. She is a daughter of Shin Takahashi.¥n two:Sei Takaahashi. He is a son of Shin Takahashi.");
-            assert.equal(proposalList[0].githubURL,"https://github.com/realtakahashi");
-            assert.equal(proposalList[0].proposalStatus,0);
+            assert.equal(proposalList[1].proposalKind,3);
+            assert.equal(proposalList[1].title,"Add Members");
+            assert.equal(proposalList[1].outline,"I propose to join 2 Members.");
+            assert.equal(proposalList[1].details,"one:Saki Takahashi. She is a daughter of Shin Takahashi.¥n two:Sei Takaahashi. He is a son of Shin Takahashi.");
+            assert.equal(proposalList[1].githubURL,"https://github.com/realtakahashi");
+            assert.equal(proposalList[1].proposalStatus,0);
             // 2
             await subDao.connect(SubDaoOwner1).submitProposal(PROPOSAL_KIND_COMMUNITY_MANAGEMENT, "Test Proposal", "I propose to Test.", 
                 "We Test hard.",
-                "https://github.com/realtakahashi");
+                "https://github.com/realtakahashi",SubDaoOwner3.address);
             const proposalList1 = await subDao.connect(SubDaoOwner3).getProposalList();
-            assert.equal(proposalList1[1].proposalKind,3);
-            assert.equal(proposalList1[1].title,"Test Proposal");
-            assert.equal(proposalList1[1].outline,"I propose to Test.");
-            assert.equal(proposalList1[1].details,"We Test hard.");
-            assert.equal(proposalList1[1].githubURL,"https://github.com/realtakahashi");
-            assert.equal(proposalList1[1].proposalStatus,0);
+            assert.equal(proposalList1[2].proposalKind,3);
+            assert.equal(proposalList1[2].title,"Test Proposal");
+            assert.equal(proposalList1[2].outline,"I propose to Test.");
+            assert.equal(proposalList1[2].details,"We Test hard.");
+            assert.equal(proposalList1[2].githubURL,"https://github.com/realtakahashi");
+            assert.equal(proposalList1[2].proposalStatus,0);
             //3 error
             await expect(subDao.connect(SubDaoOwner3).submitProposal(PROPOSAL_KIND_COMMUNITY_MANAGEMENT, 
                 "Test Proposal", "I propose to Test.", 
                 "We Test hard.",
-                "https://github.com/realtakahashi"))
+                "https://github.com/realtakahashi",SubDaoOwner3.address))
                 .to.be.revertedWith("only member does.");
 
         });
         it("Change the Proposal Status.", async function() {
             // Only member check
-            await expect(subDao.connect(SubDaoOwner3).changeProposalStatus(1,PROPOSAL_STATUS_PENDING))
+            await expect(subDao.connect(SubDaoOwner3).changeProposalStatus(2,PROPOSAL_STATUS_PENDING))
                 .to.be.revertedWith("only member does.");
             // PROPOSAL_STATUS_UNDER_DISCUSSION_ON_GITHUB => PROPOSAL_STATUS_PENDING
-            await subDao.connect(SubDaoOwner1).changeProposalStatus(1,PROPOSAL_STATUS_PENDING);
-            const proposalList = await subDao.getProposalList();
-            assert.equal(proposalList[0].proposalStatus,2);
-            // PROPOSAL_STATUS_PENDING => PROPOSAL_STATUS_UNDER_DISCUSSION_ON_GITHUB
-            await subDao.connect(SubDaoOwner1).changeProposalStatus(1,PROPOSAL_STATUS_UNDER_DISCUSSION_ON_GITHUB);
-            const proposalList2 = await subDao.getProposalList();
-            assert.equal(proposalList2[0].proposalStatus,0);
-            // PROPOSAL_STATUS_UNDER_DISCUSSION_ON_GITHUB => PROPOSAL_STATUS_VOTING
-            await subDao.connect(SubDaoOwner1).changeProposalStatus(1,PROPOSAL_STATUS_VOTING);
-            const proposalList3 = await subDao.getProposalList();
-            assert.equal(proposalList3[0].proposalStatus,1);
-            // PROPOSAL_STATUS_PENDING => PROPOSAL_STATUS_VOTING
             await subDao.connect(SubDaoOwner1).changeProposalStatus(2,PROPOSAL_STATUS_PENDING);
+            const proposalList = await subDao.getProposalList();
+            assert.equal(proposalList[1].proposalStatus,2);
+            // PROPOSAL_STATUS_PENDING => PROPOSAL_STATUS_UNDER_DISCUSSION_ON_GITHUB
+            await subDao.connect(SubDaoOwner1).changeProposalStatus(2,PROPOSAL_STATUS_UNDER_DISCUSSION_ON_GITHUB);
+            const proposalList2 = await subDao.getProposalList();
+            assert.equal(proposalList2[1].proposalStatus,0);
+            // PROPOSAL_STATUS_UNDER_DISCUSSION_ON_GITHUB => PROPOSAL_STATUS_VOTING
             await subDao.connect(SubDaoOwner1).changeProposalStatus(2,PROPOSAL_STATUS_VOTING);
+            const proposalList3 = await subDao.getProposalList();
+            assert.equal(proposalList3[1].proposalStatus,1);
+            // PROPOSAL_STATUS_PENDING => PROPOSAL_STATUS_VOTING
+            await subDao.connect(SubDaoOwner1).changeProposalStatus(3,PROPOSAL_STATUS_PENDING);
+            await subDao.connect(SubDaoOwner1).changeProposalStatus(3,PROPOSAL_STATUS_VOTING);
             const proposalList4 = await subDao.getProposalList();
-            assert.equal(proposalList4[1].proposalStatus,1);
+            assert.equal(proposalList4[2].proposalStatus,1);
         });
         it("Voting Test.", async function() {
             // error rogic check
-            await expect(subDao.connect(SubDaoOwner1).voteForProposal(3,true)).to.be.revertedWith("Now can not vote.");
+            await expect(subDao.connect(SubDaoOwner1).voteForProposal(4,true)).to.be.revertedWith("Now can not vote.");
             // normal yes case
-            await subDao.connect(SubDaoOwner1).voteForProposal(2,true);
+            await subDao.connect(SubDaoOwner1).voteForProposal(3,true);
             // // double vote check
-            await expect(subDao.connect(SubDaoOwner1).voteForProposal(2,true)).to.be.revertedWith("Already voted.");
-            await subDao.connect(SubDaoOwner2).voteForProposal(2,true);
+            await expect(subDao.connect(SubDaoOwner1).voteForProposal(3,true)).to.be.revertedWith("Already voted.");
+            await subDao.connect(SubDaoOwner2).voteForProposal(3,true);
             // // double vote check
-            await expect(subDao.connect(SubDaoOwner2).voteForProposal(2,true)).to.be.revertedWith("Already voted.");
-            await subDao.connect(SubDaoOwner1).changeProposalStatus(2,PROPOSAL_STATUS_FINISHED_VOTING);
-            const voteInfo = await subDao.votingInfoes(2);
+            await expect(subDao.connect(SubDaoOwner2).voteForProposal(3,true)).to.be.revertedWith("Already voted.");
+            await subDao.connect(SubDaoOwner1).changeProposalStatus(3,PROPOSAL_STATUS_FINISHED_VOTING);
+            const voteInfo = await subDao.votingInfoes(3);
             // console.log("## voteinfo:",voteInfo);
             assert.equal(voteInfo.votingCount,2);
             assert.equal(voteInfo.yesCount,2);
             assert.equal(voteInfo.noCount,0);
             const proposalList = await subDao.getProposalList();
-            assert.equal(proposalList[1].proposalId,2);
-            assert.equal(proposalList[1].proposalStatus,PROPOSAL_STATUS_RUNNING);
-            await subDao.connect(SubDaoOwner1).changeProposalStatus(2,PROPOSAL_STATUS_FINISHED);
+            assert.equal(proposalList[2].proposalId,3);
+            assert.equal(proposalList[2].proposalStatus,PROPOSAL_STATUS_RUNNING);
+            await subDao.connect(SubDaoOwner1).changeProposalStatus(3,PROPOSAL_STATUS_FINISHED);
             const proposalList2 = await subDao.getProposalList();
-            assert.equal(proposalList2[1].proposalId,2);
-            assert.equal(proposalList2[1].proposalStatus,6);
+            assert.equal(proposalList2[2].proposalId,3);
+            assert.equal(proposalList2[2].proposalStatus,6);
             // reject case
-            await subDao.connect(SubDaoOwner1).voteForProposal(1,true);
-            await subDao.connect(SubDaoOwner2).voteForProposal(1,false);
-            await subDao.connect(SubDaoOwner1).changeProposalStatus(1,PROPOSAL_STATUS_FINISHED_VOTING);
-            const voteInfo2 = await subDao.votingInfoes(1);
+            await subDao.connect(SubDaoOwner1).voteForProposal(2,true);
+            await subDao.connect(SubDaoOwner2).voteForProposal(2,false);
+            await subDao.connect(SubDaoOwner1).changeProposalStatus(2,PROPOSAL_STATUS_FINISHED_VOTING);
+            const voteInfo2 = await subDao.votingInfoes(2);
             // console.log("## voteinfo:",voteInfo);
             assert.equal(voteInfo2.votingCount,2);
             assert.equal(voteInfo2.yesCount,1);
             assert.equal(voteInfo2.noCount,1);
             const proposalList3 = await subDao.getProposalList();
-            assert.equal(proposalList3[0].proposalId,1);
-            assert.equal(proposalList3[0].proposalStatus,PROPOSAL_STATUS_REJECTED);
+            assert.equal(proposalList3[1].proposalId,2);
+            assert.equal(proposalList3[1].proposalStatus,PROPOSAL_STATUS_REJECTED);
         });
     });
     describe("Sub DAO is related with Master DAO.", async function() {
