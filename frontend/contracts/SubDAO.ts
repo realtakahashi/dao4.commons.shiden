@@ -7,6 +7,7 @@ import {
   SubDAOData,
   SubDAOMemberData,
   SubDAODeployFormData,
+  DeleteMemberFormData,
 } from "@/types/SubDAO";
 import { AddProposalFormData, ProposalInfo } from "@/types/Proposal";
 import { AddMemberFormData } from "@/types/MemberNFT";
@@ -122,40 +123,74 @@ export const registerSubDAO = async (
   }
   return;
 };
+
+
 export const addMemberToSubDAO = async (
   subDAOContractAddess: string,
   inputData: AddMemberFormData
 ): Promise<void> => {
-  const contractConstract = SubDAOContractConstruct;
-  if (typeof window.ethereum !== "undefined" && subDAOContractAddess) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
+  const contractConstract = SubDAOContractConstruct
+  if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
     const contract = new ethers.Contract(
       subDAOContractAddess,
       contractConstract.abi,
       signer
-    );
+    )
     const tx = await contract
       .addMember(
         inputData.memberAddress,
         inputData.name,
         inputData.nftContractAddress,
         inputData.tokenID,
-        inputData.relatedProposalId,
+        inputData.relatedProposalId
       )
       .then((r: any) => {
-        console.log(r);
-        alert("Succeeded to add member to SubDAO");
-        return;
+        console.log(r)
+        alert('Succeeded to add member to SubDAO')
+        return
       })
       .catch((err: any) => {
-        console.log(err);
-        alert("failed to add Member to SubDAO");
-        return;
-      });
+        console.log(err)
+        alert('failed to add Member to SubDAO')
+        return
+      })
   }
-  return;
-};
+  return
+}
+
+export const deleteMemberOfSubDAO = async (
+  subDAOContractAddess: string,
+  inputData: DeleteMemberFormData
+): Promise<void> => {
+  const contractConstract = SubDAOContractConstruct
+  if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOContractAddess,
+      contractConstract.abi,
+      signer
+    )
+    const tx = await contract
+      .deleteMember(
+        inputData.memberAddress,
+        inputData.relatedProposalId
+      )
+      .then((r: any) => {
+        console.log(r)
+        alert('Succeeded to delete member to SubDAO')
+        return
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed to delete Member to SubDAO')
+        return
+      })
+  }
+  return
+}
 
 export const registerProposal = async (
   subDAOContractAddess: string,
