@@ -180,11 +180,11 @@ function Modal(param:ModalPropos) {
               </tr>
               <tr>
                 <th className="border px-4 py-2">Outline</th>
-                <td className="border px-4 py-2">{param.selectProposal.outline}</td>
+                <td className="border px-4 py-2 whitespace-pre">{param.selectProposal.outline}</td>
               </tr>
               <tr>
                 <th className="border px-4 py-2">Detail</th>
-                <td className="border px-4 py-2">{param.selectProposal.details}</td>
+                <td className="border px-4 py-2 whitespace-pre">{param.selectProposal.details}</td>
               </tr>
               <tr>
                 <th className="border px-4 py-2">GithubURL</th>
