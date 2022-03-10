@@ -35,7 +35,7 @@ function Header() {
   }, []);
   return (
     <>
-      <nav className="flex justify-center flex-wrap bg-blue-900 p-4">
+      <nav className="flex justify-center flex-wrap bg-blue-900">
         <div className="w-1/5">
           <p className="flex justify-start text-blue-300 text-3xl">
             Master DAO
@@ -45,30 +45,33 @@ function Header() {
           <ul>
             <li>
               <Link href="/">
-                <a className="m-5 text-white underline">Home</a>
+                <a className="m-5 text-white underline text-xl">Home</a>
               </Link>
             </li>
           </ul>
           <ul>
             <li>
               <Link href="/members">
-                <a className="m-5 text-white underline">Members</a>
+                <a className="m-5 text-white underline text-xl">Members</a>
               </Link>
             </li>
           </ul>
           <ul>
             <li>
               <Link href="/proposals">
-                <a className="m-5 text-white underline">Proposals</a>
+                <a className="m-5 text-white underline text-xl">Proposals</a>
               </Link>
             </li>
           </ul>
-          <p className="px-20 flex justify-end text-blue-100 ">
+          <p className="px-20 flex justify-end text-blue-100 text-2xl">
             Balance:{ethers.utils.formatEther(masterDaoBalance)} SDN
           </p>
 
         </div>
       </nav>
+      <div className="flex justify-end flex-wrap bg-blue-900">
+        <label className="text-2xl text-blue-200">dao4.commons.shiden</label>
+      </div>
     </>
   );
 }
