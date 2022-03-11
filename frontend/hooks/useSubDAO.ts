@@ -7,9 +7,10 @@ export const useSubDAOList = () => {
   useEffect(() => {
     const getSubSubDAOList = async () => {
       const response = await listSubDAO()
-      setSubDAOList(
-        response
-      )
+      if (response.errors) {
+      setSubDAOList(response.result)
+      }
+      setSubDAOList([])
     }
     getSubSubDAOList()
   }, [])
@@ -20,11 +21,15 @@ export const useSubDAOData = (subDAOaddress: string) => {
   const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>()
   useEffect(() => {
     const setAddress = async () => {
-      const subDAOList = await listSubDAO()      
-      const target = subDAOList?.find(subDAOList => subDAOList.daoAddress === subDAOaddress)
-      if (typeof target !== "undefined") {
-        setTargetSubDAO(target)      
-      }
+      const subDAOList = await listSubDAO()  
+      if (typeof subDAOList.result !== 'undefined') {
+        const target = subDAOList.result.find(
+          (list) => list.daoAddress === subDAOaddress
+        )
+        if (typeof target !== 'undefined') {
+          setTargetSubDAO(target)
+        }
+      }        
     }
     setAddress()
   }, [])

@@ -98,7 +98,7 @@ export const updateNftAddressAndOwnerTokenId = async (
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
       subDAOAddress,
-      SubDAOContractConstruct.abi,
+      SubDAOContractConstruct.abi as string,
       signer
     )
 
