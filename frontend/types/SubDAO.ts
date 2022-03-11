@@ -5,11 +5,11 @@ export interface SubDAODeployFormData {
 }
 
 export interface SubDAOData {
-  ownerAddress:string
+  ownerAddress: string
   daoAddress: string
   daoName: string
   githubURL: string
-  rewardApproved:boolean
+  rewardApproved: boolean
 }
 
 export interface SubDAOMemberData {
@@ -20,4 +20,9 @@ export interface SubDAOMemberData {
   memberId: {
     _hex: string
   }
+}
+
+export interface DeleteMemberFormData {
+  memberAddress: string
+  relatedProposalId: number
 }

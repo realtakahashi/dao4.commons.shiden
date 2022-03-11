@@ -29,12 +29,12 @@ const DaoMembers = () => {
     listMember()
   }, [])
 
-
   const handleClickDAOmember = (memberID: string) => {
     const target = daoMemberList?.find(member => member.memberId._hex === memberID)
-    setTargetDAOMember(target)
     setIsModalOpen(true)
+    setTargetDAOMember(target)
   }
+
   return (
     <>
       <div>
@@ -67,14 +67,22 @@ const DaoMembers = () => {
                 <>
                   <div
                     key={member.memberId._hex}
-                    className="bg-black w-64 my-2 border border-gray-700 hover:border-gray-500 max-w-sm rounded overflow-hidden shadow-lg"
+                    className="bg-black w-64 py-5 my-2 border border-gray-700 hover:border-gray-500 max-w-sm rounded overflow-hidden shadow-lg"
                   >
                     <div className="px-6 py-2">
                       <div
                         className="text-xl mb-2 cursor-pointer"
                         onClick={() => handleClickDAOmember(member.memberId._hex)}
-                      >{member.name}</div>
+                      >{member.name}</div>                      
                     </div>
+                    <Link                                            
+                      href={`/dao/${subDAOaddress}/members/delete`}
+                    >
+                      <a
+                        className='button-dao-default px-4 py-2 m-2'>
+                        Delete Member
+                      </a>                      
+                    </Link>
                   </div>
                 </>
               )

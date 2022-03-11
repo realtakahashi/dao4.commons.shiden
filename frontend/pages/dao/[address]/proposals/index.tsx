@@ -77,12 +77,12 @@ function VoteModal(props:VoteModalProps) {
               <td className="border px-4 py-2">{props.selectProposal.title}</td>
             </tr>
             <tr>
-              <th className="border px-4 py-2">Outline</th>
+              <th className="border px-4 py-2 whitespace-pre">Outline</th>
               <td className="border px-4 py-2">{props.selectProposal.outline}</td>
             </tr>
             <tr>
-              <th className="border px-4 py-2">Detail</th>
-              <td className="border px-4 py-2">{props.selectProposal.details}</td>
+              <th className="border px-4 py-2 whitespace-pre">Detail</th>
+              <td className="border px-4 py-2 whitespace-pre">{props.selectProposal.details}</td>
             </tr>
             <tr>
               <th className="border px-4 py-2">GithubURL</th>
