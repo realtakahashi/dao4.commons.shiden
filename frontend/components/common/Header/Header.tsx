@@ -23,44 +23,50 @@ const Header: FC = () => {
     const provider = await detectEthereumProvider({ mustBeMetaMask: true });
     if (provider && window.ethereum?.isMetaMask) {
       const web3 = new Web3(Web3.givenProvider);
-      web3.eth.defaultChain = "kovan";
+      const chainId = await web3.eth.getChainId()
       const accounts = await web3.eth.requestAccounts();
       setAddress(accounts[0]);
+      // console.log(accounts[0])
+      // console.log(chainId)
       setWalletConnected(true)
+      if (chainId !== 81 && chainId !== 31337) {
+        alert("Network wrong, use shibuya network.")
+      }
       // console.log("connected")
     } else {
       setWalletConnected(false)
       console.log("failed to connect")
+      alert("Failed to Connect Metamask")
     }
   }
 
-  const disconnectWallet = async () => {
-    const web3 = new Web3(Web3.givenProvider)
-    await web3.eth.clearSubscriptions
-    setWalletConnected(false)
-    setAddress("")
-    console.log("disconnected")
-  }
+  // const disconnectWallet = async () => {
+  //   const web3 = new Web3(Web3.givenProvider)
+  //   await web3.eth.clearSubscriptions
+  //   setWalletConnected(false)
+  //   setAddress("")
+  //   console.log("disconnected")
+  // }
 
 
   const ConnectButton: FC = (): ReactElement => {
     const router = useRouter();
-    router.events?.on('routeChangeStart', () => { 
+    router.events?.on('routeChangeStart', () => {
       setheaderMenuOpen(false)
     });
-    const buttonClass = "inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-white-500 hover:bg-black mt-4 lg:mt-0"
-    let button: ReactElement
-    if (address === "") {
-      button = <button className={buttonClass} onClick={connectWallet}>
-        Connect
-      </button>
-    } else {
-      button = <button className={buttonClass} onClick={disconnectWallet}>
-        {address}
-      </button>
+    let button: ReactElement = <></>
+    if (address !== "") {
+      <>
+        <div>{address}</div>
+      </>
     }
     return button
   }
+
+
+  useEffect(() => {
+    connectWallet()
+  }, [])
 
   return (
     <>
@@ -83,7 +89,13 @@ const Header: FC = () => {
         <div className={headerMenuClassName}>
           <HeaderNav />
           <div>
-            <ConnectButton />
+            if (address !== "") {
+              <>
+                <div>
+                  <span className="text-white">{address}</span>
+                </div>
+              </>
+            }
           </div>
         </div>
       </nav>
