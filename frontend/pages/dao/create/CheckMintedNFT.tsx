@@ -13,7 +13,7 @@ const CheckMintedNFT = () => {
   useEffect(() => {
     const getSubDaoList = async () => {
       console.log("## getSubDaoList call 1");
-      const result = await listSubDAO();
+      const result = await listSubDAO().then(res => res.result);
       setSubDaoList(result);
     };
 

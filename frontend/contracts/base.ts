@@ -40,6 +40,7 @@ export const callContract = async <R>(
       return {errors}
     }    
   })
+  console.log(result)
   return {result}
 }
 

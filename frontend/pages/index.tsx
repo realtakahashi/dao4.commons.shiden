@@ -1,28 +1,32 @@
-import type { InferGetStaticPropsType } from 'next'
 import { Layout, SubDAOModal } from '@/components/common'
 import Link from "next/link"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SubDAOData } from "@/types/SubDAO"
-import { useSubDAOList } from '@/hooks';
 import { getSubDAOBalance } from '@/contracts/SubDAO';
 import { FC } from 'react';
+import { listSubDAO } from '@/contracts/SubDAO';
 
-export const getStaticProps = async () => {
-  return { props: {} };
-};
-
-// mock
 const topLinks = [
   { type: "link", path: "/dao/create", label: "Create DAO" },
   { type: "link", path: "/dao/create/signup_mint_nft", label: "Signup DAO" },
   { type: "link", path: "/dao/tokensale", label: "Token Sale" },
 ];
 
-const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+const Home = () => {
   const [targetSubDAO, setTargetSubDAO] = useState<SubDAOData>();
+  const [subDAOList, setSubDAOList] = useState<Array<SubDAOData>>();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [subDAOBalance, setSubDAOBalance] = useState<number>();
-  const subDAOList = useSubDAOList();
+  const [subDAOBalance, setSubDAOBalance] = useState<number>();  
+  useEffect(() => {
+    const f = async () => {
+      const list = await listSubDAO().then(res => res.result)
+      setSubDAOList(list)
+      // console.log(subDAOList)
+    }
+    f()
+  },[])
+
+  
   const displayDAOData = (SubDAOAddress: string) => {
     const target = subDAOList?.find(
       (subDAO) => subDAO.daoAddress === SubDAOAddress
@@ -98,7 +102,7 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <div className="flex flex-wrap justify-center mx-1 lg:-mx-4">
 
           {typeof subDAOList !== "undefined" ?
-            subDAOList.map((dao) => {
+            subDAOList.map((dao) => {    
               return (
                 <SubDAOListElement
                   key={dao.daoAddress}
