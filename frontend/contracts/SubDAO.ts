@@ -41,8 +41,7 @@ export const listSubDAO2 = async (): Promise<Array<SubDAOData>> => {
         response = r
       })
       .catch((err: any) => {
-        console.log(err)
-        alert('failed to list SubDAO')
+        console.log(err)        
       })
   }
   return response
