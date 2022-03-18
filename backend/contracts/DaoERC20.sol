@@ -24,10 +24,12 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     /** 
     * constructor
     */
-    constructor(string memory name,string memory symbol,address _daoAddress) ERC20(name,symbol) {
+    constructor(string memory name,string memory symbol,address _daoAddress,
+        uint256 _priceWei,uint256 amount,address _tokenSaleManagerAddress) ERC20(name,symbol) {
         owner = msg.sender;
         daoAddress = _daoAddress;
         onSale = false;
+        _mint(_priceWei, amount);
     }
 
     modifier onlyOwner(){
@@ -38,7 +40,7 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     /** 
     * Mintを実行する関数です。
     */
-    function mint(uint256 _priceWei,uint256 amount) public onlyOwner {
+    function _mint(uint256 _priceWei,uint256 amount) private {
         priceWei = _priceWei;
         _mint(address(this),amount);
         emit Minted(msg.sender, _priceWei, amount);   
