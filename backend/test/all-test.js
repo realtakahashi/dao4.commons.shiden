@@ -33,15 +33,24 @@ describe("All contract", function() {
     let subDaoa;
     let daoErc20;
     let daoErc721;
+    let memberManager
 
+    describe("MemberManager Deployment", function() {
+        it("MasterDAO Deployment.", async function() {
+            const MemberManager = await ethers.getContractFactory("MemberManager");
+            memberManager = await MemberManager.connect(MasterDaoOwner).deploy();
+        });
+    });
+    
     describe("Master DAO Deployment", function() {
         it("MasterDAO Deployment.", async function() {
             const MasterDao = await ethers.getContractFactory("MasterDAO");
-            masterDao = await MasterDao.connect(MasterDaoOwner).deploy("test.com","Shin Takahashi");
-            const memberId = await masterDao.memberIds(MasterDaoOwner.address)
-            const memberInfo = await masterDao.memberInfoes(memberId);
-            assert.equal(await memberInfo.memberId,1);
-            assert.equal(await memberInfo.name,"Shin Takahashi");
+            masterDao = await MasterDao.connect(MasterDaoOwner).deploy("test.com",'shin.takahashi',
+                memberManager.address,memberManager.address);
+            await masterDao.initialize();
+            const list = await masterDao.getMemberList();
+            assert.equal(await list[0].memberId,1);
+            assert.equal(await list[0].name,"shin.takahashi");
         });
         it("Add a member to Mastar DAO", async function(){
             await masterDao.connect(MasterDaoOwner).submitProposal(PROPOSAL_KIND_ADD_MEMBER,"add a new member",

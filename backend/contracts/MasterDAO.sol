@@ -4,7 +4,17 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./MemberManager.sol";
 
+
+interface MemberManagerInterface {
+    function initialize(address _targetDaoAddress,address _ownerAddress, string memory _ownerName, 
+        uint256 _targetId) external; 
+    function addMember(address targetDaoAddress,string memory _name, address _memberAddress, uint256 _relatedProposalId, uint256 targetId) external;
+    function deleteMember(address targetDaoAddress, address _memberAddress, uint256 _relatedProposalId) external;
+    function getMemberList(address targetDaoAddress,uint256 currentMaxId) external view returns(MemberManager.MemberInfo[] memory);
+    function isMember(address targetDaoAddress,address memberAddress) external view returns(bool);
+}
 
 /**
 * This contract is to create dao easier than pesent methmod.
@@ -20,6 +30,9 @@ contract MasterDAO is ReentrancyGuard{
 
     string public githubURL;
     uint256 public amountOfDotation;
+    address private owner;
+    string public ownerName;
+    MemberManagerInterface private memberManagerContract;
 
     struct MemberInfo {
         string name;
@@ -105,16 +118,33 @@ contract MasterDAO is ReentrancyGuard{
     * コンストラクター
     * DAOの基本情報をセットし、デプロイしたEOAを第一のメンバーとして登録する。
     */
-    constructor(string memory _githubURL, string memory _ownerName){
+    constructor(string memory _githubURL, string memory _ownerName, address _memberManagerAddress,
+        address _proposalManagerAddress)
+    {
         // initial id is started 1.
         _daoIdTracker.increment();
         _memberIdTracker.increment();
         _proposalIdTracker.increment();
 
+        owner = msg.sender;
+        ownerName = _ownerName;
         githubURL = _githubURL;
-        memberIds[msg.sender] = _memberIdTracker.current();
-        memberInfoes[_memberIdTracker.current()]=MemberInfo(_ownerName,msg.sender,_memberIdTracker.current());
-        _memberIdTracker.increment();
+        memberManagerContract = MemberManagerInterface(_memberManagerAddress);
+    }
+
+    /**
+    * 初期化する
+    */
+    function initialize() public onlyOwner {
+        memberManagerContract.initialize(address(this), owner, ownerName, _memberIdTracker.current());
+    }
+
+    /**
+    * only owner
+    */
+    modifier onlyOwner(){
+        require(msg.sender==owner);
+        _;
     }
 
     /** 
@@ -139,16 +169,11 @@ contract MasterDAO is ReentrancyGuard{
         proposalInfoes[_relatedProposalId].proposalStatus = ProposalStatus.Finished;
     }
 
-    /** 
+    /** ß
     * メンバーを追加する
     */
     function addMember(string memory _name, address _memberAddress, uint256 _relatedProposalId) public onlyMember {
-        require(_memberAddress==proposalInfoes[_relatedProposalId].relatedAddress,"Not proposed.");
-        require(proposalInfoes[_relatedProposalId].proposalStatus==ProposalStatus.Running,"Not approved.");
-        memberIds[_memberAddress] = _memberIdTracker.current();
-        memberInfoes[_memberIdTracker.current()]=MemberInfo(_name, _memberAddress, _memberIdTracker.current());
-        proposalInfoes[_relatedProposalId].proposalStatus = ProposalStatus.Finished;
-        emit MemberAdded(msg.sender, _memberIdTracker.current());
+        memberManagerContract.addMember(address(this),_name, _memberAddress, _relatedProposalId, _memberIdTracker.current());
         _memberIdTracker.increment();
     }
 
@@ -156,14 +181,14 @@ contract MasterDAO is ReentrancyGuard{
     * メンバーを削除する
     */
     function deleteMember(address _memberAddress, uint256 _relatedProposalId) public onlyMember {
-        require(_memberAddress==proposalInfoes[_relatedProposalId].relatedAddress,"Not proposed.");
-        require(proposalInfoes[_relatedProposalId].proposalStatus==ProposalStatus.Running,"Not approved.");
-        uint256 _memberId = _memberIdTracker.current();
-        memberInfoes[memberIds[_memberAddress]].name = "";
-        memberInfoes[memberIds[_memberAddress]].memberId = 0;
-        memberInfoes[memberIds[_memberAddress]].eoaAddress = address(0);
-        memberIds[_memberAddress] = 0;
-        emit MemberDeleted(msg.sender, _memberId);
+        memberManagerContract.deleteMember(address(this), _memberAddress, _relatedProposalId);
+    }
+
+    /**
+    * メンバーの一覧を取得する
+    */
+    function getMemberList() public view returns(MemberManager.MemberInfo[] memory) {
+        return memberManagerContract.getMemberList(address(this),_memberIdTracker.current());
     }
 
     /** 
@@ -295,19 +320,6 @@ contract MasterDAO is ReentrancyGuard{
     }
 
     /**
-    * メンバーの一覧を取得する
-    */
-    function getMemberList() public view returns(MemberInfo[] memory) {
-        MemberInfo[] memory memberList = new MemberInfo[](_memberIdTracker.current() - 1);
-        for (uint256 i=1; i < _memberIdTracker.current(); i++) {
-            if (bytes(memberInfoes[i].name).length!=0){
-                memberList[i-1] = memberInfoes[i];
-            }
-        }
-        return memberList;
-    }
-
-    /**
     * 投票を開始する
     */
     function _startVoting(uint256 _proposalId) internal {
@@ -335,7 +347,7 @@ contract MasterDAO is ReentrancyGuard{
     * Modifiter　メンバーのみ実行可能
     */
     modifier onlyMember(){
-        require(memberIds[msg.sender]!=0,"only member does.");
+        require(memberManagerContract.isMember(address(this), msg.sender),"only member does.");
         _;
     }
 

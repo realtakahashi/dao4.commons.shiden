@@ -111,6 +111,13 @@ contract SubDAO is ReentrancyGuard{
     }
 
     /**
+    * オーナーを取得する
+    */
+    function getOwnerAddress() public view returns(address) {
+        return owner;
+    }
+
+    /**
     * SubDao用のNFTのアドレス、オーナーのTokenIdを設定する
     */
     function updateNftAddressAndOwnerTokenId(address _nftAddress, uint256 _ownerTokenId) public onlyOwner {
