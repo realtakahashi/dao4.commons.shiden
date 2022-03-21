@@ -6,6 +6,11 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "./MasterDAO.sol";
 import "./ProposalManager.sol";
 
+interface MemberManagerInterface {
+    function isMember(address _targetDaoAddress, address _memberAddress) external view returns(bool);
+    function getMemberCount(address _targetDaoAddress) external view returns(uint256);
+}
+
 interface DaoInterface {
     function getOwner() external returns(address);
 }
@@ -20,6 +25,7 @@ contract MemberManager{
         string name;
         address eoaAddress;
         uint256 memberId;
+        uint256 tokenId;
     }
 
     ProposalManagerInterface proposalManagerContract;
@@ -49,7 +55,7 @@ contract MemberManager{
     /**
     * 初期メンバーを登録する
     */
-    function addFristMember(address _targetDaoAddress,address _ownerAddress, string memory _ownerName) 
+    function addFristMember(address _targetDaoAddress,address _ownerAddress, string memory _ownerName, uint256 tokenId) 
         onlyOwner(_targetDaoAddress) public 
     {
         require(memberIds[_targetDaoAddress][_ownerAddress]==0,"aliready initialized.");
@@ -59,7 +65,7 @@ contract MemberManager{
         uint256 memberId = memberCounters[_targetDaoAddress].current();
         memberIds[_targetDaoAddress][_ownerAddress] = memberId;
         memberInfoes[_targetDaoAddress][memberId]
-            =MemberInfo(_ownerName,_ownerAddress,memberId);
+            =MemberInfo(_ownerName,_ownerAddress,memberId,tokenId);
 
         memberCounters[_targetDaoAddress].increment();
         emit MemberAdded(_ownerAddress, memberId);
@@ -87,7 +93,7 @@ contract MemberManager{
     * メンバーを追加する
     */
     function addMember(address _targetDaoAddress, string memory _name, address _memberAddress, 
-        uint256 _relatedProposalId) public onlyMember(_targetDaoAddress)
+        uint256 _relatedProposalId,uint256 tokenId) public onlyMember(_targetDaoAddress)
     {
         address relatedAddress = proposalManagerContract.getProposalRelatedAddress(_targetDaoAddress, _relatedProposalId);
         require(_memberAddress==relatedAddress,"Not proposed.");
@@ -100,7 +106,7 @@ contract MemberManager{
         uint256 memberId = memberCounters[_targetDaoAddress].current();
         memberIds[_targetDaoAddress][_memberAddress] = memberId;
         memberInfoes[_targetDaoAddress][memberId]
-            =MemberInfo(_name, _memberAddress, memberId);
+            =MemberInfo(_name, _memberAddress, memberId, tokenId);
         // proposalInfoes[_relatedProposalId].proposalStatus = ProposalStatus.Finished;
         memberCounters[_targetDaoAddress].increment();
         emit MemberAdded(_memberAddress, memberId);
@@ -122,6 +128,7 @@ contract MemberManager{
         uint256 _memberId = memberIds[_targetDaoAddress][_memberAddress];
         memberInfoes[_targetDaoAddress][_memberId].name = "";
         memberInfoes[_targetDaoAddress][_memberId].memberId = 0;
+        memberInfoes[_targetDaoAddress][_memberId].tokenId = 0;
         memberInfoes[_targetDaoAddress][_memberId].eoaAddress = address(0);
         memberIds[_targetDaoAddress][_memberAddress] = 0;
         emit MemberDeleted(_memberAddress, _memberId);

@@ -3,10 +3,12 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "./MemberManager.sol";
 
-interface MemberManagerInterface {
-    function isMember(address _targetDaoAddress, address _memberAddress) external view returns(bool);
-    function getMemberCount(address _targetDaoAddress) external view returns(uint256);
+interface ProposalManagerInterface {
+    function getPropsalStatus(address _targetDaoAddress, uint256 _proposalId) external view returns (uint);
+    function getProposalRelatedAddress(address _targetDaoAddress, uint256 _proposalId) external view returns (address);
+    function updateProposalStatus(address _targetDaoAddress, uint256 _proposalId,uint _poposalStatus) external;
 }
 
 /**

@@ -61,16 +61,16 @@ describe("All contract", function() {
             const MasterDao = await ethers.getContractFactory("MasterDAO");
             masterDao = await MasterDao.connect(MasterDaoOwner).deploy("test.com",'shin.takahashi',memberManager.address,
                 proposalManager.address);
-            await memberManager.connect(MasterDaoOwner).addFristMember(masterDao.address,MasterDaoOwner.address,'shin.takahashi');
+            await memberManager.connect(MasterDaoOwner).addFristMember(masterDao.address,MasterDaoOwner.address,'shin.takahashi',0);
             const list = await memberManager.getMemberList(masterDao.address);
             assert.equal(await list[0].memberId,1);
             assert.equal(await list[0].name,"shin.takahashi");
         });
         it("Deployment Error Check", async function(){
-            await expect(memberManager.connect(SubDaoOwner1).addFristMember(masterDao.address,MasterDaoOwner.address,'shin.takahashi')).
-                to.be.revertedWith("only owner does.");
-            await expect(memberManager.connect(MasterDaoOwner).addFristMember(masterDao.address,MasterDaoOwner.address,'shin.takahashi')).
-                to.be.revertedWith("aliready initialized.");
+            await expect(memberManager.connect(SubDaoOwner1).addFristMember(masterDao.address,MasterDaoOwner.address,
+                    'shin.takahashi',0)).to.be.revertedWith("only owner does.");
+            await expect(memberManager.connect(MasterDaoOwner).addFristMember(masterDao.address,MasterDaoOwner.address,
+                'shin.takahashi',0)).to.be.revertedWith("aliready initialized.");
         });
         it("Add a member to Mastar DAO", async function(){
             await proposalManager.connect(MasterDaoOwner).submitProposal(masterDao.address,PROPOSAL_KIND_ADD_MEMBER,"add a new member",
@@ -78,7 +78,7 @@ describe("All contract", function() {
             await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,1,PROPOSAL_STATUS_VOTING);
             await proposalManager.connect(MasterDaoOwner).voteForProposal(masterDao.address,1,true);
             await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,1,PROPOSAL_STATUS_FINISHED_VOTING);
-            await memberManager.connect(MasterDaoOwner).addMember(masterDao.address,"Keisuke Funatsu",SubDaoOwner1.address,1)
+            await memberManager.connect(MasterDaoOwner).addMember(masterDao.address,"Keisuke Funatsu",SubDaoOwner1.address,1,0)
 
             const list = await memberManager.connect(MasterDaoOwner).getMemberList(masterDao.address);
             const memberInfo = list[1]; 
@@ -93,7 +93,7 @@ describe("All contract", function() {
             await proposalManager.connect(SubDaoOwner1).voteForProposal(masterDao.address,2,true);
             await proposalManager.connect(MasterDaoOwner).voteForProposal(masterDao.address,2,true);            
             await proposalManager.connect(SubDaoOwner1).changeProposalStatus(masterDao.address,2,PROPOSAL_STATUS_FINISHED_VOTING);
-            await memberManager.connect(SubDaoOwner1).addMember(masterDao.address,"Saki Takahashi",SubDaoOwner2.address,2)
+            await memberManager.connect(SubDaoOwner1).addMember(masterDao.address,"Saki Takahashi",SubDaoOwner2.address,2,0)
 
             const list = await memberManager.connect(SubDaoOwner1).getMemberList(masterDao.address);
             const memberInfo = list[2]; 
@@ -112,7 +112,7 @@ describe("All contract", function() {
             await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,3,PROPOSAL_STATUS_VOTING);
             await proposalManager.connect(SubDaoOwner1).voteForProposal(masterDao.address,3,true);            
             await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,3,PROPOSAL_STATUS_FINISHED_VOTING);
-            await expect(memberManager.connect(MasterDaoOwner).addMember(masterDao.address,"Anonimous",SubDaoOwner3.address,3))
+            await expect(memberManager.connect(MasterDaoOwner).addMember(masterDao.address,"Anonimous",SubDaoOwner3.address,3,0))
                 .to.be.revertedWith("Not approved.");
             const list = await proposalManager.connect(SubDaoOwner4).getProposalList(masterDao.address);
             const proposalInfo = await list[2];
@@ -142,7 +142,7 @@ describe("All contract", function() {
                 .to.be.revertedWith("only member does.");
             await expect(proposalManager.connect(SubDaoOwner4).voteForProposal(masterDao.address,5,true))
                 .to.be.revertedWith("only member does.");
-            await expect(memberManager.connect(SubDaoOwner4).addMember(masterDao.address,"Anonimous",SubDaoOwner2.address,5))
+            await expect(memberManager.connect(SubDaoOwner4).addMember(masterDao.address,"Anonimous",SubDaoOwner2.address,5,0))
                 .to.be.revertedWith("only member does.");
             await expect(memberManager.connect(SubDaoOwner4).deleteMember(masterDao.address,SubDaoOwner2.address,5))
                 .to.be.revertedWith("only member does.");
@@ -155,13 +155,10 @@ describe("All contract", function() {
     describe("MemberERC721", function() {
         it("SubDao deployment For MemberNFT Test", async function() {
             const SubDaoa = await ethers.getContractFactory("SubDAO");
-            subDaoa = await SubDaoa.connect(SubDaoOwner1).deploy("narusedai-2-36","test.com","Shin Takahashi");
+            subDaoa = await SubDaoa.connect(SubDaoOwner1).deploy("narusedai-2-36","test.com",memberManager.address,
+                proposalManager.address);
             assert.equal(await subDaoa.daoName(),"narusedai-2-36");
             assert.equal(await subDaoa.githubURL(),"test.com");
-
-            const member = await subDaoa.memberInfoes(SubDaoOwner1.address);
-            assert.equal(member.name, "Shin Takahashi");
-            assert.equal(member.memberId,1);
         });
         it("MemberERC721 Deployment.", async function(){
             const MemberERC721 = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
@@ -173,6 +170,13 @@ describe("All contract", function() {
             await memberERC721.connect(SubDaoOwner1).original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("2.0")});
             assert.equal(await memberERC721.balanceOf(SubDaoOwner1.address),1);
             assert.equal(await memberERC721.ownerOf(1),SubDaoOwner1.address);
+        });
+        it("Add Frist member for subdao a.",async function(){
+            await memberManager.connect(SubDaoOwner1).addFristMember(subDaoa.address,SubDaoOwner1.address,"Shin Takahashi",1)
+            const list = await memberManager.getMemberList(subDaoa.address);
+            const member = list[0];
+            assert.equal(member.name, "Shin Takahashi");
+            assert.equal(member.memberId,1);
         });
         it("Mint fail for without depositing.",async function() {
             await expect(memberERC721.connect(SubDaoOwner3)
@@ -220,13 +224,10 @@ describe("All contract", function() {
     describe("Sub DAO", async function() {
         it("SubDao deployment", async function() {
             const SubDao = await ethers.getContractFactory("SubDAO");
-            subDao = await SubDao.connect(SubDaoOwner1).deploy("narusedai-2-36","test.com","Shin Takahashi");
+            subDao = await SubDao.connect(SubDaoOwner1).deploy("narusedai-2-36","test.com",memberManager.address,
+                proposalManager.address);
             assert.equal(await subDao.daoName(),"narusedai-2-36");
             assert.equal(await subDao.githubURL(),"test.com");
-
-            const member = await subDao.memberInfoes(SubDaoOwner1.address);
-            assert.equal(member.name, "Shin Takahashi");
-            assert.equal(member.memberId,1);
         });
         it("MemberERC721a Deployment.", async function(){
             const MemberERC721 = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
@@ -234,16 +235,17 @@ describe("All contract", function() {
             assert.equal(await memberERC721a.name(),"TEST1");
             assert.equal(await memberERC721a.symbol(),"TEST1");
         });
-        it("Update NftAddress & OwnerTokenId", async function() {
+        it("MemberERC721a first mint", async function(){
             await memberERC721a.connect(SubDaoOwner1).original_mint(SubDaoOwner1.address,{value:ethers.utils.parseEther("2.0")});
-            await subDao.connect(SubDaoOwner1).updateNftAddressAndOwnerTokenId(memberERC721a.address,1);
-            const member = await subDao.memberInfoes(SubDaoOwner1.address);
+            assert.equal(await memberERC721a.balanceOf(SubDaoOwner1.address),1);
+            assert.equal(await memberERC721a.ownerOf(1),SubDaoOwner1.address);
+        });
+        it("add frist member for subdao.", async function(){
+            await memberManager.connect(SubDaoOwner1).addFristMember(subDao.address,SubDaoOwner1.address,"Shin Takahashi",1);
+            const list = await memberManager.getMemberList(subDao.address);
+            const member = list[0];
             assert.equal(member.name, "Shin Takahashi");
             assert.equal(member.memberId,1);
-            assert.equal(member.tokenId,1);
-            assert.equal(await subDao.connect(SubDaoOwner1).getMemberNFTAddress(),memberERC721a.address)
-            await expect(subDao.connect(SubDaoOwner1).updateNftAddressAndOwnerTokenId(memberERC721a.address,1))
-                .to.be.revertedWith("already set.");
         });
         it("Add Member", async function() {
             // Mint Member Token

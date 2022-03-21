@@ -7,12 +7,6 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./MemberManager.sol";
 import "./ProposalManager.sol";
 
-interface ProposalManagerInterface {
-    function getPropsalStatus(address _targetDaoAddress, uint256 _proposalId) external view returns (uint);
-    function getProposalRelatedAddress(address _targetDaoAddress, uint256 _proposalId) external view returns (address);
-    function updateProposalStatus(address _targetDaoAddress, uint256 _proposalId,uint _poposalStatus) external;
-}
-
 /**
 * This contract is to create dao easier than pesent methmod.
 * - When you create your own dao, you can get a NFT what prove to be a dao member.
@@ -38,7 +32,6 @@ contract MasterDAO is ReentrancyGuard{
         string githubURL;
         bool rewardApproved;
     }
-
 
     event DaoAdded(address indexed eoa, uint256 daoId);
     event Donated(address indexed eoa, uint256 amount);
@@ -81,8 +74,7 @@ contract MasterDAO is ReentrancyGuard{
     /** 
     * DAOの分配承認を変更する
     */
-    function changeDaoReward(address _daoAddress, uint256 _relatedProposalId, bool _reward) public 
-        onlyMember(address(this),msg.sender) 
+    function changeDaoReward(address _daoAddress, uint256 _relatedProposalId, bool _reward) public onlyMember 
     {
         address relatedAddress = proposalManagerContract.getProposalRelatedAddress(address(this), _relatedProposalId);
         require(_daoAddress==relatedAddress,"Not proposed.");
@@ -108,7 +100,7 @@ contract MasterDAO is ReentrancyGuard{
     /** 
     * MasterDAOの残高を分配する
     */
-    function divide(address to, uint256 amount,uint256 relatedProposalId) public onlyMember(address(this),msg.sender) {
+    function divide(address to, uint256 amount,uint256 relatedProposalId) public onlyMember {
         require(daoIds[to]!=0 && daoInfoes[daoIds[to]].rewardApproved==true,"only approved dao can get.");
 
         ProposalManager.ProposalStatus status = 
@@ -159,8 +151,8 @@ contract MasterDAO is ReentrancyGuard{
     /** 
     * Modifiter　メンバーのみ実行可能
     */
-    modifier onlyMember(address _targetDaoAddress, address _memberAddress){
-        require(memberManagerContract.isMember(_targetDaoAddress, _memberAddress),"only member does.");
+    modifier onlyMember(){
+        require(memberManagerContract.isMember(address(this), msg.sender),"only member does.");
         _;
     }
 
