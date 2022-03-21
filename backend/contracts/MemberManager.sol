@@ -2,18 +2,19 @@
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
-// import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "./MasterDAO.sol";
+import "./ProposalManager.sol";
 
 interface DaoInterface {
-    function setMemberManager(address MemberManagerAddress) external;
+    function getOwner() external returns(address);
 }
 
 /**
 * MemberManager
 */
 contract MemberManager{
-
-    address private targetDaoAddress;
+    using Counters for Counters.Counter;
 
     struct MemberInfo {
         string name;
@@ -21,13 +22,17 @@ contract MemberManager{
         uint256 memberId;
     }
 
+    ProposalManagerInterface proposalManagerContract;
+
     event MemberAdded(address indexed eoa, uint256 memberId);
     event MemberDeleted(address indexed eoa, uint256 memberId);
 
-    // EAO address => MemberId
-    mapping(address => uint256) public memberIds;
+    // DAO address => EAO address => MemberId
+    mapping(address => mapping(address => uint256)) private memberIds;
     // Dao Address => Member id => MemberInfo
-    mapping(uint256 => MemberInfo) public memberInfoes;
+    mapping(address => mapping(uint256 => MemberInfo)) private memberInfoes;
+    // Dao Address => Counter
+    mapping(address => Counters.Counter) private memberCounters;
 
     /** 
     * コンストラクター
@@ -35,78 +40,124 @@ contract MemberManager{
     constructor(){}
 
     /**
-    * 初期化する
+    * memberManagerをセットする。
     */
-    function initialize(address _targetDaoAddress,address _ownerAddress, string memory _ownerName, 
-        uint256 _targetId) external 
+    function setProposalManager(address _memberManber) public {
+        proposalManagerContract = ProposalManagerInterface(_memberManber);
+    }
+
+    /**
+    * 初期メンバーを登録する
+    */
+    function addFristMember(address _targetDaoAddress,address _ownerAddress, string memory _ownerName) 
+        onlyOwner(_targetDaoAddress) public 
     {
-        targetDaoAddress = _targetDaoAddress;
-        memberIds[_ownerAddress] = _targetId;
-        memberInfoes[_targetId]
-            =MemberInfo(_ownerName,_ownerAddress,_targetId);
-        emit MemberAdded(_ownerAddress, _targetId);
+        require(memberIds[_targetDaoAddress][_ownerAddress]==0,"aliready initialized.");
+
+        memberCounters[_targetDaoAddress].increment();
+
+        uint256 memberId = memberCounters[_targetDaoAddress].current();
+        memberIds[_targetDaoAddress][_ownerAddress] = memberId;
+        memberInfoes[_targetDaoAddress][memberId]
+            =MemberInfo(_ownerName,_ownerAddress,memberId);
+
+        memberCounters[_targetDaoAddress].increment();
+        emit MemberAdded(_ownerAddress, memberId);
 
     }
+
+    /**
+    * オーナーのみ
+    */
+    modifier onlyOwner(address _targetDaoAddress) {
+        DaoInterface targetDao = DaoInterface(_targetDaoAddress);
+        require(targetDao.getOwner()==msg.sender,"only owner does.");
+        _;
+    }
+
+    /**
+    * メンバーのみ
+    */
+    modifier onlyMember(address _targetDaoAddress){
+        require(memberIds[_targetDaoAddress][msg.sender]!=0,"only member does.");
+        _;
+    }
+
     /** 
     * メンバーを追加する
     */
-    function addMember(string memory _name, address _memberAddress, 
-        uint256 _relatedProposalId, uint256 targetId) external onlyTargetDao
+    function addMember(address _targetDaoAddress, string memory _name, address _memberAddress, 
+        uint256 _relatedProposalId) public onlyMember(_targetDaoAddress)
     {
-        // require(_memberAddress==proposalInfoes[_relatedProposalId].relatedAddress,"Not proposed.");
-        // require(proposalInfoes[_relatedProposalId].proposalStatus==ProposalStatus.Running,"Not approved.");
-        require(memberInfoes[targetId].eoaAddress==address(0),"already exists.");
-        memberIds[_memberAddress] = targetId;
-        memberInfoes[targetId]
-            =MemberInfo(_name, _memberAddress, targetId);
+        address relatedAddress = proposalManagerContract.getProposalRelatedAddress(_targetDaoAddress, _relatedProposalId);
+        require(_memberAddress==relatedAddress,"Not proposed.");
+
+        ProposalManager.ProposalStatus status = 
+            ProposalManager.ProposalStatus(proposalManagerContract.getPropsalStatus(_targetDaoAddress, _relatedProposalId));
+        require(status==ProposalManager.ProposalStatus.Running,"Not approved.");
+        require(memberIds[_targetDaoAddress][_memberAddress]==0,"already exists");
+
+        uint256 memberId = memberCounters[_targetDaoAddress].current();
+        memberIds[_targetDaoAddress][_memberAddress] = memberId;
+        memberInfoes[_targetDaoAddress][memberId]
+            =MemberInfo(_name, _memberAddress, memberId);
         // proposalInfoes[_relatedProposalId].proposalStatus = ProposalStatus.Finished;
-        emit MemberAdded(_memberAddress, targetId);
+        memberCounters[_targetDaoAddress].increment();
+        emit MemberAdded(_memberAddress, memberId);
     }
 
     /** 
     * メンバーを削除する
     */
-    function deleteMember(address _memberAddress, uint256 _relatedProposalId) external onlyTargetDao
+    function deleteMember(address _targetDaoAddress, address _memberAddress, uint256 _relatedProposalId) public
+        onlyMember(_targetDaoAddress)
     {
-        // require(_memberAddress==proposalInfoes[_relatedProposalId].relatedAddress,"Not proposed.");
-        // require(proposalInfoes[_relatedProposalId].proposalStatus==ProposalStatus.Running,"Not approved.");
-        uint256 _memberId = memberIds[_memberAddress];
-        memberInfoes[_memberId].name = "";
-        memberInfoes[_memberId].memberId = 0;
-        memberInfoes[_memberId].eoaAddress = address(0);
-        memberIds[_memberAddress] = 0;
+        address relatedAddress = proposalManagerContract.getProposalRelatedAddress(_targetDaoAddress, _relatedProposalId);
+        require(_memberAddress==relatedAddress,"Not proposed.");
+
+        ProposalManager.ProposalStatus status = 
+            ProposalManager.ProposalStatus(proposalManagerContract.getPropsalStatus(_targetDaoAddress, _relatedProposalId));
+        require(status==ProposalManager.ProposalStatus.Running,"Not approved.");
+
+        uint256 _memberId = memberIds[_targetDaoAddress][_memberAddress];
+        memberInfoes[_targetDaoAddress][_memberId].name = "";
+        memberInfoes[_targetDaoAddress][_memberId].memberId = 0;
+        memberInfoes[_targetDaoAddress][_memberId].eoaAddress = address(0);
+        memberIds[_targetDaoAddress][_memberAddress] = 0;
         emit MemberDeleted(_memberAddress, _memberId);
     }
 
     /**
     * メンバーの一覧を取得する
     */
-    function getMemberList(uint256 currentMaxId) external view 
-        returns(MemberInfo[] memory) 
+    function getMemberList(address _targetDaoAddress) public view returns(MemberInfo[] memory) 
     {
-        MemberInfo[] memory memberList = new MemberInfo[](currentMaxId - 1);
-        for (uint256 i=1; i < currentMaxId; i++) {
-            if (bytes(memberInfoes[i].name).length!=0){
-                memberList[i-1] = memberInfoes[i];
+        return _getMemberList(_targetDaoAddress);
+    }
+
+    function _getMemberList(address _targetDaoAddress) internal view returns(MemberInfo[] memory){
+        MemberInfo[] memory memberList = new MemberInfo[](memberCounters[_targetDaoAddress].current() - 1);
+        for (uint256 i=1; i < memberCounters[_targetDaoAddress].current(); i++) {
+            if (bytes(memberInfoes[_targetDaoAddress][i].name).length!=0){
+                memberList[i-1] = memberInfoes[_targetDaoAddress][i];
             }
         }
         return memberList;
     }
 
     /**
-    * メンバーかを判定する
+    * メンバー数を取得する
     */
-    function isMember(address targetDaoAddress,address _memberAddress) external view returns(bool){
-        return memberIds[_memberAddress]!=0;
+    function getMemberCount(address _targetDaoAddress) external view returns(uint256) {
+        MemberInfo[] memory list = _getMemberList(_targetDaoAddress);
+        return list.length;
     }
 
-    /** 
-    * Modifiter　targetDaoからのみ実行可能
+    /**
+    * メンバー判定
     */
-    modifier onlyTargetDao(){
-        require(msg.sender==targetDaoAddress,"only call from targetDao.");
-        _;
+    function isMember(address _targetDaoAddress, address _memberAddress) external view returns(bool) {
+        return memberIds[_targetDaoAddress][_memberAddress]!=0;
     }
-
 
 }
