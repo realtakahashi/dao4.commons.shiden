@@ -180,6 +180,13 @@ contract ProposalManager{
     }
 
     /**
+    * 投票結果を取得する
+    */
+    function getVotingResult(address _targetDaoAddress, uint256 _proposalId) public view returns(VotingInfo memory) {
+        return votingInfoes[_targetDaoAddress][_proposalId];
+    }
+
+    /**
     * 投票を開始する
     */
     function _startVoting(address _targetDaoAddress, uint256 _proposalId) internal {
@@ -217,7 +224,9 @@ contract ProposalManager{
     * 該当する提案のステータスを更新する
     */
     function updateProposalStatus(address _targetDaoAddress, uint256 _proposalId,uint _poposalStatus) external {
-        require(memberManagerContract.isMember(_targetDaoAddress, msg.sender),"only member does.");
+        require(msg.sender!=tx.origin,"can not call directly.");
+        require(msg.sender==_targetDaoAddress,"invalid origin.");
+        // require(memberManagerContract.isMember(_targetDaoAddress, msg.sender),"only member does.");
         proposalInfoes[_targetDaoAddress][_proposalId].proposalStatus = ProposalStatus(_poposalStatus);
     }
 }

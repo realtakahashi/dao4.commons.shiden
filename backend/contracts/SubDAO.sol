@@ -39,14 +39,16 @@ contract SubDAO is ReentrancyGuard{
     /** 
     * コンストラクター
     */
-    constructor(string memory _daoName, string memory _githubURL, address _memberManager, address _proposalManger){
+    constructor(string memory _daoName, string memory _githubURL, address _memberManager, address _proposalManger,
+        address _memberNFTAddress){
         // initial increment
         _contributeIdTracker.increment();
         
         daoName = _daoName;
         githubURL = _githubURL;
         owner = msg.sender;
-        
+        erc721Address = _memberNFTAddress;
+
         memberManagerContract = MemberManagerInterface(_memberManager);
         proposalManagerContract = ProposalManagerInterface(_proposalManger);
     }
