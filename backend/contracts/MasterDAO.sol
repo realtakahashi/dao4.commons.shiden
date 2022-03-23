@@ -76,16 +76,12 @@ contract MasterDAO is ReentrancyGuard{
     */
     function changeDaoReward(address _daoAddress, uint256 _relatedProposalId, bool _reward) public onlyMember 
     {
-        address relatedAddress = proposalManagerContract.getProposalRelatedAddress(address(this), _relatedProposalId);
-        require(_daoAddress==relatedAddress,"Not proposed.");
-        
-        ProposalManager.ProposalStatus status = 
-            ProposalManager.ProposalStatus(proposalManagerContract.getPropsalStatus(address(this), _relatedProposalId));
-        require(status==ProposalManager.ProposalStatus.Running,"Not approved.");
+        ProposalInfo memory info = proposalManagerContract.getPropsalInfo(address(this), _relatedProposalId);
+        require(info.relatedAddress==_daoAddress,"Not proposed.");
+        require(info.proposalStatus==ProposalStatus.Running,"Not approved.");
         
         daoInfoes[daoIds[_daoAddress]].rewardApproved = _reward;
-        proposalManagerContract.updateProposalStatus(address(this), _relatedProposalId, 
-            uint(ProposalManager.ProposalStatus.Finished));
+        proposalManagerContract.updateProposalStatus(address(this), _relatedProposalId, uint(ProposalStatus.Finished));
     }
 
 
@@ -100,16 +96,14 @@ contract MasterDAO is ReentrancyGuard{
     /** 
     * MasterDAOの残高を分配する
     */
-    function divide(address to, uint256 amount,uint256 relatedProposalId) public onlyMember {
+    function divide(address to, uint256 amount,uint256 _relatedProposalId) public onlyMember {
         require(daoIds[to]!=0 && daoInfoes[daoIds[to]].rewardApproved==true,"only approved dao can get.");
 
-        ProposalManager.ProposalStatus status = 
-            ProposalManager.ProposalStatus(proposalManagerContract.getPropsalStatus(address(this), relatedProposalId));
-        require(status==ProposalManager.ProposalStatus.Running,"not Approved");
-        address relatedAddress = proposalManagerContract.getProposalRelatedAddress(address(this), relatedProposalId);
-        require(relatedAddress==to,"not Related");
+        ProposalInfo memory info = proposalManagerContract.getPropsalInfo(address(this), _relatedProposalId);
+        require(info.proposalStatus==ProposalStatus.Running,"not Approved");
+        require(info.relatedAddress==to,"not Related");
         payable(to).transfer(amount);
-        proposalManagerContract.updateProposalStatus(address(this), relatedProposalId, uint(ProposalManager.ProposalStatus.Finished));
+        proposalManagerContract.updateProposalStatus(address(this), _relatedProposalId, uint(ProposalStatus.Finished));
         emit Divided(msg.sender, to, amount);
     }
 

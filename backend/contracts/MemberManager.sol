@@ -9,6 +9,9 @@ import "./ProposalManager.sol";
 interface MemberManagerInterface {
     function isMember(address _targetDaoAddress, address _memberAddress) external view returns(bool);
     function getMemberCount(address _targetDaoAddress) external view returns(uint256);
+    function checkWithinElectionCommisionTerm(address _targetDaoAddress) external view returns(bool);
+    function countupTermCounter(address _targetDaoAddress) external;
+    function isElectionComission(address _targetDaoAddress, address _memberAddress) external view returns(bool);
 }
 
 interface DaoInterface {
@@ -29,6 +32,7 @@ contract MemberManager{
     }
 
     ProposalManagerInterface proposalManagerContract;
+    address proposalManagerAddress;
 
     event MemberAdded(address indexed eoa, uint256 memberId);
     event MemberDeleted(address indexed eoa, uint256 memberId);
@@ -40,6 +44,15 @@ contract MemberManager{
     // Dao Address => Counter
     mapping(address => Counters.Counter) private memberCounters;
 
+    // 選挙管理委員
+    // DAO address => id(1 or 2) => eoa address
+    mapping(address => mapping(uint => address)) public electionCommision;
+    // 任期カウンター
+    // DAO address => counter
+    mapping(address => Counters.Counter) public termCounter;
+    // 任期定数
+    uint public TERM_COUNT = 5;
+
     /** 
     * コンストラクター
     */
@@ -48,28 +61,32 @@ contract MemberManager{
     /**
     * memberManagerをセットする。
     */
-    function setProposalManager(address _memberManber) public {
-        proposalManagerContract = ProposalManagerInterface(_memberManber);
+    function setProposalManager(address _poposalManber) public {
+        proposalManagerContract = ProposalManagerInterface(_poposalManber);
+        proposalManagerAddress = _poposalManber;
     }
 
     /**
     * 初期メンバーを登録する
     */
-    function addFristMember(address _targetDaoAddress,address _ownerAddress, string memory _ownerName, uint256 tokenId) 
+    function addFristMember(address _targetDaoAddress, string memory _ownerName, uint256 tokenId) 
         onlyOwner(_targetDaoAddress) public 
     {
-        require(memberIds[_targetDaoAddress][_ownerAddress]==0,"aliready initialized.");
+        require(memberIds[_targetDaoAddress][msg.sender]==0,"aliready initialized.");
 
         memberCounters[_targetDaoAddress].increment();
 
         uint256 memberId = memberCounters[_targetDaoAddress].current();
-        memberIds[_targetDaoAddress][_ownerAddress] = memberId;
+        memberIds[_targetDaoAddress][msg.sender] = memberId;
         memberInfoes[_targetDaoAddress][memberId]
-            =MemberInfo(_ownerName,_ownerAddress,memberId,tokenId);
+            =MemberInfo(_ownerName,msg.sender,memberId,tokenId);
 
         memberCounters[_targetDaoAddress].increment();
-        emit MemberAdded(_ownerAddress, memberId);
 
+        //初期選挙管理委
+        electionCommision[_targetDaoAddress][1]=msg.sender;
+
+        emit MemberAdded(msg.sender, memberId);
     }
 
     /**
@@ -95,12 +112,9 @@ contract MemberManager{
     function addMember(address _targetDaoAddress, string memory _name, address _memberAddress, 
         uint256 _relatedProposalId,uint256 tokenId) public onlyMember(_targetDaoAddress)
     {
-        address relatedAddress = proposalManagerContract.getProposalRelatedAddress(_targetDaoAddress, _relatedProposalId);
-        require(_memberAddress==relatedAddress,"Not proposed.");
-
-        ProposalManager.ProposalStatus status = 
-            ProposalManager.ProposalStatus(proposalManagerContract.getPropsalStatus(_targetDaoAddress, _relatedProposalId));
-        require(status==ProposalManager.ProposalStatus.Running,"Not approved.");
+        ProposalInfo memory info = proposalManagerContract.getPropsalInfo(_targetDaoAddress, _relatedProposalId);
+        require(info.relatedAddress==_memberAddress,"Not proposed.");
+        require(info.proposalStatus==ProposalStatus.Running,"Not approved.");
         require(memberIds[_targetDaoAddress][_memberAddress]==0,"already exists");
 
         uint256 memberId = memberCounters[_targetDaoAddress].current();
@@ -118,12 +132,9 @@ contract MemberManager{
     function deleteMember(address _targetDaoAddress, address _memberAddress, uint256 _relatedProposalId) public
         onlyMember(_targetDaoAddress)
     {
-        address relatedAddress = proposalManagerContract.getProposalRelatedAddress(_targetDaoAddress, _relatedProposalId);
-        require(_memberAddress==relatedAddress,"Not proposed.");
-
-        ProposalManager.ProposalStatus status = 
-            ProposalManager.ProposalStatus(proposalManagerContract.getPropsalStatus(_targetDaoAddress, _relatedProposalId));
-        require(status==ProposalManager.ProposalStatus.Running,"Not approved.");
+        ProposalInfo memory info = proposalManagerContract.getPropsalInfo(_targetDaoAddress, _relatedProposalId);
+        require(info.relatedAddress==_memberAddress,"Not proposed.");
+        require(info.proposalStatus==ProposalStatus.Running,"Not approved.");
 
         uint256 _memberId = memberIds[_targetDaoAddress][_memberAddress];
         memberInfoes[_targetDaoAddress][_memberId].name = "";
@@ -152,6 +163,27 @@ contract MemberManager{
         return memberList;
     }
 
+    // todo
+    // 選挙管理委員を実装する
+    // 通常メンバーとは別に最低1名、最大2名を任命する
+    // 任期は提案を投票で決した回数によって切れるようにする
+    // 連続で委員にはなれないようにする
+    function resetElectionCommision(address _targetDaoAddress, address _candidateEoaOne, address _candidateEoaTwo,
+        uint256 _relatedProposalIdOne, uint256 _relatedProposalIdTwo) 
+        public onlyMember(_targetDaoAddress) 
+    {
+        ProposalInfo memory infoOne = proposalManagerContract.getPropsalInfo(_targetDaoAddress, _relatedProposalIdOne);
+        ProposalInfo memory infoTwo = proposalManagerContract.getPropsalInfo(_targetDaoAddress, _relatedProposalIdTwo);
+        require(infoOne.relatedAddress==_candidateEoaOne,"first candidate is not proposed.");
+        require(infoTwo.relatedAddress==_candidateEoaTwo,"second candidate is not proposed.");
+        require(infoOne.proposalStatus==ProposalStatus.Running,"first candidate is not approved.");
+        require(infoTwo.proposalStatus==ProposalStatus.Running,"second candidate is not approved.");
+
+        termCounter[_targetDaoAddress].reset();
+        electionCommision[_targetDaoAddress][1] = _candidateEoaOne;
+        electionCommision[_targetDaoAddress][2] = _candidateEoaTwo;
+    }
+
     /**
     * メンバー数を取得する
     */
@@ -167,4 +199,26 @@ contract MemberManager{
         return memberIds[_targetDaoAddress][_memberAddress]!=0;
     }
 
+    /**
+    * 選挙管理委員会の任期チェック
+    */
+    function checkWithinElectionCommisionTerm(address _targetDaoAddress) external view returns(bool){
+        return termCounter[_targetDaoAddress].current() < TERM_COUNT;
+    }
+
+    /**
+    * 任期カウンターをアップする
+    */
+    function countupTermCounter(address _targetDaoAddress) external {
+        require(msg.sender==proposalManagerAddress,"invalid operator.");
+        termCounter[_targetDaoAddress].increment();
+    }
+
+    /**
+    * 選挙管理委員か
+    */
+    function isElectionComission(address _targetDaoAddress, address _memberAddress) external view returns(bool){
+        return (electionCommision[_targetDaoAddress][1]==_memberAddress ||
+                electionCommision[_targetDaoAddress][2]==_memberAddress);
+    }
 }

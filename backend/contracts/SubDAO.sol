@@ -102,16 +102,12 @@ contract SubDAO is ReentrancyGuard{
     * 分配する
     */
     function divide(address to, uint256 amount, uint256 _relatedProposalId) public payable onlyMember {
-        address relatedAddress = proposalManagerContract.getProposalRelatedAddress(address(this), _relatedProposalId);
-        require(to==relatedAddress,"Not proposed.");
-        
-        ProposalManager.ProposalStatus status = 
-            ProposalManager.ProposalStatus(proposalManagerContract.getPropsalStatus(address(this), _relatedProposalId));
-        require(status==ProposalManager.ProposalStatus.Running,"Not approved.");
+        ProposalInfo memory info = proposalManagerContract.getPropsalInfo(address(this), _relatedProposalId);
+        require(info.relatedAddress==to,"Not proposed.");
+        require(info.proposalStatus==ProposalStatus.Running,"Not approved.");
 
         payable(to).transfer(amount);
-        proposalManagerContract.updateProposalStatus(address(this), _relatedProposalId, 
-            uint(ProposalManager.ProposalStatus.Finished));
+        proposalManagerContract.updateProposalStatus(address(this), _relatedProposalId, uint(ProposalStatus.Finished));
 
         emit Divided(msg.sender, to, amount);
     }
