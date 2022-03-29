@@ -11,7 +11,8 @@ enum ProposalKind {
     UseOfFunds,
     CommunityManagement,
     Activities,
-    ElectionComissionPropsal
+    ElectionComissionPropsal,
+    DaoReward
 }
 
 enum ProposalStatus {
@@ -51,7 +52,7 @@ interface ProposalManagerInterface {
     function updateProposalStatus(
         address _targetDaoAddress,
         uint256 _proposalId,
-        uint256 _poposalStatus
+        uint _poposalStatus
     ) external;
 }
 
@@ -62,6 +63,7 @@ contract ProposalManager {
     using Counters for Counters.Counter;
 
     MemberManagerInterface private memberManagerContract;
+    address private memberManagerAddress;
 
     uint256 public PROPOSAL_PASS_LINE = 60;
 
@@ -91,6 +93,7 @@ contract ProposalManager {
 
     function setMemberManager(address _memberManagerAddress) public {
         memberManagerContract = MemberManagerInterface(_memberManagerAddress);
+        memberManagerAddress = _memberManagerAddress;
     }
 
     modifier onlyMember(address _targetDaoAddress) {
@@ -125,14 +128,20 @@ contract ProposalManager {
         uint256 _relatedId,
         address _relatedAddress
     ) public onlyMember(_targetDaoAddress) {
-        require(
-            _proposalKind == ProposalKind.ElectionComissionPropsal ||
-                memberManagerContract.checkWithinElectionCommisionTerm(
-                    _targetDaoAddress
-                ) ==
-                true,
-            "need to select election comission."
-        );
+        //選挙管理委員提案以外の場合は、任期をチェックする
+        if (_proposalKind != ProposalKind.ElectionComissionPropsal){
+            if (memberManagerContract.checkWithinElectionCommisionTerm(_targetDaoAddress) == false){
+                revert("need to select election comission.");
+            }
+        }
+        //選挙管理委員提案でも任期内の場合は変更を不可とする。
+        if (_proposalKind == ProposalKind.ElectionComissionPropsal){
+            if (memberManagerContract.checkWithinElectionCommisionTerm(_targetDaoAddress) == true){
+                revert("still within term.");
+            }
+        }
+
+        // Proposal Idを１から始めるためにカウントアップ
         if (proposalCounters[_targetDaoAddress].current() == 0) {
             proposalCounters[_targetDaoAddress].increment();
         }
@@ -339,10 +348,10 @@ contract ProposalManager {
     function updateProposalStatus(
         address _targetDaoAddress,
         uint256 _proposalId,
-        uint256 _poposalStatus
+        uint _poposalStatus
     ) external {
         require(msg.sender != tx.origin, "can not call directly.");
-        require(msg.sender == _targetDaoAddress, "invalid origin.");
+        require(msg.sender == memberManagerAddress || msg.sender == _targetDaoAddress, "invalid origin.");
         // require(memberManagerContract.isMember(_targetDaoAddress, msg.sender),"only member does.");
         proposalInfoes[_targetDaoAddress][_proposalId]
             .proposalStatus = ProposalStatus(_poposalStatus);

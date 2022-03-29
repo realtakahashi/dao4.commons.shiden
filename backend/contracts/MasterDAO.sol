@@ -77,6 +77,7 @@ contract MasterDAO is ReentrancyGuard{
     function changeDaoReward(address _daoAddress, uint256 _relatedProposalId, bool _reward) public onlyMember 
     {
         ProposalInfo memory info = proposalManagerContract.getPropsalInfo(address(this), _relatedProposalId);
+        require(info.proposalKind==ProposalKind.DaoReward,"invalid proposalKind.");
         require(info.relatedAddress==_daoAddress,"Not proposed.");
         require(info.proposalStatus==ProposalStatus.Running,"Not approved.");
         
@@ -100,6 +101,7 @@ contract MasterDAO is ReentrancyGuard{
         require(daoIds[to]!=0 && daoInfoes[daoIds[to]].rewardApproved==true,"only approved dao can get.");
 
         ProposalInfo memory info = proposalManagerContract.getPropsalInfo(address(this), _relatedProposalId);
+        require(info.proposalKind==ProposalKind.UseOfFunds,"invalid proposalKind.");
         require(info.proposalStatus==ProposalStatus.Running,"not Approved");
         require(info.relatedAddress==to,"not Related");
         payable(to).transfer(amount);

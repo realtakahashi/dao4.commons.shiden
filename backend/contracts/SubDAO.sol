@@ -103,6 +103,7 @@ contract SubDAO is ReentrancyGuard{
     */
     function divide(address to, uint256 amount, uint256 _relatedProposalId) public payable onlyMember {
         ProposalInfo memory info = proposalManagerContract.getPropsalInfo(address(this), _relatedProposalId);
+        require(info.proposalKind==ProposalKind.UseOfFunds,"invalid proposalKind.");
         require(info.relatedAddress==to,"Not proposed.");
         require(info.proposalStatus==ProposalStatus.Running,"Not approved.");
 

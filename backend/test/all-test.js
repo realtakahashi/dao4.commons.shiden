@@ -15,6 +15,8 @@ describe("All contract", function() {
     const PROPOSAL_KIND_USE_OF_FUNDS = 2;
     const PROPOSAL_KIND_COMMUNITY_MANAGEMENT = 3;
     const PROPOSAL_KIND_ACTIVITIES = 4;
+    const PROPOSAL_KIND_ELECTION_COMISSION_PROPOSAL = 5;
+    const PROPOSAL_KIND_DAO_REWARD = 6;
 
     // Proposal status
     const PROPOSAL_STATUS_UNDER_DISCUSSION_ON_GITHUB = 0;
@@ -24,6 +26,8 @@ describe("All contract", function() {
     const PROPOSAL_STATUS_REJECTED = 4;
     const PROPOSAL_STATUS_FINISHED_VOTING = 5;
     const PROPOSAL_STATUS_FINISHED = 6;
+
+    const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
 
     let masterDao;
     let memberERC721;
@@ -85,6 +89,8 @@ describe("All contract", function() {
             assert.equal(await memberInfo.memberId,2);
             assert.equal(await memberInfo.eoaAddress,SubDaoOwner1.address)
             assert.equal(await memberInfo.name,"Keisuke Funatsu");
+            const proposalList = await proposalManager.getProposalList(masterDao.address);
+            assert.equal(proposalList[0].proposalStatus,PROPOSAL_STATUS_FINISHED);
         });
         it("Add another member to Mastar DAO", async function(){
             await proposalManager.connect(SubDaoOwner1).submitProposal(masterDao.address,PROPOSAL_KIND_ADD_MEMBER,"add a new member",
@@ -100,6 +106,8 @@ describe("All contract", function() {
             assert.equal(await memberInfo.memberId,3);
             assert.equal(await memberInfo.eoaAddress,SubDaoOwner2.address)
             assert.equal(await memberInfo.name,"Saki Takahashi");
+            const proposalList = await proposalManager.getProposalList(masterDao.address);
+            assert.equal(proposalList[1].proposalStatus,PROPOSAL_STATUS_FINISHED);
         });
         it("Check Member List", async function(){
             const list = await memberManager.connect(SubDaoOwner3).getMemberList(masterDao.address);
@@ -119,7 +127,7 @@ describe("All contract", function() {
             assert.equal(proposalInfo.proposalStatus,PROPOSAL_STATUS_REJECTED);
         });
         it("Delete a member.", async function(){
-            await proposalManager.connect(MasterDaoOwner).submitProposal(masterDao.address,PROPOSAL_KIND_ADD_MEMBER,"delete member",
+            await proposalManager.connect(MasterDaoOwner).submitProposal(masterDao.address,PROPOSAL_KIND_DELETE_MEMBER,"delete member",
                 "I want to delete a member", "Please Approve to delete.", "test.com", 0, SubDaoOwner2.address);
             await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,4,PROPOSAL_STATUS_VOTING);
             await proposalManager.connect(MasterDaoOwner).voteForProposal(masterDao.address,4,true);
@@ -127,6 +135,8 @@ describe("All contract", function() {
             await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,4,PROPOSAL_STATUS_FINISHED_VOTING);
             await memberManager.connect(MasterDaoOwner).deleteMember(masterDao.address,SubDaoOwner2.address,4)
             assert.equal(await memberManager.connect(MasterDaoOwner).isMember(masterDao.address,SubDaoOwner2.address),false);
+            const proposalList = await proposalManager.getProposalList(masterDao.address);
+            assert.equal(proposalList[3].proposalStatus,PROPOSAL_STATUS_FINISHED);
         });
         it("Check ProposalList", async function(){
             const list = await proposalManager.connect(MasterDaoOwner).getProposalList(masterDao.address);
@@ -253,7 +263,7 @@ describe("All contract", function() {
             assert.equal(await memberERC721a.balanceOf(SubDaoOwner2.address),1);
             assert.equal(await memberERC721a.ownerOf(2),SubDaoOwner2.address);
 
-            await proposalManager.connect(SubDaoOwner1).submitProposal(subDao.address,PROPOSAL_KIND_COMMUNITY_MANAGEMENT, "Add Members", "test", 
+            await proposalManager.connect(SubDaoOwner1).submitProposal(subDao.address,PROPOSAL_KIND_ADD_MEMBER, "Add Members", "test", 
                 "test","https://github.com/realtakahashi", 0, SubDaoOwner2.address);
             await proposalManager.connect(SubDaoOwner1).changeProposalStatus(subDao.address,1,PROPOSAL_STATUS_VOTING);
             await proposalManager.connect(SubDaoOwner1).voteForProposal(subDao.address,1,true);
@@ -391,7 +401,7 @@ describe("All contract", function() {
             assert.equal(daoList[0].githubURL,"test.com");
         });
         it("Voting to a Sub DAO & Approved.", async function() {
-            await proposalManager.connect(MasterDaoOwner).submitProposal(masterDao.address,PROPOSAL_KIND_COMMUNITY_MANAGEMENT,"approve the dao",
+            await proposalManager.connect(MasterDaoOwner).submitProposal(masterDao.address,PROPOSAL_KIND_DAO_REWARD,"approve the dao",
                 "I want to approve", "Please Approve to reward.", "test.com", 0, subDao.address);
             await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,5,PROPOSAL_STATUS_VOTING);
             await proposalManager.connect(MasterDaoOwner).voteForProposal(masterDao.address,5,true);
@@ -412,21 +422,96 @@ describe("All contract", function() {
 
             const beforedaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
 
-            await proposalManager.connect(MasterDaoOwner).submitProposal(masterDao.address,PROPOSAL_KIND_COMMUNITY_MANAGEMENT,"divide the dao",
-                "I want to divide", "Please divide to reward.", "test.com", 0, subDao.address);
+            await proposalManager.connect(MasterDaoOwner).submitProposal(
+                masterDao.address,
+                PROPOSAL_KIND_ELECTION_COMISSION_PROPOSAL,
+                "Election Comission.",
+                "Select Election Comission.", 
+                "Reselect same person.", 
+                "test.com", 
+                0, 
+                MasterDaoOwner.address
+            );
             await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,6,PROPOSAL_STATUS_VOTING);
             await proposalManager.connect(MasterDaoOwner).voteForProposal(masterDao.address,6,true);
             await proposalManager.connect(SubDaoOwner1).voteForProposal(masterDao.address,6,true);            
             await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,6,PROPOSAL_STATUS_FINISHED_VOTING);
+            
+            await proposalManager.connect(MasterDaoOwner).submitProposal(
+                masterDao.address,
+                PROPOSAL_KIND_ELECTION_COMISSION_PROPOSAL,
+                "Election Comission.",
+                "Select SudDaoOwner1 to Election Comission.", 
+                "select SubDaoOwner1.", 
+                "test.com", 
+                0, 
+                SubDaoOwner1.address
+            );
+            await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,7,PROPOSAL_STATUS_VOTING);
+            await proposalManager.connect(MasterDaoOwner).voteForProposal(masterDao.address,7,true);
+            await proposalManager.connect(SubDaoOwner1).voteForProposal(masterDao.address,7,true);            
+            await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,7,PROPOSAL_STATUS_FINISHED_VOTING);
+            //
+            await memberManager.connect(MasterDaoOwner).resetElectionCommision(
+                masterDao.address,
+                MasterDaoOwner.address,
+                SubDaoOwner1.address,
+                6,
+                7
+            );
+
+            await proposalManager.connect(MasterDaoOwner).submitProposal(masterDao.address,PROPOSAL_KIND_USE_OF_FUNDS,"divide the dao",
+                "I want to divide", "Please divide to reward.", "test.com", 0, subDao.address);            
+            await proposalManager.connect(SubDaoOwner1).changeProposalStatus(masterDao.address,8,PROPOSAL_STATUS_VOTING);
+            await proposalManager.connect(MasterDaoOwner).voteForProposal(masterDao.address,8,true);
+            await proposalManager.connect(SubDaoOwner1).voteForProposal(masterDao.address,8,true);            
+            await proposalManager.connect(MasterDaoOwner).changeProposalStatus(masterDao.address,8,PROPOSAL_STATUS_FINISHED_VOTING);
 
             await masterDao.connect(MasterDaoOwner).donate({value:ethers.utils.parseEther("10.0")});
-            await masterDao.connect(MasterDaoOwner).divide(subDao.address,ethers.utils.parseEther("2.0"),6);
+            await masterDao.connect(MasterDaoOwner).divide(subDao.address,ethers.utils.parseEther("2.0"),8);
             const afterdaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
             assert.equal(afterdaobalance-beforedaobalance > 1,true);
             const list = await proposalManager.getProposalList(masterDao.address);
-            const proposal = list[5];
-            assert.equal(proposal.proposalStatus,PROPOSAL_STATUS_FINISHED);
-
+            const proposal6 = list[5];
+            assert.equal(proposal6.proposalStatus,PROPOSAL_STATUS_FINISHED);
+            const proposal7 = list[6];
+            assert.equal(proposal7.proposalStatus,PROPOSAL_STATUS_FINISHED);
+            const proposal8 = list[7];
+            assert.equal(proposal8.proposalStatus,PROPOSAL_STATUS_FINISHED);
+        });
+    });
+    describe("Error Check Test.", async function() {
+        it("Check Proposal Manager", async function(){
+            //
+            const list = await memberManager.getMemberList(masterDao.address);
+            assert.equal(list[1].eoaAddress,SubDaoOwner1.address);
+            await expect(proposalManager.connect(SubDaoOwner2).changeProposalStatus(masterDao.address,0,PROPOSAL_STATUS_VOTING)).
+                to.be.revertedWith("only election comission does.");
+            //
+            await expect(proposalManager.connect(MasterDaoOwner).updateProposalStatus(masterDao.address,0,PROPOSAL_STATUS_VOTING)).
+                to.be.revertedWith("can not call directly.");
+            //
+            await expect(proposalManager.connect(MasterDaoOwner).submitProposal(
+                masterDao.address,
+                PROPOSAL_KIND_ELECTION_COMISSION_PROPOSAL,
+                "Election Comission.",
+                "Select Election Comission.", 
+                "Reselect same person.", 
+                "test.com", 
+                0, 
+                MasterDaoOwner.address
+            )).
+            to.be.revertedWith("still within term.");
+        });
+        it("Check Member Manager.", async function(){
+            //
+            await expect(memberManager.countupTermCounter(masterDao.address)).to.be.
+                revertedWith("invalid operator.");
+            //
+            assert.equal(await memberManager.isElectionComission(masterDao.address,MasterDaoOwner.address),true);
+            assert.equal(await memberManager.isElectionComission(masterDao.address,SubDaoOwner1.address),true);
+            assert.equal(await memberManager.isElectionComission(masterDao.address,SubDaoOwner2.address),false);
+            assert.equal(await memberManager.isElectionComission(masterDao.address,SubDaoOwner3.address),false);
         });
     });
     describe("Erc20 for DAO.", async function() {
