@@ -27,6 +27,10 @@ describe("All contract", function() {
     const PROPOSAL_STATUS_FINISHED_VOTING = 5;
     const PROPOSAL_STATUS_FINISHED = 6;
 
+    // token kind
+    const TOKEN_KIND_ERC20 = 0;
+    const TOKEN_KIND_ERC721 = 1;
+
     const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
 
     let masterDao;
@@ -520,6 +524,7 @@ describe("All contract", function() {
             daoErc20 = await DaoErc20.connect(SubDaoOwner1).deploy("DAO ERC20","D20",subDao.address);
             assert.equal(await daoErc20.name(), "DAO ERC20");
             assert.equal(await daoErc20.symbol(), "D20");
+            await subDao.connect(SubDaoOwner1).addTokenToList(TOKEN_KIND_ERC20,daoErc20.address);
         });
         it("Only owner check.", async function() {
             // not owner error.
@@ -568,6 +573,7 @@ describe("All contract", function() {
                 ethers.utils.parseEther("2.0"));
             assert.equal(await daoErc721.name(), "DAO ERC721");
             assert.equal(await daoErc721.symbol(), "D721");
+            await subDao.connect(SubDaoOwner1).addTokenToList(TOKEN_KIND_ERC721,daoErc721.address);
         });
         it("Only owner check.", async function() {
             // not owner error.
@@ -604,6 +610,15 @@ describe("All contract", function() {
             // console.log("## beforedaobalance: ",beforedaobalance);
             // console.log("## afterdaobalance: ",afterdaobalance);
             assert.equal(afterdaobalance-beforedaobalance > 1,true);
+        });
+    });
+    describe("token list",async function(){
+        it("check token list",async function(){
+            const list = await subDao.getTokenList();
+            assert.equal(list[0].tokenKind,TOKEN_KIND_ERC20);
+            assert.equal(list[0].tokenAddress,daoErc20.address);
+            assert.equal(list[1].tokenKind,TOKEN_KIND_ERC721);
+            assert.equal(list[1].tokenAddress,daoErc721.address);
         });
     });
 });

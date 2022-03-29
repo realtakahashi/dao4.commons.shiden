@@ -14,6 +14,7 @@ import "./ProposalManager.sol";
 contract SubDAO is ReentrancyGuard{
     using Counters for Counters.Counter;
     Counters.Counter private _contributeIdTracker;
+    Counters.Counter private _tokenIdTracker;
 
     MemberManagerInterface private memberManagerContract;
     ProposalManagerInterface private proposalManagerContract;
@@ -29,12 +30,24 @@ contract SubDAO is ReentrancyGuard{
         string githubURL;
     }
 
+    enum TokenKind {
+        erc20,
+        erm721
+    }
+
+    struct TokenInfo {
+        TokenKind tokenKind;
+        address tokenAddress;
+    }
+
     event ReportedContribution(address indexed eoa, string githubURL, uint256 reportId);
     event Donated(address indexed eoa, uint256 amount);
     event Divided(address indexed eoa, address to, uint256 amount);
 
     // contoribute id => ContributeInfo
     mapping(uint256 => ContributeInfo) public contributionReports;
+    // tokenId => token info
+    mapping(uint256 => TokenInfo) public tokenList;
 
     /** 
     * コンストラクター
@@ -43,6 +56,7 @@ contract SubDAO is ReentrancyGuard{
         address _memberNFTAddress){
         // initial increment
         _contributeIdTracker.increment();
+        _tokenIdTracker.increment();
         
         daoName = _daoName;
         githubURL = _githubURL;
@@ -118,6 +132,28 @@ contract SubDAO is ReentrancyGuard{
     */
     function getContractBalance() public view returns(uint256) {
         return address(this).balance;
+    }
+
+    /**
+    * Token Listに追加する
+    */
+    function addTokenToList(TokenKind _tokenKind, address _tokenAddress) public onlyMember {
+        tokenList[_tokenIdTracker.current()]=TokenInfo(_tokenKind,_tokenAddress);
+        _tokenIdTracker.increment();
+    }
+
+    /**
+    * Token Listを取得する
+    */
+    function getTokenList() public view returns(TokenInfo[] memory) {
+ 
+        TokenInfo[] memory _tokenList = new TokenInfo[](_tokenIdTracker.current() - 1);
+        for (uint256 i=1; i < _tokenIdTracker.current(); i++) {
+            if (tokenList[i].tokenAddress!=address(0)){
+                _tokenList[i-1] = tokenList[i];
+            }
+        }
+        return _tokenList;       
     }
 
     /**
