@@ -19,15 +19,21 @@ npm i
 ```
 npx hardhat node --hostname localhost
 ```
+# Deploy Master DAO & Managers
+```
+cd dao4.commons.shiden/backend
+npx hardhat compile
+npx hardhat run --network localhost scripts/initial_deploy.js 
+```
 
-# Deploy Contract
+# Deploy Contract Command Example
 ```
 cd dao4.commons.shiden/backend
 npx hardhat compile
 npx hardhat run --network localhost scripts/deploy_subdao.js 
 ```
 
-# Excecute contract by Hardhat console
+# Excecute contract by Hardhat console Command Example
 - You have to run a local node.
 - With another termial,you can execute Hardhat concole.
 ```

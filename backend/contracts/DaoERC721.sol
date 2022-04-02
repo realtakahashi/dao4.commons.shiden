@@ -20,7 +20,7 @@ contract DaoERC721 is ERC721,ReentrancyGuard{
 
     Counters.Counter private _tokenIdTracker;
 
-    event Bought(address indexed executer);
+    event Bought(address indexed executer, uint256 tokenId);
     event ControledTokenSale(address indexed executer, bool onSale);
     event Withdrawn(address indexed executer, uint256 amount);
 
@@ -45,10 +45,11 @@ contract DaoERC721 is ERC721,ReentrancyGuard{
     function buy() public payable {
         require(onSale,"now not on sale.");
         require(msg.value==priceWei,"invalid transfering value.");
-        _safeMint(msg.sender,_tokenIdTracker.current());
+        uint256 _tokenId = _tokenIdTracker.current();
+        _safeMint(msg.sender,_tokenId);
         _tokenIdTracker.increment();
         salesAmount += msg.value;
-        emit Bought(msg.sender);
+        emit Bought(msg.sender,_tokenId);
     }
 
     /** 

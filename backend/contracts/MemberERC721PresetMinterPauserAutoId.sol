@@ -17,7 +17,7 @@ contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId,
     
     address owner;
     Counters.Counter private _tokenIdTracker;
-    address daoAddress;
+    // address daoAddress;
 
     // eoa => tokenId
     mapping(address => uint256) public ownedTokenId;
@@ -31,14 +31,14 @@ contract MemberERC721PresetMinterPauserAutoId is ERC721PresetMinterPauserAutoId,
     */
     constructor(string memory name,
                 string memory symbol,
-                string memory baseTokenURI,
-                address _daoAddress
+                string memory baseTokenURI
+                // address _daoAddress
     ) ERC721PresetMinterPauserAutoId(name,symbol,baseTokenURI) {
         // This NFT start One
         _tokenIdTracker.increment();
 
         owner = msg.sender;
-        daoAddress = _daoAddress;
+        // daoAddress = _daoAddress;
     }
 
     // modifier onlyOwner(){

@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./MemberManager.sol";
+import "./ProposalManager.sol";
 
 /**
 * This contract is to create dao easier than pesent methmod.
@@ -11,11 +13,11 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 */
 contract SubDAO is ReentrancyGuard{
     using Counters for Counters.Counter;
-    Counters.Counter private _memberIdTracker;
     Counters.Counter private _contributeIdTracker;
-    Counters.Counter private _proposalIdTracker;
+    Counters.Counter private _tokenIdTracker;
 
-    uint public PROPOSAL_PASS_LINE = 60;
+    MemberManagerInterface private memberManagerContract;
+    ProposalManagerInterface private proposalManagerContract;
 
     string public daoName;
     string public githubURL;
@@ -23,101 +25,53 @@ contract SubDAO is ReentrancyGuard{
     address private erc721Address;
     address private owner;
 
-    struct MemberInfo {
-        string name;
-        uint256 tokenId;
-        uint256 memberId;
-    }
-
     struct ContributeInfo {
         address eoa;
         string githubURL;
     }
 
-    enum ProposalKind {
-        AddAMember,  
-        DeleteAMember,
-        UseOfFunds,
-        CommunityManagement,
-        Activities
+    enum TokenKind {
+        erc20,
+        erm721
     }
 
-    enum ProposalStatus {
-        UnderDiscussionOnGithub,
-        Voting,
-        Pending,
-        Running,
-        Rejected,
-        FinishedVoting,
-        Finished
+    struct TokenInfo {
+        TokenKind tokenKind;
+        address tokenAddress;
     }
 
-    struct ProposalInfo {
-        ProposalKind proposalKind;
-        string title;
-        string outline;
-        string details;
-        string githubURL;
-        uint256 proposalId;
-        address relatedAddress;
-        ProposalStatus proposalStatus;
-    }
-
-    struct VotingInfo {
-        uint256 votingCount;
-        uint256 yesCount;
-        uint256 noCount;
-    }
-
-    event MemberAdded(address indexed eoa, uint256 memberId);
-    event MemberDeleted(address indexed eoa, uint256 memberId);
-    event UpdatedOwnerInfo(address memberNft, uint256 tokenId);
     event ReportedContribution(address indexed eoa, string githubURL, uint256 reportId);
     event Donated(address indexed eoa, uint256 amount);
     event Divided(address indexed eoa, address to, uint256 amount);
-    event SubmitedProposal(address indexed eoa, string title, uint256 proposalId);
-    event ChangedProposalStatus(address indexed eoa, uint256 proposalId, ProposalStatus _proposalStatus);
-    event VotedForProposal(address indexed eoa, uint256 _proposalId);
 
-    // EOA address => MemberInfo
-    mapping(address => MemberInfo) public memberInfoes;
-    // Member Id => EOA address
-    mapping(uint256 => address) public memberIds;
     // contoribute id => ContributeInfo
     mapping(uint256 => ContributeInfo) public contributionReports;
-    // proposal id => ProposalInfo
-    mapping(uint256 => ProposalInfo) public proposalInfoes;
-    // proposal id => Voting Info
-    mapping(uint256 => VotingInfo) public votingInfoes;
-    // proposal id => ( eoa => Already Voted)
-    mapping(uint256 => mapping(address => bool)) public checkVoted;
+    // tokenId => token info
+    mapping(uint256 => TokenInfo) public tokenList;
 
     /** 
     * コンストラクター
-    * DAOの基本情報をセットし、デプロイしたEOAを第一のメンバーとして登録する。
     */
-    constructor(string memory _daoName, string memory _githubURL, string memory _ownerName){
+    constructor(string memory _daoName, string memory _githubURL, address _memberManager, address _proposalManger,
+        address _memberNFTAddress){
         // initial increment
-        _memberIdTracker.increment();
-        _proposalIdTracker.increment();
         _contributeIdTracker.increment();
+        _tokenIdTracker.increment();
         
         daoName = _daoName;
         githubURL = _githubURL;
         owner = msg.sender;
-        memberInfoes[msg.sender] = MemberInfo(_ownerName,0,_memberIdTracker.current());
-        memberIds[_memberIdTracker.current()] = msg.sender;
-        _memberIdTracker.increment();
+        erc721Address = _memberNFTAddress;
+
+        memberManagerContract = MemberManagerInterface(_memberManager);
+        proposalManagerContract = ProposalManagerInterface(_proposalManger);
     }
 
     /**
-    * SubDao用のNFTのアドレス、オーナーのTokenIdを設定する
+    * オーナーを取得する
     */
-    function updateNftAddressAndOwnerTokenId(address _nftAddress, uint256 _ownerTokenId) public onlyOwner {
-        require(erc721Address==address(0),"already set.");
-        erc721Address = _nftAddress;
-        memberInfoes[msg.sender].tokenId = _ownerTokenId;
-        emit UpdatedOwnerInfo(_nftAddress,_ownerTokenId);
+    function getOwnerAddress() public view returns(address) {
+        return owner;
     }
 
     /**
@@ -125,49 +79,6 @@ contract SubDAO is ReentrancyGuard{
     */
     function getMemberNFTAddress() public view onlyMember returns (address) {
         return erc721Address;
-    }
-
-    /**
-    * メンバーを追加する。
-    * 正しくないdaoAddressにてコールした場合に対処するために、NFTのAddressをチェックする。
-    */
-    function addMember(address eoa, string memory name, address daoERC721Address,uint256 tokenId,
-        uint256 relatedProposalId) public onlyMember {
-        require(erc721Address==daoERC721Address,"NFT address isn't correct.");
-        require(proposalInfoes[relatedProposalId].relatedAddress==eoa,"not approved.");
-        memberInfoes[eoa] = MemberInfo(name,tokenId,_memberIdTracker.current());
-        memberIds[_memberIdTracker.current()] = eoa;
-        proposalInfoes[relatedProposalId].proposalStatus = ProposalStatus.Finished;
-        emit MemberAdded(eoa,_memberIdTracker.current());
-        _memberIdTracker.increment();
-    }
-
-    /**
-    * メンバーを削除する。
-    */
-    function deleteMember(address eoa, uint256 relatedProposalId) public onlyMember {
-        require(bytes(memberInfoes[eoa].name).length!=0,"not exists.");
-        require(proposalInfoes[relatedProposalId].relatedAddress==eoa,"not approved.");
-        uint256 memberId = memberInfoes[eoa].memberId;
-        memberInfoes[eoa].name = "";
-        memberInfoes[eoa].tokenId = 0;
-        memberInfoes[eoa].memberId = 0;
-        memberIds[memberId] = address(0);
-        proposalInfoes[relatedProposalId].proposalStatus = ProposalStatus.Finished;
-        emit MemberDeleted(eoa,memberId);
-    }
-
-    /**
-    * メンバーの一覧を取得する
-    */
-    function getMemberList() public view returns (MemberInfo[] memory) {
-        MemberInfo[] memory memberList = new MemberInfo[](_memberIdTracker.current() - 1);
-        for (uint256 i=1; i < _memberIdTracker.current(); i++) {
-            if (bytes(memberInfoes[memberIds[i]].name).length!=0){
-                memberList[i-1] = memberInfoes[memberIds[i]];
-            }
-        }
-        return memberList;
     }
 
     /** 
@@ -204,10 +115,15 @@ contract SubDAO is ReentrancyGuard{
     /** 
     * 分配する
     */
-    function divide(address to, uint256 amount, uint256 relatedProposalId) public payable onlyMember {
-        require(proposalInfoes[relatedProposalId].relatedAddress==to,"not approved.");
+    function divide(address to, uint256 amount, uint256 _relatedProposalId) public payable onlyMember {
+        ProposalInfo memory info = proposalManagerContract.getPropsalInfo(address(this), _relatedProposalId);
+        require(info.proposalKind==ProposalKind.UseOfFunds,"invalid proposalKind.");
+        require(info.relatedAddress==to,"Not proposed.");
+        require(info.proposalStatus==ProposalStatus.Running,"Not approved.");
+
         payable(to).transfer(amount);
-        proposalInfoes[relatedProposalId].proposalStatus = ProposalStatus.Finished;
+        proposalManagerContract.updateProposalStatus(address(this), _relatedProposalId, uint(ProposalStatus.Finished));
+
         emit Divided(msg.sender, to, amount);
     }
 
@@ -218,99 +134,26 @@ contract SubDAO is ReentrancyGuard{
         return address(this).balance;
     }
 
-    /** 
-    * 提案を提出する
+    /**
+    * Token Listに追加する
     */
-    function submitProposal(ProposalKind _proposalKind, string memory _title, string memory _outline, string memory _details, 
-        string memory _githubURL, address relatedAddress) public onlyMember {
-        proposalInfoes[_proposalIdTracker.current()] = 
-            ProposalInfo(_proposalKind, _title, _outline, _details, _githubURL, _proposalIdTracker.current()
-            , relatedAddress, ProposalStatus.UnderDiscussionOnGithub);
-        emit SubmitedProposal(msg.sender, _title, _proposalIdTracker.current());
-        _proposalIdTracker.increment();
+    function addTokenToList(TokenKind _tokenKind, address _tokenAddress) public onlyMember {
+        tokenList[_tokenIdTracker.current()]=TokenInfo(_tokenKind,_tokenAddress);
+        _tokenIdTracker.increment();
     }
 
     /**
-    * 提案のステータスを変更する
+    * Token Listを取得する
     */
-    function changeProposalStatus(uint256 _proposalId, ProposalStatus _proposalStatus) public onlyMember {
-        require(bytes(proposalInfoes[_proposalId].title).length!=0,"Invalid proposal.");
-        if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.UnderDiscussionOnGithub) {
-            if ((_proposalStatus != ProposalStatus.Voting) && (_proposalStatus != ProposalStatus.Pending) && 
-                (_proposalStatus != ProposalStatus.Rejected)) {
-                revert("Invalid Status.");
+    function getTokenList() public view returns(TokenInfo[] memory) {
+ 
+        TokenInfo[] memory _tokenList = new TokenInfo[](_tokenIdTracker.current() - 1);
+        for (uint256 i=1; i < _tokenIdTracker.current(); i++) {
+            if (tokenList[i].tokenAddress!=address(0)){
+                _tokenList[i-1] = tokenList[i];
             }
         }
-        else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Pending) {
-            if ((_proposalStatus != ProposalStatus.Voting) && 
-                (_proposalStatus != ProposalStatus.Rejected) &&
-                (_proposalStatus != ProposalStatus.UnderDiscussionOnGithub)) {
-                revert("Invalid Status.");
-            }
-        }
-        else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Voting) {
-            if ((_proposalStatus != ProposalStatus.FinishedVoting)) {
-                revert("Invalid Status.");
-            }
-        }
-        else if (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Running) {
-            if ((_proposalStatus != ProposalStatus.Finished)) {
-                revert("Invalid Status.");
-            }
-        }
-        else if ((proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Finished) ||
-                (proposalInfoes[_proposalId].proposalStatus == ProposalStatus.Rejected)) {
-                revert("Invalid Status.");
-        }
-
-        if (_proposalStatus == ProposalStatus.FinishedVoting){
-            proposalInfoes[_proposalId].proposalStatus = _checkVotingResult(_proposalId);
-        }
-        else if (_proposalStatus == ProposalStatus.Voting){
-            proposalInfoes[_proposalId].proposalStatus = _proposalStatus;
-            _startVoting(_proposalId);
-        }
-        else {
-            proposalInfoes[_proposalId].proposalStatus = _proposalStatus;
-        }
-        emit ChangedProposalStatus(msg.sender, _proposalId, _proposalStatus);
-    }
-
-    /**
-    * 投票する
-    */
-    function voteForProposal(uint256 _proposalId, bool yes) public onlyMember {
-        require(proposalInfoes[_proposalId].proposalStatus==ProposalStatus.Voting,"Now can not vote.");
-        require(checkVoted[_proposalId][msg.sender]==false,"Already voted.");
-        votingInfoes[_proposalId].votingCount++;
-        if (yes){
-            votingInfoes[_proposalId].yesCount++;
-        }
-        else{
-            votingInfoes[_proposalId].noCount++;
-        }
-        checkVoted[_proposalId][msg.sender] = true;
-        emit VotedForProposal(msg.sender, _proposalId);
-    }
-
-    /**
-    * 提案の一覧を取得する
-    */
-    function getProposalList() public view returns (ProposalInfo[] memory) {
-        ProposalInfo[] memory proposalList = new ProposalInfo[](_proposalIdTracker.current() - 1);
-        for (uint256 i=1; i < _proposalIdTracker.current(); i++) {
-            if (bytes(proposalInfoes[i].title).length!=0){
-                proposalList[i-1] = proposalInfoes[i];
-            }
-        }
-        return proposalList;
-    }
-
-    /**
-    * 投票を開始する
-    */
-    function _startVoting(uint256 _proposalId) internal {
-        votingInfoes[_proposalId]=VotingInfo(0,0,0);
+        return _tokenList;       
     }
 
     /**
@@ -319,22 +162,20 @@ contract SubDAO is ReentrancyGuard{
     receive() external payable {}
     
     /**
-    * 投票結果をチェックする。
+    * オーナーを取得する
     */
-    function _checkVotingResult(uint256 _proposalId) internal view returns (ProposalStatus){
-        if (votingInfoes[_proposalId].yesCount * 100 / (_memberIdTracker.current() - 1) >= PROPOSAL_PASS_LINE){   
-            return ProposalStatus.Running;
+    function getOwner() external view returns(address) {
+        if (msg.sender==tx.origin){
+            require(msg.sender==owner,"only owner does.");
         }
-        else {
-            return ProposalStatus.Rejected;
-        }       
+        return owner;
     }
 
     /** 
     * メンバーのみチェック
     */
     modifier onlyMember(){
-        require(bytes(memberInfoes[msg.sender].name).length!=0,"only member does.");
+        require(memberManagerContract.isMember(address(this),msg.sender),"only member does.");
         _;
     }
 
