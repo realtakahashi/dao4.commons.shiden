@@ -30,6 +30,7 @@ contract MasterDAO is ReentrancyGuard{
         address daoAddress;
         string daoName;
         string githubURL;
+        string description;
         bool rewardApproved;
     }
 
@@ -62,10 +63,10 @@ contract MasterDAO is ReentrancyGuard{
     /** 
     * DAOを登録する。
     */
-    function registerDAO(address daoAddress,string memory daoName,string memory _githubURL) public {
+    function registerDAO(address daoAddress,string memory daoName,string memory _githubURL, string memory _discription) public {
         require(daoIds[daoAddress]==0,"already registerd.");
         uint256 id = _daoIdTracker.current();
-        daoInfoes[id] = DaoInfo(msg.sender,daoAddress,daoName,_githubURL,false);
+        daoInfoes[id] = DaoInfo(msg.sender,daoAddress,daoName,_githubURL,_discription,false);
         daoIds[daoAddress] = id;
         _daoIdTracker.increment();
         emit DaoAdded(msg.sender, id);
