@@ -26,28 +26,16 @@ const Header: FC = () => {
       const chainId = await web3.eth.getChainId()
       const accounts = await web3.eth.requestAccounts();
       setAddress(accounts[0]);
-      // console.log(accounts[0])
-      // console.log(chainId)
       setWalletConnected(true)
       if (chainId !== 81 && chainId !== 31337) {
         alert("Network wrong, use shibuya network.")
-      }
-      // console.log("connected")
+      }      
     } else {
       setWalletConnected(false)
       console.log("failed to connect")
       alert("Failed to Connect Metamask")
     }
   }
-
-  // const disconnectWallet = async () => {
-  //   const web3 = new Web3(Web3.givenProvider)
-  //   await web3.eth.clearSubscriptions
-  //   setWalletConnected(false)
-  //   setAddress("")
-  //   console.log("disconnected")
-  // }
-
 
   const ConnectButton: FC = (): ReactElement => {
     const router = useRouter();
@@ -90,10 +78,8 @@ const Header: FC = () => {
           <HeaderNav />
           <div>
             if (address !== "") {
-              <>
-                <div>
-                  <span className="text-white">{address}</span>
-                </div>
+              <>                
+                <span className="text-white">{address}</span>                
               </>
             }
           </div>
