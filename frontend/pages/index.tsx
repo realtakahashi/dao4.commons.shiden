@@ -20,8 +20,7 @@ const Home = () => {
   useEffect(() => {
     const f = async () => {
       const list = await listSubDAO().then(res => res.result)
-      setSubDAOList(list)
-      // console.log(subDAOList)
+      setSubDAOList(list)      
     }
     f()
   },[])
