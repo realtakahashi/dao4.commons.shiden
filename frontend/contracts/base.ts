@@ -26,7 +26,10 @@ export const callContract = async <R>(
   callOption: ContractCallOption
 ): Promise<callContractResults<R>> => {
   if (typeof window.ethereum === 'undefined' || !callOption.contractAddress) {
-    return {}
+    throw new Error("Ethereum is not defined")
+  }
+  if (callOption.contractAddress === "") {
+    throw new Error("Contract Address is not defined")
   }
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
@@ -35,12 +38,11 @@ export const callContract = async <R>(
     callOption.contractArtifact.abi as string,
     signer
   )
-  const result = await contract.getDaoList().catch((errors: any) => {
+  const result:R = await contract.getDaoList().catch((errors: any) => {
     if (errors) {
       return {errors}
     }    
   })
-  console.log(result)
   return {result}
 }
 

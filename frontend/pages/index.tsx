@@ -19,8 +19,15 @@ const Home = () => {
   const [subDAOBalance, setSubDAOBalance] = useState<number>();  
   useEffect(() => {
     const f = async () => {
-      const list = await listSubDAO().then(res => res.result)
-      setSubDAOList(list)      
+      await listSubDAO()
+        .then((res) => {
+          res.result
+          setSubDAOList(res.result)
+        })
+        .catch((e) => {        
+          subDAOList
+          console.log("failed to list subDAO list", e)
+      })            
     }
     f()
   },[])

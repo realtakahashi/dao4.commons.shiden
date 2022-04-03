@@ -11,7 +11,7 @@ import {
 } from '@/types/SubDAO'
 import {AddProposalFormData, ProposalInfo} from '@/types/Proposal'
 import {AddMemberFormData} from '@/types/MemberNFT'
-import {callContract} from './base'
+import { callContract } from './base'
 
 export const listSubDAO = async () => {
   const res = await callContract<Array<SubDAOData>>({
@@ -19,32 +19,6 @@ export const listSubDAO = async () => {
     contractArtifact: MasterDAOContractConstruct,
   })
   return res
-}
-
-export const listSubDAO2 = async (): Promise<Array<SubDAOData>> => {
-  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS
-  const contractConstract = MasterDAOContractConstruct
-  let response: SubDAOData[] = []
-  if (typeof window.ethereum !== 'undefined' && masterDAOAddress) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner()
-    console.log(typeof contractConstract.abi)
-    const contract = new ethers.Contract(
-      masterDAOAddress,
-      contractConstract.abi as string,
-      signer
-    )
-    await contract
-      .getDaoList()
-      .then((r: any) => {
-        // console.log(r)
-        response = r
-      })
-      .catch((err: any) => {
-        console.log(err)        
-      })
-  }
-  return response
 }
 
 export const getSubDAOMemberList = async (
