@@ -3,6 +3,7 @@ export interface SubDAOData {
     daoAddress: string
     daoName: string
     githubURL: string
+    description: string
     rewardApproved:boolean
   }
 
@@ -11,18 +12,6 @@ export interface SubDAOData {
     doReward:boolean
   }
   
-export interface MemberInfo {
-  name:string
-  eoaAddress:string
-  memberId:Number
-}
-
-export interface MemberFormData {
-  name:string
-  memberAddress:string
-  proposalId:Number
-}
-
 export interface AddProposalFormData {
   proposalKind: number
   title: string
