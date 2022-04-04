@@ -15,11 +15,11 @@ async function main() {
 
   // We get the contract to deploy
   const NFT = await hre.ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
-  const nft = await NFT.deploy("test","test","test.com","0xB581C9264f59BF0289fA76D61B2D0746dCE3C30D");
+  const nft = await NFT.deploy("test","test","test.com");
 
   await nft.deployed();
 
-  console.log("SubDAO deployed to:", nft.address);
+  console.log("Member NFT deployed to:", nft.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

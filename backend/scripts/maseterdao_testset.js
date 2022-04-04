@@ -41,7 +41,7 @@ async function main() {
     await sudao6.deployed();
     console.log("SubDAO6 deployed to:", sudao6.address);
 
-    const DISCRIPTION = "This DAO was created to test the Master DAO. ¥r¥nThat's why we survive to help Master DAO complete functional tests. ¥r¥nWe hate products that have not been fully tested.¥r¥n Thoroughly test using these data.";
+    const DISCRIPTION = "This DAO was created to test the Master DAO. That's why we survive to help Master DAO complete functional tests. We hate products that have not been fully tested.Thoroughly test using these data.";
     await masterDao.registerDAO(sudao1.address,"DAO test1","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
     await masterDao.registerDAO(sudao2.address,"DAO test2","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
     await masterDao.registerDAO(sudao3.address,"DAO test3","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
