@@ -1,6 +1,5 @@
 export interface SubDAODeployFormData {
   name: string
-  ownerName: string
   githubUrl: string
 }
 

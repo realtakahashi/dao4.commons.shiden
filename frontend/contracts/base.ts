@@ -1,4 +1,4 @@
-import {ethers} from 'ethers'
+import {Contract, ethers} from 'ethers'
 
 export interface ContractCallOption {
   contractAddress: string
@@ -43,6 +43,40 @@ export const callContract = async <R>(
       return {errors}
     }    
   })
+  return {result}
+}
+
+export interface contractDeployOption {  
+  contractArtifact: ContractArtifact
+  data: string[]
+}
+
+export interface deployContractResults {
+  result?: any
+  errors?: any
+}
+
+export const deployContract = async <R>(
+  deployOption: contractDeployOption,
+): Promise<deployContractResults> => {
+  if (typeof window.ethereum === 'undefined') {
+    throw new Error("Ethereum is not defined")
+  }
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
+  const factory = new ethers.ContractFactory(
+    deployOption.contractArtifact.abi as string,
+    deployOption.contractArtifact.bytecode,
+    signer
+  )
+  const result = await factory.deploy(...deployOption.data)
+    .catch((errors: any) => {
+      if (errors) {
+      console.log(errors)
+      return {errors}
+    }    
+    })
+  console.log(result)
   return {result}
 }
 
