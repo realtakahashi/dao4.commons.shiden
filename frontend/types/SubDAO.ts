@@ -1,6 +1,8 @@
 export interface SubDAODeployFormData {
   name: string
   githubUrl: string
+  memberNFTAddress: string
+  description: string
 }
 
 export interface SubDAOData {

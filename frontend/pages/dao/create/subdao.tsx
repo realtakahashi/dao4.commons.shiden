@@ -7,7 +7,9 @@ const DeploySubDAO = () => {
   const [sudDAOAddress, setSubDAOAddress] = useState("")
   const [formValue, setFormValue] = useState<SubDAODeployFormData>({
     githubUrl: "",    
-    name: ""
+    name: "",
+    memberNFTAddress: "",
+    description: ""
   })
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormValue({
@@ -40,6 +42,18 @@ const DeploySubDAO = () => {
             label='GithubURL'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="githubUrl"
+            handleOnChangeInput={onChangeInput}
+          />
+          <FormInputText
+            label='MemberNFTAddress'
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="memberNFTAddress"
+            handleOnChangeInput={onChangeInput}
+          />
+          <FormInputText
+            label='Description'
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="description"
             handleOnChangeInput={onChangeInput}
           />
           <div className="md:w-1/3"></div>

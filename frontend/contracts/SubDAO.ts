@@ -21,6 +21,43 @@ export const listSubDAO = async () => {
   return res
 }
 
+export const deploySubDAO = async (
+  inputData: SubDAODeployFormData
+): Promise<string> => {
+  let subDAOContractAddess = ''
+  const contractConstract = SubDAOContractConstruct
+  const memberManagerAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? ""
+  const proposalManagerAddress = process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS ?? ""
+  if (memberManagerAddress === "") {
+    throw new Error("memberManagerAddress is required")
+  }
+  if (proposalManagerAddress === "") {
+    throw new Error("proposalManagerAddress is required")
+  }
+  if (typeof window.ethereum !== 'undefined') {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const factory = new ethers.ContractFactory(
+      contractConstract.abi as string,
+      contractConstract.bytecode,
+      signer
+    )
+    await factory
+      .deploy(inputData.name, inputData.githubUrl, proposalManagerAddress, proposalManagerAddress, inputData.memberNFTAddress)
+      .then((res: any) => {
+        console.log(res)
+        subDAOContractAddess = res.address
+        registerSubDAO(subDAOContractAddess, inputData)
+        alert('Succeeeded to deploy SubDAO')
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('Failed to deploy SubDAO')
+      })
+  }
+  return subDAOContractAddess
+}
+
 export const getSubDAOMemberList = async (
   sudDAOAddress: string
 ): Promise<Array<SubDAOMemberData>> => {
@@ -48,35 +85,6 @@ export const getSubDAOMemberList = async (
   return response
 }
 
-export const deploySubDAO = async (
-  inputData: SubDAODeployFormData
-): Promise<string> => {
-  let subDAOContractAddess = ''
-  const contractConstract = SubDAOContractConstruct
-  if (typeof window.ethereum !== 'undefined') {
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = provider.getSigner()
-    const factory = new ethers.ContractFactory(
-      contractConstract.abi as string,
-      contractConstract.bytecode,
-      signer
-    )
-    await factory
-      .deploy(inputData.name, inputData.githubUrl, inputData.ownerName)
-      .then((res: any) => {
-        console.log(res)
-        subDAOContractAddess = res.address
-        registerSubDAO(subDAOContractAddess, inputData)
-        alert('Succeeeded to deploy SubDAO')
-      })
-      .catch((err: any) => {
-        console.log(err)
-        alert('Failed to deploy SubDAO')
-      })
-  }
-  return subDAOContractAddess
-}
-
 export const registerSubDAO = async (
   subDAOContractAddess: string,
   inputData: SubDAODeployFormData
@@ -92,7 +100,7 @@ export const registerSubDAO = async (
       signer
     )
     await contract
-      .registerDAO(subDAOContractAddess, inputData.name, inputData.githubUrl)
+      .registerDAO(subDAOContractAddess, inputData.name, inputData.githubUrl, inputData.description)
       .then((r: any) => {
         console.log(r)
         alert('Succeeded to connect SubDAO and MasterDAO')
