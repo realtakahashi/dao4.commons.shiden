@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { getBalance } from "../contracts/MasterDaoApi";
 import { ethers } from "ethers";
 import MemberList from "../components/MemberList";
+import Member from "../components/Member";
 
 const Home: NextPage = () => {
   const [showSubDaoList, setShowSubDaoList] = useState(false);
@@ -84,7 +85,7 @@ const Home: NextPage = () => {
         )}
         {showMemberList == true && (
           <div>
-            <MemberList></MemberList>
+            <Member></Member>
           </div>
         )}
       </div>

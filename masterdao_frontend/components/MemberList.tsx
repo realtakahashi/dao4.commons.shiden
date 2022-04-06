@@ -20,19 +20,14 @@ const MemberList = () => {
 
   return (
     <>
-        <div className="flex justify-center">
-        <button className="m-2 px-4 py-2  border-black border-2 bg-white rounded text-black  hover:bg-green-200">
-            + Memeber
-          </button>
-          <button className="m-2 px-4 py-2  border-black border-2 bg-white rounded text-black  hover:bg-green-200">
-            Re: Election Comission
-          </button>
-        </div>
       <div className="p-2 flex flex-wrap justify-center mx-1 lg:-mx-4">
         {typeof memberList !== "undefined"
           ? memberList.map((member) => {
               return (
-                <div className="m-5  max-w-sm rounded overflow-hidden shadow-lg bg-black border-4 border-white">
+                <div 
+                    className="m-5  max-w-sm rounded overflow-hidden shadow-lg bg-black border-4 border-white"
+                    key={member.name}
+                >
                   <div className="px-6 py-4">
                     <div className="font-bold mb-2 text-white">Name: {member.name}</div>
                     {member.isElectionCommition == true && (

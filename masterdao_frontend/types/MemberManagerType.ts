@@ -18,4 +18,11 @@ export interface MemberInfo {
     memberAddress:string
     proposalId:Number
   }
+
+  export interface ElectionComissionFormData {
+      candidateEoa_one:string
+      candidateEoa_two:string
+      relatedProposalId_one:Number
+      relatedProposalId_two:Number
+  }
   
