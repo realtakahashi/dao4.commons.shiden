@@ -8,10 +8,14 @@ import { getBalance } from "../contracts/MasterDaoApi";
 import { ethers } from "ethers";
 import MemberList from "../components/MemberList";
 import Member from "../components/Member";
+import Proposal from "../components/Proposal";
+import ProposalTop from "../components/Proposal";
 
 const Home: NextPage = () => {
   const [showSubDaoList, setShowSubDaoList] = useState(false);
   const [showMemberList, setShowMemberList] = useState(false);
+  const [showProposalList,setShowProposalList] = useState(false);
+  const [showDonate, setShowDonate] = useState(false);
   const [address, setAddress] = useState("");
   const [walletConnected, setWalletConnected] = useState(false);
   const [showBalance, setShowBalance] = useState(0);
@@ -40,9 +44,11 @@ const Home: NextPage = () => {
     _getBalance();
   }, []);
 
-  const setShow=(_showSubDao:boolean,_showMember:boolean)=>{
+  const setShow=(_showSubDao:boolean,_showMember:boolean, _showPropsal:boolean, _showDonate:boolean)=>{
     setShowSubDaoList(_showSubDao);
     setShowMemberList(_showMember);
+    setShowProposalList(_showPropsal);
+    setShowDonate(_showDonate);
   }
 
   return (
@@ -61,20 +67,26 @@ const Home: NextPage = () => {
         <div className="p-1 text-center text-25px">
           <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
-            onClick={() => setShow(!showSubDaoList,false)}
+            onClick={() => setShow(!showSubDaoList,false,false,false)}
           >
             Sub DAOs
           </button>
           <button 
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
-            onClick={()=>setShow(false,!showMemberList)}
+            onClick={()=>setShow(false,!showMemberList,false,false)}
           >
             Members
           </button>
-          <button className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500">
+          <button 
+            className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
+            onClick={()=>setShow(false,false,!showProposalList,false)}
+          >
             Proposals
           </button>
-          <button className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500">
+          <button 
+            className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
+            onClick={()=>setShow(false,false,false,!showDonate)}
+          >
             Donate
           </button>
         </div>
@@ -86,6 +98,11 @@ const Home: NextPage = () => {
         {showMemberList == true && (
           <div>
             <Member></Member>
+          </div>
+        )}
+        {showProposalList == true &&(
+          <div>
+            <Proposal></Proposal>
           </div>
         )}
       </div>
