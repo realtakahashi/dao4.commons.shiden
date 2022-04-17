@@ -5,7 +5,7 @@ import { SubDAOMemberData } from '@/types/SubDAO';
 import Link from 'next/link';
 import { useSubDAOData } from '@/hooks';
 import { useRouter } from 'next/router';
-import { getSubDAOMemberList } from '@/contracts/SubDAO';
+import { getSubDAOMemberList } from '@/contracts/MemberManager';
 
 const DaoMembers = () => {
   const router = useRouter()
@@ -16,6 +16,7 @@ const DaoMembers = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   useEffect(() => {
     const listMember = async () => {
+      console.log(subDAOaddress)
       const membersList = await getSubDAOMemberList(subDAOaddress)
       setDAOMemberList(membersList)
       // console.log(daoMemberList)

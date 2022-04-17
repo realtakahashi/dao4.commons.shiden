@@ -3,27 +3,30 @@ import { Layout } from "@/components/common";
 import Link from "next/link";
 
 const topLinks = [
-  { path: "/dao/create/subdao", label: "Deploy SubDAO" },
   { path: "/dao/create/member_nft", label: "Deploy MemberNFT" },
+  { path: "/dao/create/subdao", label: "Deploy SubDAO" },  
   { path: '/dao/create/CheckMintedNFT', label: "Check MemberNFT Address" },
 ];
 
 const CreateDAO = () => {
   return (
     <>
-      <div>
-        {topLinks.map((link) => {
-          return (
+      {topLinks.map((link) => {
+        return (
+          <div            
+            key={link.path}
+          >
             <a
-              className="button-dao-default p-4 m-10"
+              className="button-dao-default block p-4 m-3"
               href={link.path}
-              key={link.path}
+              
             >
               {link.label}
             </a>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
+
     </>
   );
 };

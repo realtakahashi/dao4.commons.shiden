@@ -321,7 +321,7 @@ export const getSubDAOBalance = async (
   return response
 }
 
-export const getMemberNFTAddressApi = async (
+export const getMemberNFTAddress = async (
   subDAOContractAddess: string
 ): Promise<string> => {
   const contractConstract = SubDAOContractConstruct
