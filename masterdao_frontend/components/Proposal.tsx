@@ -7,17 +7,20 @@ const Proposal = () => {
   const [showSubmitButton, setShowSubmitButton] = useState(true);
   const [showList, setShowList] = useState(true);
   const [showSubmitScreen, setShowSubmitScreen] = useState(false);
+  const [showAllList, setShowAllList] = useState(false);
 
   const _manageShowing = (
     _listButton: boolean,
     _submitButton: boolean,
     _list: boolean,
-    _submitScreen: boolean
+    _submitScreen: boolean,
+    _showAllList:boolean
   ) => {
     setShowListButton(_listButton);
     setShowSubmitButton(_submitButton);
     setShowList(_list);
     setShowSubmitScreen(_submitScreen);
+    setShowAllList(_showAllList);
   };
 
   return (
@@ -26,18 +29,26 @@ const Proposal = () => {
         {showListButton == true && (
           <button
             className="m-2 px-4 py-2  border-black border-2 bg-white rounded text-black  hover:bg-green-200"
-            onClick={() => _manageShowing(false, true, true, false)}
+            onClick={() => _manageShowing(false, true, true, false,false)}
           >
-            List
+            Back To List
           </button>
         )}
         {showSubmitButton == true && (
+          <div>
           <button
             className="m-2 px-4 py-2  border-black border-2 bg-white rounded text-black  hover:bg-green-200"
-            onClick={() => _manageShowing(true, false, false, true)}
+            onClick={() => _manageShowing(true, false, false, true,false)}
           >
             + Submit New
           </button>
+          <button
+          className="m-2 px-4 py-2  border-black border-2 bg-white rounded text-black  hover:bg-green-200"
+          onClick={() => _manageShowing(false, true, true, false, !showAllList)}
+        >
+          All or Not Finished
+        </button>
+        </div>
         )}
       </div>
       <div>
@@ -47,6 +58,7 @@ const Proposal = () => {
             setShowList={setShowList}
             setShowListButton={setShowListButton}
             setShowSubmitScreen={setShowSubmitScreen}
+            showAllList={showAllList}
             />
         )}
         {showSubmitScreen == true && <SubmitProposal></SubmitProposal>}

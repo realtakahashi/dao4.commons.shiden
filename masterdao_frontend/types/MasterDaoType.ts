@@ -11,3 +11,9 @@ export interface DonateInfo {
   amount: number;
   relatedProposalId: number;
 }
+
+export interface TargetDaoInterface {
+  daoAddress: string;
+  daoName: string;
+  isMasterDao:boolean;
+}

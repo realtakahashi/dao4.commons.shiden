@@ -50,3 +50,4 @@ export const PROPOSAL_STATUS = [
 ] as const;
 
 export const PROPOSAL_VOTING = 1;
+export const PROPOSAL_FINISHED = 6;

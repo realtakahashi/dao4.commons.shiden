@@ -11,6 +11,9 @@ const ProposalParts = (props: ProposalProps) => {
         {props.targetProposal.title}
       </div>
       <p className="p-1 text-white text-base">
+        Id: {String(props.targetProposal.proposalId)}
+      </p>
+      <p className="p-1 text-white text-base">
         Kind: {PROPOSAL_KIND[props.targetProposal.proposalKind]}
       </p>
       <p className="p-1 text-white text-base">

@@ -43,7 +43,7 @@ const SubmitProposal = () => {
 
   return (
     <>
-      <div className="p-7"></div>
+      <div className="p-3"></div>
       <div className="flex justify-center text-25px text-blue-200">
         <label>Enter the information of the proposal you want to add.</label>
       </div>

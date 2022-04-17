@@ -163,3 +163,32 @@ export const _resetElectionComission = async (
       });
   }
 };
+
+export const deleteMember = async (
+  _memberInfoData: MemberInfo,
+  _proposalId: number
+) => {
+  const memberManagerAddress =
+    process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS;
+  const masterDaoAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
+  const contractConstract = MemberManagerContractConstruct;
+
+  console.log("## masterDAOAddress:", masterDaoAddress);
+  console.log("## memberinfo:", _memberInfoData);
+  console.log("## proposalId:", _proposalId);
+  if (typeof window.ethereum !== "undefined" && memberManagerAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      memberManagerAddress,
+      contractConstract.abi,
+      signer
+    );
+    await contract
+      .deleteMember(masterDaoAddress,_memberInfoData.eoaAddress, _proposalId)
+      .catch((err: any) => {
+        console.log(err);
+        errorFunction(err);
+      });
+  }
+};

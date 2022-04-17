@@ -1,15 +1,14 @@
 import { NextPage } from "next";
 import { useState } from "react";
-import SubDaoList from "../components/SubDaoList";
 import detectEthereumProvider from "@metamask/detect-provider";
 import Web3 from "web3";
 import { useEffect } from "react";
 import { getBalance } from "../contracts/MasterDaoApi";
 import { ethers } from "ethers";
-import MemberList from "../components/MemberList";
 import Member from "../components/Member";
 import Proposal from "../components/Proposal";
-import ProposalTop from "../components/Proposal";
+import SubDaoList from "../components/SubDaoList";
+import Donate from "../components/Donate";
 
 const Home: NextPage = () => {
   const [showSubDaoList, setShowSubDaoList] = useState(false);
@@ -19,6 +18,7 @@ const Home: NextPage = () => {
   const [address, setAddress] = useState("");
   const [walletConnected, setWalletConnected] = useState(false);
   const [showBalance, setShowBalance] = useState(0);
+  const MasterDaoAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
 
   useEffect(() => {
     const connectWallet = async () => {
@@ -45,6 +45,7 @@ const Home: NextPage = () => {
   }, []);
 
   const setShow=(_showSubDao:boolean,_showMember:boolean, _showPropsal:boolean, _showDonate:boolean)=>{
+    console.log("### showSubDao:",_showSubDao);
     setShowSubDaoList(_showSubDao);
     setShowMemberList(_showMember);
     setShowProposalList(_showPropsal);
@@ -104,6 +105,9 @@ const Home: NextPage = () => {
           <div>
             <Proposal></Proposal>
           </div>
+        )}
+        {showDonate == true &&(
+          <div><Donate daoAddress={String(MasterDaoAddress)} daoName={"Master DAO"} isMasterDao={true}></Donate></div>
         )}
       </div>
     </>

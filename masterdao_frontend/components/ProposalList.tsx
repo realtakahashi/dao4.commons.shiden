@@ -3,11 +3,13 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { checkElectionComission } from "../contracts/MemberManagerApi";
 import { getProposalList } from "../contracts/ProposalManagerApi";
-import { ProposalInfo, PROPOSAL_VOTING } from "../types/ProposalManagerType";
-import { PROPOSAL_KIND, PROPOSAL_STATUS } from "../types/ProposalManagerType";
+import {
+  ProposalInfo,
+  PROPOSAL_VOTING,
+  PROPOSAL_FINISHED,
+} from "../types/ProposalManagerType";
 import ChangeStatusOfProposal from "./ChangeStatusOfProposal";
 import ProposalParts from "./ProposalParts";
-import SupportReward from "./SupportReward";
 import Vote from "./Vote";
 
 interface ProposalListProps {
@@ -15,6 +17,7 @@ interface ProposalListProps {
   setShowListButton: (flg: boolean) => void;
   setShowList: (flg: boolean) => void;
   setShowSubmitScreen: (flg: boolean) => void;
+  showAllList: boolean;
 }
 
 const ProposalList = (props: ProposalListProps) => {
@@ -62,6 +65,7 @@ const ProposalList = (props: ProposalListProps) => {
     _backToList: boolean
   ) => {
     setShowList(_showList);
+    _getProposalList();
     setShowVote(_showVote);
     setShowChangeStatus(_showChangeStatus);
     setShowListButton(_showListButton);
@@ -97,7 +101,7 @@ const ProposalList = (props: ProposalListProps) => {
         <div className="flex justify-center">
           <button
             className="m-2 px-4 py-2  border-black border-2 bg-white rounded text-black  hover:bg-green-200"
-            onClick={() => _setShow(true,false,false,false,true)}
+            onClick={() => _setShow(true, false, false, false, true)}
           >
             Back To List
           </button>
@@ -109,54 +113,61 @@ const ProposalList = (props: ProposalListProps) => {
             {typeof proposalList !== "undefined"
               ? proposalList.map((proposal) => {
                   return (
-                    <div
-                      className="m-5  max-w-sm rounded overflow-hidden shadow-lg bg-black border-4 border-white"
-                      key={proposal.title}
-                    >
-                      <ProposalParts targetProposal={proposal}></ProposalParts>
-                      <div className="px-6 py-4">
-                        {proposal.proposalStatus == PROPOSAL_VOTING && (
-                          <button
-                            className="inline-block bg-red-700 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2"
-                            onClick={() =>
-                              _setShowAndSetTargetProposal(
-                                false,
-                                true,
-                                false,
-                                true,
-                                false,
-                                proposal
-                              )
-                            }
-                          >
-                            Vote
-                          </button>
-                        )}
-                        <button className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                          <Link href={proposal.githubURL}>
-                            <a target={"_blank"} rel="noopener noreferrer">
-                              Website
-                            </a>
-                          </Link>
-                        </button>
-                        {isElectionComission == true && (
-                          <button
-                            className="inline-block bg-green-700 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2"
-                            onClick={() =>
-                              _setShowAndSetTargetProposal(
-                                false,
-                                false,
-                                true,
-                                true,
-                                false,
-                                proposal
-                              )
-                            }
-                          >
-                            Change Status Of Proposal
-                          </button>
-                        )}
-                      </div>
+                    <div key={proposal.title}>
+                      {(props.showAllList == true ||
+                        (props.showAllList == false &&
+                          proposal.proposalStatus != PROPOSAL_FINISHED)) && (
+                        <div
+                          className="m-5  max-w-sm rounded overflow-hidden shadow-lg bg-black border-4 border-white"    
+                        >
+                          <ProposalParts
+                            targetProposal={proposal}
+                          ></ProposalParts>
+                          <div className="px-6 py-4">
+                            {proposal.proposalStatus == PROPOSAL_VOTING && (
+                              <button
+                                className="inline-block bg-red-700 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2"
+                                onClick={() =>
+                                  _setShowAndSetTargetProposal(
+                                    false,
+                                    true,
+                                    false,
+                                    true,
+                                    false,
+                                    proposal
+                                  )
+                                }
+                              >
+                                Vote
+                              </button>
+                            )}
+                            <button className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                              <Link href={proposal.githubURL}>
+                                <a target={"_blank"} rel="noopener noreferrer">
+                                  Website
+                                </a>
+                              </Link>
+                            </button>
+                            {isElectionComission == true && (
+                              <button
+                                className="inline-block bg-green-700 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2"
+                                onClick={() =>
+                                  _setShowAndSetTargetProposal(
+                                    false,
+                                    false,
+                                    true,
+                                    true,
+                                    false,
+                                    proposal
+                                  )
+                                }
+                              >
+                                Change Status Of Proposal
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })
@@ -167,7 +178,13 @@ const ProposalList = (props: ProposalListProps) => {
       <div>
         {showVote == true && <Vote targetProposal={targetProposal}></Vote>}
       </div>
-      <div>{showChangeStatus == true && <ChangeStatusOfProposal targetProposal={targetProposal}></ChangeStatusOfProposal>}</div>
+      <div>
+        {showChangeStatus == true && (
+          <ChangeStatusOfProposal
+            targetProposal={targetProposal}
+          ></ChangeStatusOfProposal>
+        )}
+      </div>
     </>
   );
 };
