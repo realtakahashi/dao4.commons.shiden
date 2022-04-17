@@ -42,12 +42,12 @@ async function main() {
     console.log("SubDAO6 deployed to:", subdao6.address);
 
     const DISCRIPTION = "This DAO was created to test the Master DAO. That's why we survive to help Master DAO complete functional tests. We hate products that have not been fully tested.Thoroughly test using these data.";
-    await masterDao.registeredAO(subdao1.address,"DAO test1","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
-    await masterDao.registeredAO(subdao2.address,"DAO test2","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
-    await masterDao.registeredAO(subdao3.address,"DAO test3","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
-    await masterDao.registeredAO(subdao4.address,"DAO test4","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
-    await masterDao.registeredAO(subdao5.address,"DAO test5","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
-    await masterDao.registeredAO(subdao6.address,"DAO test6","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registerDAO(subdao1.address,"DAO test1","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registerDAO(subdao2.address,"DAO test2","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registerDAO(subdao3.address,"DAO test3","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registerDAO(subdao4.address,"DAO test4","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registerDAO(subdao5.address,"DAO test5","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registerDAO(subdao6.address,"DAO test6","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
 }
 
 main()

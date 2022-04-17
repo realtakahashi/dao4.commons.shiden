@@ -394,7 +394,7 @@ describe("All contract", function() {
     });
     describe("Sub DAO is related with Master DAO.", async function() {
         it("Add SubDAO to Master DAO", async function() {
-            await masterDao.connect(SubDaoOwner1).registeredAO(subDao.address,"narusedai-2-36","test.com","this dao is for test.");
+            await masterDao.connect(SubDaoOwner1).registerDAO(subDao.address,"narusedai-2-36","test.com","this dao is for test.");
             const daoId = await masterDao.daoIds(subDao.address);
             const daoInfo = await masterDao.daoInfoes(daoId);
             assert.equal(daoInfo.daoName,"narusedai-2-36");
