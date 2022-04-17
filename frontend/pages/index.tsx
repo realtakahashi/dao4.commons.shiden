@@ -107,7 +107,7 @@ const Home = () => {
         <h2 className="text-center">List of Sub DAOs to which you belong</h2>
         <div className="flex flex-wrap justify-center mx-1 lg:-mx-4">
 
-          {typeof subDAOList !== "undefined" ?
+          {subDAOList instanceof Error || typeof subDAOList !== "undefined" ?            
             subDAOList.map((dao) => {    
               return (
                 <SubDAOListElement
@@ -115,7 +115,8 @@ const Home = () => {
                   dao={dao}
                 />
               )
-            }) : ""
+            })            
+            : ""
           }
 
           {typeof targetSubDAO !== "undefined" &&
