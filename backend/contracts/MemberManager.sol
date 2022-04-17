@@ -217,8 +217,19 @@ contract MemberManager {
         view
         returns (MemberInfo[] memory)
     {
+        uint256 counter = 0;
+        for (
+            uint256 i = 1;
+            i < memberCounters[_targetDaoAddress].current();
+            i++
+        ) {
+            if (bytes(memberInfoes[_targetDaoAddress][i].name).length != 0) {
+                counter++;
+            }
+        }
+
         MemberInfo[] memory memberList = new MemberInfo[](
-            memberCounters[_targetDaoAddress].current() - 1
+            counter
         );
         for (
             uint256 i = 1;
