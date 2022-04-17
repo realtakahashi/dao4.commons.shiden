@@ -1,4 +1,4 @@
-import {ethers} from 'ethers'
+import { ethers } from 'ethers'
 import {
   SubDAOContractConstruct,
   MasterDAOContractConstruct,
@@ -9,9 +9,10 @@ import {
   SubDAODeployFormData,
   DeleteMemberFormData,
 } from '@/types/SubDAO'
-import {AddProposalFormData, ProposalInfo} from '@/types/Proposal'
-import {AddMemberFormData} from '@/types/MemberNFT'
+import { AddProposalFormData, ProposalInfo } from '@/types/Proposal'
+import { AddMemberFormData } from '@/types/MemberNFT'
 import { callContract } from './base'
+import MemberManagerContractConstruct from './construct/MemberManager'
 
 export const listSubDAO = async () => {
   const res = await callContract<Array<SubDAOData>>({
@@ -43,7 +44,13 @@ export const deploySubDAO = async (
       signer
     )
     await factory
-      .deploy(inputData.name, inputData.githubUrl, proposalManagerAddress, proposalManagerAddress, inputData.memberNFTAddress)
+      .deploy(
+        inputData.name,
+        inputData.githubUrl,
+        memberManagerAddress,
+        proposalManagerAddress,
+        inputData.memberNFTAddress
+      )
       .then((res: any) => {
         console.log(res)
         subDAOContractAddess = res.address
@@ -104,11 +111,42 @@ export const registerSubDAO = async (
       .then((r: any) => {
         console.log(r)
         alert('Succeeded to connect SubDAO and MasterDAO')
+        addFirstMember(subDAOContractAddess, inputData.ownerName)
         return
       })
       .catch((err: any) => {
         console.log(err)
         alert('failed to connect SubDAO and MasterDAO')
+        return
+      })
+  }
+  return
+}
+
+export const addFirstMember = async (
+  subDAOContractAddess: string,
+  ownerName: string
+): Promise<void> => {
+  const contractConstract = MemberManagerContractConstruct
+  const memberManagerAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? ""
+  if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      memberManagerAddress,
+      contractConstract.abi as string,
+      signer
+    )
+    const tx = await contract
+      .addFristMember(subDAOContractAddess, ownerName, 0)
+      .then((r: any) => {
+        console.log(r)
+        alert('Succeeded to add first member to SubDAO')
+        return
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed to add first member to SubDAO')
         return
       })
   }
