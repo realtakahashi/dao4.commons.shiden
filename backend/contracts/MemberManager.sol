@@ -85,14 +85,14 @@ contract MemberManager {
     /**
      * 初期メンバーを登録する
      */
-    function addFristMember(
+    function addFirstMember(
         address _targetDaoAddress,
         string memory _ownerName,
         uint256 tokenId
     ) public onlyOwner(_targetDaoAddress) {
         require(
             memberIds[_targetDaoAddress][msg.sender] == 0,
-            "aliready initialized."
+            "already initialized."
         );
 
         memberCounters[_targetDaoAddress].increment();

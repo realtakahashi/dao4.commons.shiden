@@ -204,7 +204,7 @@ const MasterDAOContractConstruct = {
         { internalType: "string", name: "_githubURL", type: "string" },
         { internalType: "string", name: "_discription", type: "string" },
       ],
-      name: "registerDAO",
+      name: "registeredAO",
       outputs: [],
       stateMutability: "nonpayable",
       type: "function",

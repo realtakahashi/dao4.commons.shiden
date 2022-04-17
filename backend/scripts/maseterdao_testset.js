@@ -22,32 +22,32 @@ async function main() {
     console.log("Member NFT deployed to:", nft.address);
 
     const SubDAO = await hre.ethers.getContractFactory("SubDAO");
-    const sudao1 = await SubDAO.deploy("testDAO1", "test1.com",  memberManager.address, proposalManager.address, nft.address);
-    await sudao1.deployed();
-    console.log("SubDAO1 deployed to:", sudao1.address);
-    const sudao2 = await SubDAO.deploy("testDAO2", "test2.com",  memberManager.address, proposalManager.address, nft.address);
-    await sudao2.deployed();
-    console.log("SubDAO2 deployed to:", sudao2.address);
-    const sudao3 = await SubDAO.deploy("testDAO3", "test3.com",  memberManager.address, proposalManager.address, nft.address);
-    await sudao3.deployed();
-    console.log("SubDAO3 deployed to:", sudao3.address);
-    const sudao4 = await SubDAO.deploy("testDAO4", "test4.com",  memberManager.address, proposalManager.address, nft.address);
-    await sudao4.deployed();
-    console.log("SubDAO4 deployed to:", sudao4.address);
-    const sudao5 = await SubDAO.deploy("testDAO5", "test5.com",  memberManager.address, proposalManager.address, nft.address);
-    await sudao5.deployed();
-    console.log("SubDAO5 deployed to:", sudao5.address);
-    const sudao6 = await SubDAO.deploy("testDAO6", "test6.com",  memberManager.address, proposalManager.address, nft.address);
-    await sudao6.deployed();
-    console.log("SubDAO6 deployed to:", sudao6.address);
+    const subdao1 = await SubDAO.deploy("testDAO1", "test1.com",  memberManager.address, proposalManager.address, nft.address);
+    await subdao1.deployed();
+    console.log("SubDAO1 deployed to:", subdao1.address);
+    const subdao2 = await SubDAO.deploy("testDAO2", "test2.com",  memberManager.address, proposalManager.address, nft.address);
+    await subdao2.deployed();
+    console.log("SubDAO2 deployed to:", subdao2.address);
+    const subdao3 = await SubDAO.deploy("testDAO3", "test3.com",  memberManager.address, proposalManager.address, nft.address);
+    await subdao3.deployed();
+    console.log("SubDAO3 deployed to:", subdao3.address);
+    const subdao4 = await SubDAO.deploy("testDAO4", "test4.com",  memberManager.address, proposalManager.address, nft.address);
+    await subdao4.deployed();
+    console.log("SubDAO4 deployed to:", subdao4.address);
+    const subdao5 = await SubDAO.deploy("testDAO5", "test5.com",  memberManager.address, proposalManager.address, nft.address);
+    await subdao5.deployed();
+    console.log("SubDAO5 deployed to:", subdao5.address);
+    const subdao6 = await SubDAO.deploy("testDAO6", "test6.com",  memberManager.address, proposalManager.address, nft.address);
+    await subdao6.deployed();
+    console.log("SubDAO6 deployed to:", subdao6.address);
 
     const DISCRIPTION = "This DAO was created to test the Master DAO. That's why we survive to help Master DAO complete functional tests. We hate products that have not been fully tested.Thoroughly test using these data.";
-    await masterDao.registerDAO(sudao1.address,"DAO test1","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
-    await masterDao.registerDAO(sudao2.address,"DAO test2","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
-    await masterDao.registerDAO(sudao3.address,"DAO test3","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
-    await masterDao.registerDAO(sudao4.address,"DAO test4","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
-    await masterDao.registerDAO(sudao5.address,"DAO test5","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
-    await masterDao.registerDAO(sudao6.address,"DAO test6","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registeredAO(subdao1.address,"DAO test1","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registeredAO(subdao2.address,"DAO test2","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registeredAO(subdao3.address,"DAO test3","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registeredAO(subdao4.address,"DAO test4","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registeredAO(subdao5.address,"DAO test5","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
+    await masterDao.registeredAO(subdao6.address,"DAO test6","https://github.com/realtakahashi/dao4.commons.shiden",DISCRIPTION);
 }
 
 main()

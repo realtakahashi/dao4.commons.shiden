@@ -15,11 +15,11 @@ async function main() {
 
   // We get the contract to deploy
   const SubDAO = await hre.ethers.getContractFactory("SubDAO");
-  const sudao = await SubDAO.deploy("testDAO","test.com","shin");
+  const subdao = await SubDAO.deploy("testDAO","test.com","shin");
 
-  await sudao.deployed();
+  await subdao.deployed();
 
-  console.log("SubDAO deployed to:", sudao.address);
+  console.log("SubDAO deployed to:", subdao.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

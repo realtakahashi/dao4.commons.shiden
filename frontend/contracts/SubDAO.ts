@@ -109,7 +109,7 @@ export const registerSubDAO = async (
       signer
     );
     await contract
-      .registerDAO(subDAOContractAddess, inputData.name, inputData.githubUrl)
+      .registeredAO(subDAOContractAddess, inputData.name, inputData.githubUrl)
       .then((r: any) => {
         console.log(r);
         alert("Succeeded to connect SubDAO and MasterDAO");
