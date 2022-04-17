@@ -52,7 +52,7 @@ interface ProposalManagerInterface {
     function updateProposalStatus(
         address _targetDaoAddress,
         uint256 _proposalId,
-        uint _poposalStatus
+        uint256 _poposalStatus
     ) external;
 }
 
@@ -129,14 +129,22 @@ contract ProposalManager {
         address _relatedAddress
     ) public onlyMember(_targetDaoAddress) {
         //選挙管理委員提案以外の場合は、任期をチェックする
-        if (_proposalKind != ProposalKind.ElectionComissionPropsal){
-            if (memberManagerContract.checkWithinElectionCommisionTerm(_targetDaoAddress) == false){
+        if (_proposalKind != ProposalKind.ElectionComissionPropsal) {
+            if (
+                memberManagerContract.checkWithinElectionCommisionTerm(
+                    _targetDaoAddress
+                ) == false
+            ) {
                 revert("need to select election comission.");
             }
         }
         //選挙管理委員提案でも任期内の場合は変更を不可とする。
-        if (_proposalKind == ProposalKind.ElectionComissionPropsal){
-            if (memberManagerContract.checkWithinElectionCommisionTerm(_targetDaoAddress) == true){
+        if (_proposalKind == ProposalKind.ElectionComissionPropsal) {
+            if (
+                memberManagerContract.checkWithinElectionCommisionTerm(
+                    _targetDaoAddress
+                ) == true
+            ) {
                 revert("still within term.");
             }
         }
@@ -274,9 +282,11 @@ contract ProposalManager {
         view
         returns (ProposalInfo[] memory)
     {
-        ProposalInfo[] memory proposalList = new ProposalInfo[](
-            proposalCounters[_targetDaoAddress].current() - 1
-        );
+        uint256 index = 0;
+        if (proposalCounters[_targetDaoAddress].current() != 0) {
+            index = proposalCounters[_targetDaoAddress].current() - 1;
+        }
+        ProposalInfo[] memory proposalList = new ProposalInfo[](index);
         for (
             uint256 i = 1;
             i < proposalCounters[_targetDaoAddress].current();
@@ -348,10 +358,14 @@ contract ProposalManager {
     function updateProposalStatus(
         address _targetDaoAddress,
         uint256 _proposalId,
-        uint _poposalStatus
+        uint256 _poposalStatus
     ) external {
         require(msg.sender != tx.origin, "can not call directly.");
-        require(msg.sender == memberManagerAddress || msg.sender == _targetDaoAddress, "invalid origin.");
+        require(
+            msg.sender == memberManagerAddress ||
+                msg.sender == _targetDaoAddress,
+            "invalid origin."
+        );
         // require(memberManagerContract.isMember(_targetDaoAddress, msg.sender),"only member does.");
         proposalInfoes[_targetDaoAddress][_proposalId]
             .proposalStatus = ProposalStatus(_poposalStatus);

@@ -74,6 +74,10 @@ describe("All contract", function() {
             assert.equal(await list[0].memberId,1);
             assert.equal(await list[0].name,"shin.takahashi");
         });
+        it("Get Zero List",async function(){
+            const list = await proposalManager.getProposalList(masterDao.address);
+            assert.equal(list.length,0);
+        });
         it("Deployment Error Check", async function(){
             await expect(memberManager.connect(SubDaoOwner1).addFristMember(masterDao.address,
                     'shin.takahashi',0)).to.be.revertedWith("only owner does.");
