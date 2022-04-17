@@ -55,7 +55,7 @@ const MemberManagerContractConstruct = {
         { internalType: "string", name: "_ownerName", type: "string" },
         { internalType: "uint256", name: "tokenId", type: "uint256" },
       ],
-      name: "addFristMember",
+      name: "addFirstMember",
       outputs: [],
       stateMutability: "nonpayable",
       type: "function",
