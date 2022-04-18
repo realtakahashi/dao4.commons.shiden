@@ -4,13 +4,13 @@ const TargetDao = (props: TargetDaoInterface) => {
   return (
     <>
       <tr>
-        <th className="flex justify-end px-4 py-2 text-white text-18px">
+        <th className="flex justify-end px-4 py-5 text-white text-24px">
           DAO Name:{" "}
         </th>
-        <td className="text-white text-18px">{props.daoName}</td>
+        <td className="text-white text-24px">{props.daoName}</td>
       </tr>
       <tr>
-        <th className="flex justify-end px-4 py-2 text-white text-18px">
+        <th className="flex justify-end px-4 py-5 text-white text-24px">
           DAO Address:{" "}
         </th>
         <td className="text-white text-14px">{props.daoAddress}</td>

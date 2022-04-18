@@ -54,7 +54,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <div className=" bg-black bg-cover">
+      <div className="bg-black flex flex-col min-h-screen">
         <div className="text-center text-150px font-extrabold leading-none tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-500">
             Master DAO
@@ -62,7 +62,7 @@ const Home: NextPage = () => {
         </div>
         <div className="p-4 text-center">
           <label className="text-white text-50px">
-            Master DAO Balance: {ethers.utils.formatEther(showBalance)} SDN
+            Balance: {ethers.utils.formatEther(showBalance)} SDN
           </label>
         </div>
         <div className="p-1 text-center text-25px">

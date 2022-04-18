@@ -7,6 +7,7 @@ import {
   ProposalInfo,
   PROPOSAL_VOTING,
   PROPOSAL_FINISHED,
+  PROPOSAL_REJECTED,
 } from "../types/ProposalManagerType";
 import ChangeStatusOfProposal from "./ChangeStatusOfProposal";
 import ProposalParts from "./ProposalParts";
@@ -116,7 +117,10 @@ const ProposalList = (props: ProposalListProps) => {
                     <div key={proposal.title}>
                       {(props.showAllList == true ||
                         (props.showAllList == false &&
-                          proposal.proposalStatus != PROPOSAL_FINISHED)) && (
+                          proposal.proposalStatus != PROPOSAL_FINISHED) &&
+                          (props.showAllList == false &&
+                            proposal.proposalStatus != PROPOSAL_REJECTED)
+                            ) && (
                         <div
                           className="m-5  max-w-sm rounded overflow-hidden shadow-lg bg-black border-4 border-white"    
                         >

@@ -14,7 +14,7 @@ const SupportReward = (props: TargetDaoInterface) => {
   return (
     <>
       <div className="flex justify-center">
-        <label className="text-indigo-300 text-20px">
+        <label className="text-indigo-300 text-24px">
           You are trying to change the DAO Reward settings below...
         </label>
       </div>
@@ -24,9 +24,10 @@ const SupportReward = (props: TargetDaoInterface) => {
           <TargetDao
             daoAddress={props.daoAddress}
             daoName={props.daoName}
+            isMasterDao={false}
           ></TargetDao>
           <tr>
-            <th className="flex justify-end px-4 py-2 text-white text-18px">
+            <th className="flex justify-end px-4 py-5 text-white text-24px">
               Proposal Id:{" "}
             </th>
             <td>
@@ -37,10 +38,10 @@ const SupportReward = (props: TargetDaoInterface) => {
             </td>
           </tr>
           <tr>
-            <th className="flex justify-end px-4 py-2 text-white text-18px">
+            <th className="flex justify-end px-4 py-5 text-white text-24px">
               Change Reward To...
             </th>
-            <td className="text-black text-14px">
+            <td className="text-black text-18px">
               <select
                 name="doReward"
                 onChange={(e) => setDoreward(e.target.value)}

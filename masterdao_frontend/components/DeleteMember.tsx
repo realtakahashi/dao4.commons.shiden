@@ -12,29 +12,29 @@ const DeleteMember = (props: MemberInfo) => {
   return (
     <>
       <div className="p-2"></div>
-      <div className="flex justify-center text-25px text-blue-200">
+      <div className="flex justify-center text-24px text-blue-200">
         <label>You are trying to remove the following members:</label>
       </div>
       <div className="p-2 flex justify-center">
         <table>
           <tr className="">
-            <th className="px-2 py-4 text-18px text-white flex justify-end ">
+            <th className="px-2 py-4 text-24px text-white flex justify-end ">
               Name:
             </th>
-            <td className="px-2 py-4 text-18px text-white ">
+            <td className="px-2 py-4 text-24px text-white ">
               {props.name}
             </td>
           </tr>
           <tr className="">
-            <th className="px-2 py-4 text-18px text-white flex justify-end ">
+            <th className="px-2 py-4 text-24px text-white flex justify-end ">
               Member Id:
             </th>
-            <td className="px-2 py-4 text-18px text-white ">
+            <td className="px-2 py-4 text-24px text-white ">
               {String(props.memberId)}
             </td>
           </tr>
           <tr className="">
-            <th className="px-2 py-4 text-18px text-white flex justify-end ">
+            <th className="px-2 py-4 text-24px text-white flex justify-end ">
               Address:
             </th>
             <td className="px-2 py-4 text-14px text-white ">
@@ -42,7 +42,7 @@ const DeleteMember = (props: MemberInfo) => {
             </td>
           </tr>
           <tr className="">
-            <th className="flex justify-end px-2 py-4 text-white text-18px ">
+            <th className="flex justify-end px-2 py-4 text-white text-24px ">
               Proposal Id:
             </th>
             <td className="px-2 py-4 text-14px text-white ">
