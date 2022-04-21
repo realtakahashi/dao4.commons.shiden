@@ -9,6 +9,7 @@ import Member from "../components/Member";
 import Proposal from "../components/Proposal";
 import SubDaoList from "../components/SubDaoList";
 import Donate from "../components/Donate";
+import DaoBalance from "../components/DaoBalance";
 
 const Home: NextPage = () => {
   const [showSubDaoList, setShowSubDaoList] = useState(false);
@@ -17,7 +18,7 @@ const Home: NextPage = () => {
   const [showDonate, setShowDonate] = useState(false);
   const [address, setAddress] = useState("");
   const [walletConnected, setWalletConnected] = useState(false);
-  const [showBalance, setShowBalance] = useState(0);
+  
   const MasterDaoAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
 
   useEffect(() => {
@@ -36,12 +37,7 @@ const Home: NextPage = () => {
       }
     };
 
-    const _getBalance = async () => {
-      const ret:number = await getBalance();
-      setShowBalance(ret);
-    }
     connectWallet();
-    _getBalance();
   }, []);
 
   const setShow=(_showSubDao:boolean,_showMember:boolean, _showPropsal:boolean, _showDonate:boolean)=>{
@@ -61,9 +57,7 @@ const Home: NextPage = () => {
           </span>
         </div>
         <div className="p-4 text-center">
-          <label className="text-white text-50px">
-            Balance: {ethers.utils.formatEther(showBalance)} SDN
-          </label>
+          <DaoBalance></DaoBalance>
         </div>
         <div className="p-1 text-center text-25px">
           <button
