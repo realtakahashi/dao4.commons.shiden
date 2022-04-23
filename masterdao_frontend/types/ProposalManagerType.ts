@@ -51,3 +51,4 @@ export const PROPOSAL_STATUS = [
 
 export const PROPOSAL_VOTING = 1;
 export const PROPOSAL_FINISHED = 6;
+export const PROPOSAL_REJECTED= 4;

@@ -69,7 +69,11 @@ describe("All contract", function () {
             const MasterDao = await ethers.getContractFactory("MasterDAO");
             masterDao = await MasterDao.connect(MasterDaoOwner).deploy("test.com", 'shin.takahashi', memberManager.address,
                 proposalManager.address);
+<<<<<<< HEAD:backend/test/all-test.ts
             await memberManager.connect(MasterDaoOwner).addFristMember(masterDao.address, 'shin.takahashi', 0);
+=======
+            await memberManager.connect(MasterDaoOwner).addFirstMember(masterDao.address,'shin.takahashi',0);
+>>>>>>> backend/refactoring:backend/test/all-test.js
             const list = await memberManager.getMemberList(masterDao.address);
             assert.equal(await list[0].memberId, 1);
             assert.equal(await list[0].name, "shin.takahashi");
@@ -78,11 +82,11 @@ describe("All contract", function () {
             const list = await proposalManager.getProposalList(masterDao.address);
             assert.equal(list.length, 0);
         });
-        it("Deployment Error Check", async function () {
-            await expect(memberManager.connect(SubDaoOwner1).addFristMember(masterDao.address,
-                'shin.takahashi', 0)).to.be.revertedWith("only owner does.");
-            await expect(memberManager.connect(MasterDaoOwner).addFristMember(masterDao.address,
-                'shin.takahashi', 0)).to.be.revertedWith("aliready initialized.");
+        it("Deployment Error Check", async function(){
+            await expect(memberManager.connect(SubDaoOwner1).addFirstMember(masterDao.address,
+                    'shin.takahashi',0)).to.be.revertedWith("only owner does.");
+            await expect(memberManager.connect(MasterDaoOwner).addFirstMember(masterDao.address,
+                'shin.takahashi',0)).to.be.revertedWith("already initialized.");
         });
         it("Add a member to Mastar DAO", async function () {
             await proposalManager.connect(MasterDaoOwner).submitProposal(masterDao.address, PROPOSAL_KIND_ADD_MEMBER, "add a new member",
@@ -189,8 +193,8 @@ describe("All contract", function () {
             assert.equal(await subDaoa.daoName(), "narusedai-2-36");
             assert.equal(await subDaoa.githubURL(), "test.com");
         });
-        it("Add Frist member for subdao a.", async function () {
-            await memberManager.connect(SubDaoOwner1).addFristMember(subDaoa.address, "Shin Takahashi", 1)
+        it("Add First member for subdao a.",async function(){
+            await memberManager.connect(SubDaoOwner1).addFirstMember(subDaoa.address,"Shin Takahashi",1)
             const list = await memberManager.getMemberList(subDaoa.address);
             const member = list[0];
             assert.equal(member.name, "Shin Takahashi");
@@ -260,8 +264,8 @@ describe("All contract", function () {
             assert.equal(await subDao.daoName(), "narusedai-2-36");
             assert.equal(await subDao.githubURL(), "test.com");
         });
-        it("add frist member for subdao.", async function () {
-            await memberManager.connect(SubDaoOwner1).addFristMember(subDao.address, "Shin Takahashi", 1);
+        it("add First member for subdao.", async function(){
+            await memberManager.connect(SubDaoOwner1).addFirstMember(subDao.address,"Shin Takahashi",1);
             const list = await memberManager.getMemberList(subDao.address);
             const member = list[0];
             assert.equal(member.name, "Shin Takahashi");

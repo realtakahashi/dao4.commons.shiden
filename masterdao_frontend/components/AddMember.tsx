@@ -25,7 +25,7 @@ const AddMember = () => {
   return (
     <>
       <div className="p-7"></div>
-      <div className="flex justify-center text-25px text-blue-200">
+      <div className="flex justify-center text-24px text-blue-200">
         <label>Enter the information of the member you want to add.</label>
       </div>
       <form className="" onSubmit={_onSubmit}>
@@ -33,7 +33,7 @@ const AddMember = () => {
           <table>
             <tr>
               <th>
-                <label className="text-18px text-white">Name:</label>
+                <label className="text-24px text-white">Name:</label>
               </th>
               <td>
                 <input
@@ -47,7 +47,7 @@ const AddMember = () => {
             </tr>
             <tr>
               <th>
-                <label className="text-18px text-white">EOA Address:</label>
+                <label className="text-24px text-white">EOA Address:</label>
               </th>
               <td>
                 <input
@@ -61,7 +61,7 @@ const AddMember = () => {
             </tr>
             <tr>
               <th>
-                <label className="text-18px text-white">Proposal Id:</label>
+                <label className="text-24px text-white">Proposal Id:</label>
               </th>
               <td>
                 <input

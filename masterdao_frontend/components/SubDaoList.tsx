@@ -120,7 +120,11 @@ const SubDaoList = () => {
                           Support Reward
                         </button>
                         <button className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                          <Link href={subDao.githubURL}>Website</Link>
+                          <Link href={subDao.githubURL}>
+                            <a target={"_blank"} rel="noopener noreferrer">
+                              Website
+                            </a>
+                          </Link>
                         </button>
                       </div>
                     </div>
@@ -135,12 +139,14 @@ const SubDaoList = () => {
         <Donate
           daoAddress={selectDao.daoAddress}
           daoName={selectDao.daoName}
+          isMasterDao={false}
         ></Donate>
       )}
       {showReward == true && (
         <SupportReward
           daoAddress={selectDao.daoAddress}
           daoName={selectDao.daoName}
+          isMasterDao={false}
         ></SupportReward>
       )}
     </>

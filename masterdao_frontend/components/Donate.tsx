@@ -19,11 +19,11 @@ const Donate = (props: TargetDaoInterface) => {
   return (
     <>
       <div className="flex justify-center">
-        <label className="text-indigo-300 text-20px">
+        <label className="text-indigo-300 text-24px">
           You are trying to raise funds for the following DAO:
         </label>
       </div>
-      <div className="p-3"></div>
+      <div className="p-1"></div>
       <div className="flex justify-center">
         <table>
           <TargetDao
@@ -33,7 +33,7 @@ const Donate = (props: TargetDaoInterface) => {
           ></TargetDao>
           {props.isMasterDao == false && (
             <tr>
-              <th className="flex justify-end px-4 py-2 text-white text-18px">
+              <th className="flex justify-end px-4 py-5 text-white text-24px">
                 Proposal Id:{" "}
               </th>
               <td>
@@ -45,7 +45,7 @@ const Donate = (props: TargetDaoInterface) => {
             </tr>
           )}
           <tr>
-            <th className="flex justify-end px-4 py-2 text-white text-18px">
+            <th className="flex justify-end px-4 py-5 text-white text-24px">
               Donate Amount:{" "}
             </th>
             <td className="text-white text-18px">

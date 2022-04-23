@@ -25,7 +25,7 @@ await proposalManager.setMemberManager(memberManager.address);
   console.log("MasterDAO deployed to:", masterdao.address);
 
   //set first member
-  await memberManager.addFristMember(masterdao.address,"Shin Takahashi",0);
+  await memberManager.addFirstMember(masterdao.address,"Shin Takahashi",0);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

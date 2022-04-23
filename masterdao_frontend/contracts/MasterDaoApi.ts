@@ -65,6 +65,9 @@ export const changeDaoReward = async (_daoAddress:string,_relatedProposalId:numb
 export const doDonateSelectedDao = async (_subDaoAddress:string,_amount:number,_proposalId:string) => {
   const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
+  console.log("## subDaoAddress:",_subDaoAddress);
+  console.log("## amount:",_amount);
+  console.log("## proposal ID",_proposalId);
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -83,6 +86,7 @@ export const doDonateSelectedDao = async (_subDaoAddress:string,_amount:number,_
 };
 
 export const doDonateMasterDao = async (amount:number) => {
+  console.log("## Mater Dao Donate;");
   const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
   const contractConstract = MasterDAOContractConstruct;
   if (typeof window.ethereum !== "undefined" && masterDAOAddress) {
