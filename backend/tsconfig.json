@@ -2,10 +2,12 @@
   "compilerOptions": {
     "target": "es2018",
     "module": "commonjs",
-    // jsファイル時代のテストが通らないのでanyでもOK
+    // allow type of any
     "strict": false,
     "esModuleInterop": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    // alow import JSON file
+    "resolveJsonModule": true
   },
   "include": ["./scripts", "./test"],
   "files": ["./hardhat.config.ts"]

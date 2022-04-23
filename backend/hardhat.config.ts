@@ -1,7 +1,3 @@
-require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-truffle5");
-require('hardhat-contract-sizer');
-
 import { task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
 
@@ -18,7 +14,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
-const { privateKey } = require('./private.json');
+import { privateKey } from './private.json'
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -27,14 +23,14 @@ module.exports = {
   solidity: "0.8.4",
   networks: {
     shibuya: {
-      url:"https://rpc.shibuya.astar.network:8545",
-      chainId:81,
-      accounts: [privateKey],
+      url: "https://rpc.shibuya.astar.network:8545",
+      chainId: 81,
+      accounts: privateKey,
     },
     localhost: {
-      url:"http://localhost:8545",
-      chainId:31337,
-      accounts: [privateKey],
+      url: "http://localhost:8545",
+      chainId: 31337,
+      accounts: privateKey,
     }
   }
 };
