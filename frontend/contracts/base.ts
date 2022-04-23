@@ -25,10 +25,10 @@ export interface ContractArtifact {
 export const callContract = async <R>(
   callOption: ContractCallOption
 ): Promise<callContractResults<R>> => {
-  if (typeof window.ethereum === 'undefined' || !callOption.contractAddress) {
+  if (typeof window.ethereum === 'undefined') {
     throw new Error("Ethereum is not defined")
   }
-  if (callOption.contractAddress === "") {
+  if (!callOption.contractAddress) {
     throw new Error("Contract Address is not defined")
   }
   const provider = new ethers.providers.Web3Provider(window.ethereum)
