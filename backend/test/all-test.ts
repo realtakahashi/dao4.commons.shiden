@@ -69,11 +69,7 @@ describe("All contract", function () {
             const MasterDao = await ethers.getContractFactory("MasterDAO");
             masterDao = await MasterDao.connect(MasterDaoOwner).deploy("test.com", 'shin.takahashi', memberManager.address,
                 proposalManager.address);
-<<<<<<< HEAD:backend/test/all-test.ts
-            await memberManager.connect(MasterDaoOwner).addFristMember(masterDao.address, 'shin.takahashi', 0);
-=======
             await memberManager.connect(MasterDaoOwner).addFirstMember(masterDao.address,'shin.takahashi',0);
->>>>>>> backend/refactoring:backend/test/all-test.js
             const list = await memberManager.getMemberList(masterDao.address);
             assert.equal(await list[0].memberId, 1);
             assert.equal(await list[0].name, "shin.takahashi");
