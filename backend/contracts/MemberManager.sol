@@ -143,7 +143,7 @@ contract MemberManager {
         address _memberAddress,
         uint256 _relatedProposalId,
         uint256 tokenId
-    ) public onlyMember(_targetDaoAddress) {
+    ) public  {
         ProposalInfo memory info = proposalManagerContract.getPropsalInfo(
             _targetDaoAddress,
             _relatedProposalId
@@ -158,6 +158,7 @@ contract MemberManager {
             memberIds[_targetDaoAddress][_memberAddress] == 0,
             "already exists"
         );
+        require((msg.sender==info.relatedAddress) || (memberIds[_targetDaoAddress][msg.sender] != 0), "Invalide operater.");
 
         uint256 memberId = memberCounters[_targetDaoAddress].current();
         memberIds[_targetDaoAddress][_memberAddress] = memberId;
