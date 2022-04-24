@@ -9,7 +9,7 @@ export const getSubDAOMemberList = async (
   subDAOAddress: string
 ): Promise<Array<SubDAOMemberData>> => {
   const contractConstract = MemberManagerContractConstruct
-  const memberMangerContractAddress = process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS ?? ''
+  const memberMangerContractAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? ''
   let response: SubDAOMemberData[] = []
   if (typeof window.ethereum !== 'undefined' && subDAOAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -19,6 +19,7 @@ export const getSubDAOMemberList = async (
       contractConstract.abi as string,
       signer
     )
+    console.log(subDAOAddress)
     await contract
       .getMemberList(subDAOAddress)
       .then((r: any) => {
