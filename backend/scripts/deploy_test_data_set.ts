@@ -61,23 +61,6 @@ async function main() {
   //set masterdao first member 
   await memberManagerContract.connect(masterDAOOwner).addFirstMember(masterDAOContract.address, "Shin Takahashi", 0);
 
-  // // add subdao owner to masterdao
-  // await proposalManagerContract
-  //   .connect(masterDAOOwner)
-  //   .submitProposal(masterDAOContract.address,
-  //     proposalConst.kind.PROPOSAL_KIND_ADD_MEMBER,
-  //     "add a new member",
-  //     "I want a new member",
-  //     "Please Approve to add.",
-  //     "test.com",
-  //     0,
-  //     signers[0].address
-  //   )
-  // await proposalManagerContract.connect(masterDAOOwner).changeProposalStatus(masterDAOContract.address, 1, proposalConst.status.PROPOSAL_STATUS_VOTING);
-  // await proposalManagerContract.connect(masterDAOOwner).voteForProposal(masterDAOContract.address, 1, true);
-  // await proposalManagerContract.connect(masterDAOOwner).changeProposalStatus(masterDAOContract.address, 1, proposalConst.status.PROPOSAL_STATUS_FINISHED_VOTING);
-  // await memberManagerContract.connect(masterDAOOwner).addMember(masterDAOContract.address, "Keisuke Funatsu", signers[0].address, 1, 0)
-
   // set up subDAO
   const daoLoopCounter = 5
   for (let i = 0; i < daoLoopCounter; i++) {
@@ -112,11 +95,19 @@ async function main() {
     await memberManagerContract.connect(signers[i]).addFirstMember(subDaoContract.address, `Shin Takahashi`, 1)
     console.log("subDAO owner: ", a, "is regstered to member manager: ", memberManagerContract.address)
 
-    const otherSigners = signers.filter(async (s) => {
-      const a = await s.getAddress()
-      return a !== signerAddresses[i]
-    })
-    
+    const findOtherSigners = async () => {
+      const unmatchsigners = signers.filter(async (s) => {
+        const a = await s.getAddress()
+        return a.toUpperCase() !== signerAddresses[i].toUpperCase()
+      })
+      const res: NonceManager[] = []
+      unmatchsigners.forEach(async (s,i) => {
+        const signer = await ethers.getSigner(await s.getAddress())
+        res[i] = new NonceManager(signer)
+      })
+      return res
+    }
+    const otherSigners = await findOtherSigners()
     // add other signer as member
     otherSigners.forEach(async (s, j) => {
       const a = await s.getAddress()
