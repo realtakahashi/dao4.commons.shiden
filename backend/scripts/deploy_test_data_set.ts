@@ -1,5 +1,8 @@
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { Signer } from "ethers";
 import { ethers } from "hardhat";
 import { proposalConst } from "./proposal_const"
+import { NonceManager } from "@ethersproject/experimental";
 
 async function main() {
 
@@ -13,9 +16,17 @@ async function main() {
     "0x15d34aaf54267db7d7c367839aaf71a00a2c6a65",
     "0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc"
   ]
-  const signers = {}
+
+  // const getSigners = async (signerAddresses): Promise<Array<SignerWithAddress>> => {
+  //   return await signerAddresses.map(async (address) => {
+  //     return await ethers.getSigner(address).catch(e => console.log(e))
+  //   })
+  // }
+  // const signers = await getSigners(signerAddresses)
+  let signers: NonceManager[] = []
   signerAddresses.forEach(async (signerAddress, i) => {
-    signers[i] = await ethers.getSigner(signerAddress)
+    const signer = await ethers.getSigner(signerAddress)
+    signers[i] = new NonceManager(signer)
   })
 
   // Member Manager
@@ -69,77 +80,69 @@ async function main() {
 
   // set up subDAO
   const daoLoopCounter = 5
-  // for (let i = 0; i < daoLoopCounter; i++) {
-  const MemberERC721ContractFactory = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
-  const memberERC721Contract = await MemberERC721ContractFactory.connect(
-    signers[0]).deploy(`TEST$`, `TEST$`, `test$.com`);
-  console.log("memberERC721 deployed to:", memberERC721Contract.address);
-  await memberERC721Contract
-    .connect(signers[0])
-    .original_mint(
-      signers[0].address, { value: ethers.utils.parseEther("2.0") }
-    );
-  console.log("memberERC721 minted by:", signers[0].address);
-  const subDAOContractFactory = await ethers.getContractFactory("SubDAO");
-  const subDaoContract = await subDAOContractFactory
-    .connect(signers[0])
-    .deploy(
-      "narusedai-2-36",
-      "test.com",
-      memberManagerContract.address,
-      proposalManagerContract.address,
-      memberERC721Contract.address
-    );
-  console.log("SubDAO deployed to:", subDaoContract.address);
+  for (let i = 0; i < daoLoopCounter; i++) {
+    const a = await signers[i].getAddress()
+    const MemberERC721ContractFactory = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
+    const memberERC721Contract = await MemberERC721ContractFactory.connect(
+      signers[i]).deploy(`TEST${i}`, `TEST${i}`, `test${i}.com`);
+    console.log("memberERC721 deployed to:", memberERC721Contract.address);
+    await memberERC721Contract
+      .connect(signers[i])
+      .original_mint(
+        a, { value: ethers.utils.parseEther("2.0") }
+      )
+    console.log("memberERC721 minted by:", a);
+    const subDAOContractFactory = await ethers.getContractFactory("SubDAO");
+    const subDaoContract = await subDAOContractFactory
+      .connect(signers[i])
+      .deploy(
+        "narusedai-2-36",
+        "test.com",
+        memberManagerContract.address,
+        proposalManagerContract.address,
+        memberERC721Contract.address
+      );
+    console.log("SubDAO deployed to:", subDaoContract.address);
 
-  // add subDAO to masterDAO
-  await masterDAOContract.connect(signers[0]).registerDAO(subDaoContract.address, `DAO test`, "https://github.com/realtakahashi/dao4.commons.shiden", `Description`);
-  console.log("subDAO: ", subDaoContract.address, "is connected to masterDAO: ", masterDAOContract.address);
+    // add subDAO to masterDAO
+    await masterDAOContract.connect(signers[i]).registerDAO(subDaoContract.address, `DAO test`, "https://github.com/realtakahashi/dao4.commons.shiden", `Description`);
+    console.log("subDAO: ", subDaoContract.address, "is connected to masterDAO: ", masterDAOContract.address)
 
-  // add subdao owner as member manager (the signer is registered as commisionar implicitly)
-  await memberManagerContract.connect(signers[0]).addFirstMember(subDaoContract.address, `Shin Takahashi`, 1)
-  console.log("subDAO owner: ", signers[0].address, "is regstered to member manager: ", memberManagerContract.address);
+    // add subdao owner as member manager (the signer is registered as commisionar implicitly)
+    await memberManagerContract.connect(signers[i]).addFirstMember(subDaoContract.address, `Shin Takahashi`, 1)
+    console.log("subDAO owner: ", a, "is regstered to member manager: ", memberManagerContract.address)
 
-  // add member proposals
-  await proposalManagerContract.connect(signers[0]).submitProposal(
-    subDaoContract.address,
-    proposalConst.kind.PROPOSAL_KIND_ADD_MEMBER,
-    "Add Members",
-    "test",
-    "test",
-    "https://github.com/realtakahashi",
-    0,
-    signers[1].address
-  );
+    const otherSigners = signers.filter(async (s) => {
+      const a = await s.getAddress()
+      return a !== signerAddresses[i]
+    })
+    
+    // add other signer as member
+    otherSigners.forEach(async (s, j) => {
+      const a = await s.getAddress()
+      // add member proposals
+      await proposalManagerContract.connect(signers[i]).submitProposal(
+        subDaoContract.address,
+        proposalConst.kind.PROPOSAL_KIND_ADD_MEMBER,
+        "Add Members",
+        "test",
+        "test",
+        "https://github.com/realtakahashi",
+        0,
+        a
+      )
 
-  // vote new member proposal by subdaoOwner
-  await proposalManagerContract.connect(signers[0]).changeProposalStatus(subDaoContract.address, 1, proposalConst.status.PROPOSAL_STATUS_VOTING)
-  await proposalManagerContract.connect(signers[0]).voteForProposal(subDaoContract.address, 1, true)
-  await proposalManagerContract.connect(signers[0]).changeProposalStatus(subDaoContract.address, 1, proposalConst.status.PROPOSAL_STATUS_FINISHED_VOTING)
+      // vote new member proposal by subdaoOwner
+      await proposalManagerContract.connect(signers[i]).changeProposalStatus(subDaoContract.address, j + 1, proposalConst.status.PROPOSAL_STATUS_VOTING)
+      await proposalManagerContract.connect(signers[i]).voteForProposal(subDaoContract.address, j + 1, true)
+      await proposalManagerContract.connect(signers[i]).changeProposalStatus(subDaoContract.address, j + 1, proposalConst.status.PROPOSAL_STATUS_FINISHED_VOTING)
 
-  // add member 
-  await memberManagerContract.connect(signers[0]).addMember(subDaoContract.address, "Keisuke Funatsu", signers[1].address, 1, 2);
-
-
-  // // add subdao owner as election commision 
-  // await proposalManagerContract.connect(masterDAOOwner).submitProposal(
-  // masterDAOContract.address,
-  //   proposalConst.kind.PROPOSAL_KIND_ELECTION_COMISSION_PROPOSAL,
-  //   "Election Comission.",
-  //   "Select SudDaoOwner1 to Election Comission.",
-  //   "select SubDaoOwner1.",
-  //   "test.com",
-  //   0,
-  //   signers[0].address
-  // );
-  // await proposalManagerContract.connect(masterDAOOwner).changeProposalStatus(masterDAOContract.address, 7, status.PROPOSAL_STATUS_VOTING);
-  // await proposalManagerContract.connect(masterDAOOwner).voteForProposal(masterDAOContract.address, 7, true);
-  // await proposalManagerContract.connect(signers[0]).voteForProposal(masterDAOContract.address, 7, true);
-  // await proposalManagerContract.connect(masterDAOOwner).changeProposalStatus(masterDAOContract.address, 7, status.PROPOSAL_STATUS_FINISHED_VOTING);
-
-  
+      // add member 
+      await memberManagerContract.connect(signers[i]).addMember(subDaoContract.address, "Keisuke Funatsu", a, j + 1, j);
+      console.log("member added to:", subDaoContract.address)
+    });
+  }
 }
-// }
 
 
 main()
