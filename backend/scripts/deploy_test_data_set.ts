@@ -17,13 +17,8 @@ async function main() {
     "0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc"
   ]
 
-  // const getSigners = async (signerAddresses): Promise<Array<SignerWithAddress>> => {
-  //   return await signerAddresses.map(async (address) => {
-  //     return await ethers.getSigner(address).catch(e => console.log(e))
-  //   })
-  // }
-  // const signers = await getSigners(signerAddresses)
   let signers: NonceManager[] = []
+
   signerAddresses.forEach(async (signerAddress, i) => {
     const signer = await ethers.getSigner(signerAddress)
     signers[i] = new NonceManager(signer)
@@ -61,9 +56,8 @@ async function main() {
   //set masterdao first member 
   await memberManagerContract.connect(masterDAOOwner).addFirstMember(masterDAOContract.address, "Shin Takahashi", 0);
 
-  // set up subDAO
-  const daoLoopCounter = 5
-  for (let i = 0; i < daoLoopCounter; i++) {
+  // set up subDAO  
+  for (let i = 0; i < signers.length; i++) {
     const a = await signers[i].getAddress()
     const MemberERC721ContractFactory = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
     const memberERC721Contract = await MemberERC721ContractFactory.connect(
@@ -96,17 +90,17 @@ async function main() {
     console.log("subDAO owner: ", a, "is regstered to member manager: ", memberManagerContract.address)
 
     const findOtherSigners = async () => {
-      const unmatchsigners = signers.filter(async (s) => {
-        const a = await s.getAddress()
-        return a.toUpperCase() !== signerAddresses[i].toUpperCase()
-      })
-      const res: NonceManager[] = []
-      unmatchsigners.forEach(async (s,i) => {
-        const signer = await ethers.getSigner(await s.getAddress())
-        res[i] = new NonceManager(signer)
-      })
-      return res
+      const signerAddress = await signers[i].getAddress()      
+      const otherAddress = signerAddresses.filter((s) => {        
+        return s.toUpperCase() !== signerAddress.toUpperCase()
+      })      
+      return await Promise.all(otherAddress.map(async (s, k) => {
+        const signer = await ethers.getSigner(s)
+        return new NonceManager(signer)
+      }))
+      
     }
+
     const otherSigners = await findOtherSigners()
     // add other signer as member
     otherSigners.forEach(async (s, j) => {
@@ -115,21 +109,22 @@ async function main() {
       await proposalManagerContract.connect(signers[i]).submitProposal(
         subDaoContract.address,
         proposalConst.kind.PROPOSAL_KIND_ADD_MEMBER,
-        "Add Members",
+        `Add Members ${j}`,
         "test",
         "test",
         "https://github.com/realtakahashi",
         0,
         addressAsMember
       )
+      console.log("member proposal added to:", subDaoContract.address)
 
-      // vote new member proposal by subdaoOwner
+      // // vote new member proposal by subdaoOwner
       await proposalManagerContract.connect(signers[i]).changeProposalStatus(subDaoContract.address, j + 1, proposalConst.status.PROPOSAL_STATUS_VOTING)
       await proposalManagerContract.connect(signers[i]).voteForProposal(subDaoContract.address, j + 1, true)
       await proposalManagerContract.connect(signers[i]).changeProposalStatus(subDaoContract.address, j + 1, proposalConst.status.PROPOSAL_STATUS_FINISHED_VOTING)
 
-      // add member 
-      await memberManagerContract.connect(signers[i]).addMember(subDaoContract.address, "Keisuke Funatsu", addressAsMember, j + 1, j);
+      // // add member 
+      await memberManagerContract.connect(signers[i]).addMember(subDaoContract.address, `Keisuke Funatsu${j + 1}`, addressAsMember, j + 1, j);
       console.log("member added to:", subDaoContract.address)
     });
   }
