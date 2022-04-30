@@ -14,10 +14,10 @@ import { AddMemberFormData } from '@/types/MemberNFT'
 import { callContract } from './base'
 import MemberManagerContractConstruct from './construct/MemberManager'
 import ProposalManagerContractConstruct from './construct/ProposalManager'
-
+import { masterDAOContractAddress, proposalManagerContractAddress, memberManagerContractAddress } from './const'
 export const listSubDAO = async () => {
   const res = await callContract<Array<SubDAOData>>({
-    contractAddress: process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS ?? '',
+    contractAddress: masterDAOContractAddress ?? '',
     contractArtifact: MasterDAOContractConstruct,
   })
   return res
@@ -28,13 +28,11 @@ export const deploySubDAO = async (
 ): Promise<string> => {
   let subDAOContractAddess = ''
   const contractConstract = SubDAOContractConstruct
-  const memberManagerAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? ""
-  const proposalManagerAddress = process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS ?? ""
-  if (memberManagerAddress === "") {
-    throw new Error("memberManagerAddress is required")
+  if (memberManagerContractAddress === "") {
+    throw new Error("memberManagerContractAddress is required")
   }
-  if (proposalManagerAddress === "") {
-    throw new Error("proposalManagerAddress is required")
+  if (proposalManagerContractAddress === "") {
+    throw new Error("proposalManagerContractAddress is required")
   }
   if (typeof window.ethereum !== 'undefined') {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -48,8 +46,8 @@ export const deploySubDAO = async (
       .deploy(
         inputData.name,
         inputData.githubUrl,
-        memberManagerAddress,
-        proposalManagerAddress,
+        memberManagerContractAddress,
+        proposalManagerContractAddress,
         inputData.memberNFTAddress
       )
       .then((res: any) => {
@@ -97,13 +95,12 @@ export const registerSubDAO = async (
   subDAOContractAddess: string,
   inputData: SubDAODeployFormData
 ) => {
-  const masterDAOAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS
   const contractConstract = MasterDAOContractConstruct
-  if (typeof window.ethereum !== 'undefined' && masterDAOAddress) {
+  if (typeof window.ethereum !== 'undefined' && masterDAOContractAddress) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
-      masterDAOAddress,
+      masterDAOContractAddress,
       contractConstract.abi as string,
       signer
     )
@@ -129,12 +126,12 @@ export const addFirstMember = async (
   ownerName: string
 ): Promise<void> => {
   const contractConstract = MemberManagerContractConstruct
-  const memberManagerAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? ""
+  const memberManagerContractAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? ""
   if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
-      memberManagerAddress,
+      memberManagerContractAddress,
       contractConstract.abi as string,
       signer
     )
@@ -254,13 +251,13 @@ export const getProposalListFromContract = async (
 ): Promise<Array<ProposalInfo>> => {
   console.log('## SubDao Address: ', subDAOContractAddess)
   const contractConstract = ProposalManagerContractConstruct
-  const proposalContractAddress = process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS
+
   let response: ProposalInfo[] = []
   if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
-      proposalContractAddress as string,
+      proposalManagerContractAddress as string,
       contractConstract.abi as string,
       signer
     )
