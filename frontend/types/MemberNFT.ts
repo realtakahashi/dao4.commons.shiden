@@ -11,8 +11,7 @@ export interface MemberNFTMintFormData {
 
 
 export interface AddMemberFormData {
-  tokenID: number
-  nftContractAddress: string
+  tokenID: number  
   name: string
   memberAddress: string
   relatedProposalId: number

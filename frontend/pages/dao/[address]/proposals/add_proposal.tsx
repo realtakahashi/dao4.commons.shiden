@@ -16,7 +16,8 @@ const AddProposal = () => {
     outline: "",
     detail: "",
     githubURL: "",
-    relatedAddress:"",
+    relatedId: 0,
+    relatedAddress: "",
   });
 
   function onChagngeInput<T extends React.ChangeEvent<HTMLSelectElement>
@@ -53,7 +54,7 @@ const AddProposal = () => {
       <div className="w-full form-container">
         <h1 className="text-3xl">Add A Proposal</h1>
         <div className="p-5"></div>
-        <form          
+        <form
           onSubmit={onSubmitAddProposalForm}
         >
           <FormInputSelect
@@ -94,6 +95,13 @@ const AddProposal = () => {
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="githubURL"
+            handleOnChangeInput={onChagngeInput}
+          />
+          <FormInputText
+            label="Related ID"
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
+			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="relatedId"
             handleOnChangeInput={onChagngeInput}
           />
           <FormInputText

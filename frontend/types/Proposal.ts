@@ -4,6 +4,7 @@ export interface AddProposalFormData {
     outline: string
     detail: string
     githubURL: string
+    relatedId: number
     relatedAddress: string
   }
 

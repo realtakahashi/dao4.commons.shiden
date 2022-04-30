@@ -202,7 +202,7 @@ contract ProposalManager {
                 (_proposalStatus != ProposalStatus.Rejected) &&
                 (_proposalStatus != ProposalStatus.UnderDiscussionOnGithub)
             ) {
-                revert("Invalid Status.");
+                revert("proposalStatuss.");
             }
         } else if (
             proposalInfoes[_targetDaoAddress][_proposalId].proposalStatus ==

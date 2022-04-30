@@ -14,8 +14,7 @@ const MintMemberNFT = () => {
   const subDAOaddress = router.query.address as string  
   const [memberAdded, setMemberAdded] = useState(false)
   const [formValue, setFormValue] = useState<AddMemberFormData>({
-    tokenID: 0,
-    nftContractAddress: "",
+    tokenID: 0,    
     name: "",
     memberAddress: "",
     relatedProposalId: 0,
@@ -62,12 +61,6 @@ const MintMemberNFT = () => {
             label='Name'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="name"
-            handleOnChangeInput={onChangeInput}
-          />
-          <FormInputText
-            label='NFT contract address'
-            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-            name="nftContractAddress"
             handleOnChangeInput={onChangeInput}
           />
           <FormInputText
