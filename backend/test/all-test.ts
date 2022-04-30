@@ -160,8 +160,8 @@ describe("All contract", function () {
                 .to.be.revertedWith("only election comission does.");
             await expect(proposalManager.connect(SubDaoOwner4).voteForProposal(masterDao.address, 5, true))
                 .to.be.revertedWith("only member does.");
-            await expect(memberManager.connect(SubDaoOwner4).addMember(masterDao.address, "Anonimous", SubDaoOwner2.address, 5, 0))
-                .to.be.revertedWith("only member does.");
+            // await expect(memberManager.connect(SubDaoOwner4).addMember(masterDao.address, "Anonimous", SubDaoOwner2.address, 5, 0))
+            //     .to.be.revertedWith("only member does.");
             await expect(memberManager.connect(SubDaoOwner4).deleteMember(masterDao.address, SubDaoOwner2.address, 5))
                 .to.be.revertedWith("only member does.");
             await expect(masterDao.connect(SubDaoOwner4).divide(masterDao.address, 200, masterDao.address))
@@ -280,7 +280,7 @@ describe("All contract", function () {
             await proposalManager.connect(SubDaoOwner1).changeProposalStatus(subDao.address, 1, PROPOSAL_STATUS_FINISHED_VOTING);
 
             assert.equal(await memberERC721a.connect(SubDaoOwner1).balanceOf(SubDaoOwner2.address), 1);
-            await memberManager.connect(SubDaoOwner1).addMember(subDao.address, "Keisuke Funatsu", SubDaoOwner2.address, 1, 2);
+            await memberManager.connect(SubDaoOwner2).addMember(subDao.address, "Keisuke Funatsu", SubDaoOwner2.address, 1, 2);
 
             const list = await memberManager.getMemberList(subDao.address);
             const member = await list[1];
