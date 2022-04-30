@@ -155,22 +155,22 @@ export const addMemberToSubDAO = async (
   subDAOContractAddess: string,
   inputData: AddMemberFormData
 ): Promise<void> => {
-  const contractConstract = SubDAOContractConstruct
+  const contractConstract = MemberManagerContractConstruct
   if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
-      subDAOContractAddess,
+      memberManagerContractAddress as string,
       contractConstract.abi as string,
       signer
     )
     const tx = await contract
       .addMember(
+        subDAOContractAddess,
         inputData.memberAddress,
         inputData.name,
-        inputData.nftContractAddress,
-        inputData.tokenID,
-        inputData.relatedProposalId
+        inputData.relatedProposalId,
+        inputData.tokenID,        
       )
       .then((r: any) => {
         console.log(r)
@@ -220,24 +220,27 @@ export const registerProposal = async (
   inputData: AddProposalFormData
 ): Promise<string> => {
   console.log('### registerProposal 1')
-  const contractConstract = SubDAOContractConstruct
+  const contractConstract = ProposalManagerContractConstruct
   if (typeof window.ethereum !== 'undefined') {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
-      subDAOContractAddess,
+      proposalManagerContractAddress as string,
       contractConstract.abi as string,
       signer
     )
     console.log('## Add Proposal: Detail: ', inputData.detail)
     const tx = await contract.submitProposal(
+      subDAOContractAddess,
       inputData.proposalKind,
       inputData.title,
       inputData.outline,
       inputData.detail,
       inputData.githubURL,
+      0,
       inputData.relatedAddress
     )
+
     const returnValue = await tx.wait()
     console.log('### returnValue:', returnValue)
     console.log('### Proposal ID:', returnValue.events[0].args.proposalId)
@@ -279,18 +282,18 @@ export const changeProposalStatus = async (
   console.log('## SubDao Address: ', subDAOContractAddess)
   console.log('## Proposal Status: ', proposalStatus)
   console.log('## Proposal Id: ', proposalId)
-  const contractConstract = SubDAOContractConstruct
+  const contractConstract = ProposalManagerContractConstruct
   let response: ProposalInfo[] = []
   if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
-      subDAOContractAddess,
+      proposalManagerContractAddress as string,
       contractConstract.abi as string,
       signer
     )
     response = await contract
-      .changeProposalStatus(proposalId, proposalStatus)
+      .changeProposalStatus(subDAOContractAddess, proposalId, proposalStatus)
       .catch((err: any) => {
         console.log(err)
         alert('failed changeProposalStatus.')
@@ -308,18 +311,18 @@ export const doVoteForProposal = async (
 ) => {
   console.log('## doVote:yes: ', yes)
   console.log('## doVote:SubDao Address: ', subDAOContractAddess)
-  const contractConstract = SubDAOContractConstruct
+  const contractConstract = ProposalManagerContractConstruct
   let response: ProposalInfo[] = []
   if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
-      subDAOContractAddess,
+      proposalManagerContractAddress as string,
       contractConstract.abi as string,
       signer
     )
     response = await contract
-      .voteForProposal(proposalId, yes)
+      .voteForProposal(subDAOContractAddess, proposalId, yes)
       .catch((err: any) => {
         console.log(err)
         alert('failed voteForProposal.')

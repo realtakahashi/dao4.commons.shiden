@@ -152,6 +152,9 @@ export const MemberModal: FC<MemberProps> = ({
                 MemberID: {member.memberId._hex}
               </p>
               <p className="text-base leading-relaxed text-white dark:text-white">
+                Address: {member.eoaAddress}
+              </p>
+              <p className="text-base leading-relaxed text-white dark:text-white">
                 TokenID: {member.tokenId._hex}
               </p>
             </div>
