@@ -13,6 +13,7 @@ import { AddProposalFormData, ProposalInfo } from '@/types/Proposal'
 import { AddMemberFormData } from '@/types/MemberNFT'
 import { callContract } from './base'
 import MemberManagerContractConstruct from './construct/MemberManager'
+import ProposalManagerContractConstruct from './construct/ProposalManager'
 
 export const listSubDAO = async () => {
   const res = await callContract<Array<SubDAOData>>({
@@ -252,17 +253,18 @@ export const getProposalListFromContract = async (
   subDAOContractAddess: string
 ): Promise<Array<ProposalInfo>> => {
   console.log('## SubDao Address: ', subDAOContractAddess)
-  const contractConstract = SubDAOContractConstruct
+  const contractConstract = ProposalManagerContractConstruct
+  const proposalContractAddress = process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS
   let response: ProposalInfo[] = []
   if (typeof window.ethereum !== 'undefined' && subDAOContractAddess) {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
-      subDAOContractAddess,
+      proposalContractAddress as string,
       contractConstract.abi as string,
       signer
     )
-    response = await contract.getProposalList().catch((err: any) => {
+    response = await contract.getProposalList(subDAOContractAddess).catch((err: any) => {
       console.log(err)
       alert('failed to list Proposal Info.')
     })

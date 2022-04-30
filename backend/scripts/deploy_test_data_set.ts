@@ -110,7 +110,7 @@ async function main() {
     const otherSigners = await findOtherSigners()
     // add other signer as member
     otherSigners.forEach(async (s, j) => {
-      const a = await s.getAddress()
+      const addressAsMember = await s.getAddress()
       // add member proposals
       await proposalManagerContract.connect(signers[i]).submitProposal(
         subDaoContract.address,
@@ -120,7 +120,7 @@ async function main() {
         "test",
         "https://github.com/realtakahashi",
         0,
-        a
+        addressAsMember
       )
 
       // vote new member proposal by subdaoOwner
@@ -129,7 +129,7 @@ async function main() {
       await proposalManagerContract.connect(signers[i]).changeProposalStatus(subDaoContract.address, j + 1, proposalConst.status.PROPOSAL_STATUS_FINISHED_VOTING)
 
       // add member 
-      await memberManagerContract.connect(signers[i]).addMember(subDaoContract.address, "Keisuke Funatsu", a, j + 1, j);
+      await memberManagerContract.connect(signers[i]).addMember(subDaoContract.address, "Keisuke Funatsu", addressAsMember, j + 1, j);
       console.log("member added to:", subDaoContract.address)
     });
   }
