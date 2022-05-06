@@ -1,7 +1,7 @@
 
-import { FC } from 'react';
+import { FC } from 'react'
 import cn from "classnames"
-import { SubDAOData } from '@/types/SubDAO';
+import { SubDAOData } from '@/types/SubDAO'
 
 interface InputProps {
   className: string | undefined
