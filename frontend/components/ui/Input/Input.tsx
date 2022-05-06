@@ -74,13 +74,13 @@ export const FormInputSelect: FC<SelectProps> = (props) => {
           >
             <option value="">Please Choose { props.itemName}</option>
             {
-              props.selectList.length > 0 ?
+              props.selectList.length > 0 || typeof props.selectList !== "undefined" ?
                 props.selectList.map((item) => {
                   return (
                     <option
                       key={item[props.optionValueKey]}
                       value={item[props.optionValueKey]}>
-                      {item[props.optionLabelKey]}
+                      {`${item[props.optionLabelKey]}`}
                     </option>
                   )
                 })
