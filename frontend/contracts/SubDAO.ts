@@ -167,13 +167,18 @@ export const addMemberToSubDAO = async (
     const tx = await contract
       .addMember(
         subDAOContractAddess,
-        inputData.memberAddress,
         inputData.name,
+        inputData.memberAddress,
         inputData.relatedProposalId,
-        inputData.tokenID,        
+        inputData.tokenID,
       )
       .then((r: any) => {
         console.log(r)
+        console.log(subDAOContractAddess,
+          inputData.name,
+          inputData.memberAddress,
+          inputData.relatedProposalId,
+          inputData.tokenID)
         alert('Succeeded to add member to SubDAO')
         return
       })
