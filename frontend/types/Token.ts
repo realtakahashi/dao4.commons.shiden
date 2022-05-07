@@ -4,11 +4,9 @@ export interface DaoErc20DeployFormData {
   subDAOAddress: string
 }
 
-// export interface DaoErc20 {
-//   name: string
-//   symbol: string
-//   ownerAddress: string
-//   subDAOAddress: string  
-// }
+export interface DaoErc20 {
+  tokenAddress: string
+  tokenKind: number
+}
 
 

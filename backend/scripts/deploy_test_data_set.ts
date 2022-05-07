@@ -98,39 +98,40 @@ async function main() {
         const signer = await ethers.getSigner(s)
         return new NonceManager(signer)
       }))
-
-    }
+    }    
 
     const otherSigners = await findOtherSigners()
     // add other signer as member
     otherSigners.forEach(async (s, j) => {
       const addressAsMember = await s.getAddress()
-      // just wait for queue auto mining problem
-      setTimeout(function () {
-      }, 3000)
-      // add member proposals
-      await proposalManagerContract.connect(signers[i]).submitProposal(
-        subDaoContract.address,
-        proposalConst.kind.PROPOSAL_KIND_ADD_MEMBER,
-        `Add Members ${j}`,
-        `add ${addressAsMember} as member`,
-        `add ${addressAsMember} as member`,
-        "https://github.com/realtakahashi",
-        0,
-        addressAsMember
-      )
-      console.log("member proposal added to:", subDaoContract.address)
+      // // just wait for queue auto mining problem
+      // const waitMining = () => {
+      // setTimeout(function () {
+      // }, 5000)}
+      // waitMining()
+      // // add member proposals
+      // await proposalManagerContract.connect(signers[i]).submitProposal(
+      //   subDaoContract.address,
+      //   proposalConst.kind.PROPOSAL_KIND_ADD_MEMBER,
+      //   `Add Members ${j}`,
+      //   `add ${addressAsMember} as member`,
+      //   `add ${addressAsMember} as member`,
+      //   "https://github.com/realtakahashi",
+      //   0,
+      //   addressAsMember
+      // )
+      // console.log("member proposal added to:", subDaoContract.address)
 
-      // vote new member proposal by subdaoOwner
-      await proposalManagerContract.connect(signers[i]).changeProposalStatus(subDaoContract.address, j + 1, proposalConst.status.PROPOSAL_STATUS_VOTING)
-      await proposalManagerContract.connect(signers[i]).voteForProposal(subDaoContract.address, j + 1, true)
-      await proposalManagerContract.connect(signers[i]).changeProposalStatus(subDaoContract.address, j + 1, proposalConst.status.PROPOSAL_STATUS_FINISHED_VOTING)
+      // // vote new member proposal by subdaoOwner
+      // await proposalManagerContract.connect(signers[i]).changeProposalStatus(subDaoContract.address, j + 1, proposalConst.status.PROPOSAL_STATUS_VOTING)
+      // await proposalManagerContract.connect(signers[i]).voteForProposal(subDaoContract.address, j + 1, true)
+      // await proposalManagerContract.connect(signers[i]).changeProposalStatus(subDaoContract.address, j + 1, proposalConst.status.PROPOSAL_STATUS_FINISHED_VOTING)
 
-      // add member 
-      if ((j + 1) % 2 === 0) {
-        await memberManagerContract.connect(signers[i]).addMember(subDaoContract.address, `Keisuke Funatsu${j + 1}`, addressAsMember, j + 1, j)
-        console.log("member added to:", subDaoContract.address)
-      }
+      // // add member 
+      // if ((j + 1) % 2 === 0) {
+      //   await memberManagerContract.connect(signers[i]).addMember(subDaoContract.address, `Keisuke Funatsu${j + 1}`, addressAsMember, j + 1, j)
+      //   console.log("member added to:", subDaoContract.address)
+      // }
     })
 
     // Token sale

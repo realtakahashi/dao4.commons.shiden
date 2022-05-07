@@ -15,11 +15,9 @@ const DaoMembers = () => {
   const [targetDAOMember, setTargetDAOMember] = useState<SubDAOMemberData>()
   const [isModalOpen, setIsModalOpen] = useState(false)
   useEffect(() => {
-    const listMember = async () => {
-      console.log(subDAOaddress)
+    const listMember = async () => {      
       const membersList = await getSubDAOMemberList(subDAOaddress)
-      setDAOMemberList(membersList)
-      // console.log(daoMemberList)
+      setDAOMemberList(membersList)      
       if (typeof daoMemberList !== "undefined") {
         daoMemberList.map(member => {          
           return member.memberId
