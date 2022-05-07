@@ -7,6 +7,9 @@ export interface DaoErc20DeployFormData {
 export interface DaoErc20 {
   tokenAddress: string
   tokenKind: number
+  name: string
+  symbol: string
+  balance: number
 }
 
 

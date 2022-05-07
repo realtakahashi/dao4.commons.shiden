@@ -60,6 +60,7 @@ const Tokens = () => {
               <th className="border px-4 py-2">Symbol</th>
               <th className="border px-4 py-2">Price</th>
               <th className="border px-4 py-2">Token Address</th>
+              <th className="border px-4 py-2">Total Amount</th>
               <th className="border px-4 py-2">Available Amount</th>
               <th className="border px-4 py-2">Status</th>
             </tr>
@@ -73,12 +74,11 @@ const Tokens = () => {
                       key={token.tokenAddress}
                       className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
                     >
-                      <td className="border px-4 py-2"></td>
-                      <td className="border px-4 py-2">
-
-                      </td>
+                      <td className="border px-4 py-2">{token.name}</td>
+                      <td className="border px-4 py-2">{token.symbol}</td>
                       <td className="border px-4 py-2"></td>
                       <td className="border px-4 py-2">{token.tokenAddress}</td>
+                      <td className="border px-4 py-2">{token.balance}</td>
                       <td className="border px-4 py-2"></td>
                       <td className="border px-4 py-2"></td>
                     </tr>

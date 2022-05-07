@@ -52,14 +52,72 @@ export const getDAOERCTokenList = async (
     )
     await contract
       .getTokenList()
-      .then((r: any) => {
-        console.log(r)
-        response = r
+      .then(async (res: DaoErc20[]) => {
+        console.log(res)
+        response = await Promise.all(res.map(async (r) => {
+          const { name, symbol, balance } = await getDAOERCTokenInfo(r.tokenAddress)
+          return {
+            ...r,
+            symbol,
+            name,
+            // balance
+          }
+        }))
       })
       .catch((err: any) => {
         console.log(err)
         alert('failed to list Token')
       })
+  }
+  return response
+}
+
+
+export const getDAOERCTokenInfo = async (
+  tokenAddress: string
+): Promise<{ name: string, symbol: string, balance: number }> => {
+  const contractConstract = DAOERC20ContractConstruct
+  const response = { name: "", symbol: "", balance: 0 }
+  if (typeof window.ethereum !== 'undefined' && tokenAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      tokenAddress,
+      contractConstract.abi as string,
+      signer
+    )
+    await contract
+      .name()
+      .then((res: string) => {
+        // console.log(res)
+        response.name = res
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed to get token name')
+      })
+    await contract
+      .symbol()
+      .then((res: string) => {
+        console.log(res)
+        response.symbol = res
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed to get token symbol')
+      })
+      await contract
+      .getContractBalance()
+      .then((res: { _hex: string, _isBigNumber: boolean }) => {
+        console.log(res)
+        response.balance = parseInt(res._hex.toString(), 18)
+        console.log(response.balance)
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('failed to get token balance')
+      })
+
   }
   return response
 }
