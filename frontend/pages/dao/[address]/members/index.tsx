@@ -1,11 +1,11 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 import { Layout, MemberModal } from '@/components/common'
-import { SubDAOMemberData } from '@/types/SubDAO';
-import Link from 'next/link';
-import { useSubDAOData } from '@/hooks';
-import { useRouter } from 'next/router';
-import { getSubDAOMemberList } from '@/contracts/MemberManager';
+import { SubDAOMemberData } from '@/types/SubDAO'
+import Link from 'next/link'
+import { useSubDAOData } from '@/hooks'
+import { useRouter } from 'next/router'
+import { getSubDAOMemberList } from '@/contracts/MemberManager'
 
 const DaoMembers = () => {
   const router = useRouter()

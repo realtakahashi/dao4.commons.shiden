@@ -1,8 +1,6 @@
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { Signer } from "ethers";
-import { ethers } from "hardhat";
-import { proposalConst } from "./proposal_const"
-import { NonceManager } from "@ethersproject/experimental";
+import { ethers } from "hardhat"
+import { proposalConst, tokenConst } from "./const"
+import { NonceManager } from "@ethersproject/experimental"
 
 async function main() {
 
@@ -25,23 +23,23 @@ async function main() {
   })
 
   // Member Manager
-  const memberManagerContractFactory = await ethers.getContractFactory("MemberManager");
-  const memberManagerContract = await memberManagerContractFactory.connect(masterDAOOwner).deploy();
-  await memberManagerContract.deployed();
-  console.log("Member Manager deployed to:", memberManagerContract.address);
+  const memberManagerContractFactory = await ethers.getContractFactory("MemberManager")
+  const memberManagerContract = await memberManagerContractFactory.connect(masterDAOOwner).deploy()
+  await memberManagerContract.deployed()
+  console.log("Member Manager deployed to:", memberManagerContract.address)
 
   // Proposal Manager
-  const proposalManagerContractFactory = await ethers.getContractFactory("ProposalManager");
-  const proposalManagerContract = await proposalManagerContractFactory.connect(masterDAOOwner).deploy();
-  await proposalManagerContract.deployed();
-  console.log("Proposal Manager deployed to:", proposalManagerContract.address);
+  const proposalManagerContractFactory = await ethers.getContractFactory("ProposalManager")
+  const proposalManagerContract = await proposalManagerContractFactory.connect(masterDAOOwner).deploy()
+  await proposalManagerContract.deployed()
+  console.log("Proposal Manager deployed to:", proposalManagerContract.address)
 
   // set each other
-  await memberManagerContract.connect(masterDAOOwner).setProposalManager(proposalManagerContract.address);
-  await proposalManagerContract.connect(masterDAOOwner).setMemberManager(memberManagerContract.address);
+  await memberManagerContract.connect(masterDAOOwner).setProposalManager(proposalManagerContract.address)
+  await proposalManagerContract.connect(masterDAOOwner).setMemberManager(memberManagerContract.address)
 
   // Master DAO
-  const masterDAOContractFactory = await ethers.getContractFactory("MasterDAO");
+  const masterDAOContractFactory = await ethers.getContractFactory("MasterDAO")
   const masterDAOContract = await masterDAOContractFactory
     .connect(masterDAOOwner)
     .deploy(
@@ -49,27 +47,28 @@ async function main() {
       "Shin Takahashi",
       memberManagerContract.address,
       proposalManagerContract.address
-    );
-  await masterDAOContract.deployed();
-  console.log("MasterDAO deployed to:", masterDAOContract.address);
+    )
+  await masterDAOContract.deployed()
+  console.log("MasterDAO deployed to:", masterDAOContract.address)
 
   //set masterdao first member 
-  await memberManagerContract.connect(masterDAOOwner).addFirstMember(masterDAOContract.address, "Shin Takahashi", 0);
+  await memberManagerContract.connect(masterDAOOwner).addFirstMember(masterDAOContract.address, "Shin Takahashi", 0)
 
   // set up subDAO  
   for (let i = 0; i < signers.length; i++) {
     const a = await signers[i].getAddress()
-    const MemberERC721ContractFactory = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId");
+    const MemberERC721ContractFactory = await ethers.getContractFactory("MemberERC721PresetMinterPauserAutoId")
     const memberERC721Contract = await MemberERC721ContractFactory.connect(
-      signers[i]).deploy(`TEST${i}`, `TEST${i}`, `test${i}.com`);
-    console.log("memberERC721 deployed to:", memberERC721Contract.address);
+      signers[i]).deploy(`TEST${i}`, `TEST${i}`, `test${i}.com`)
+    await memberERC721Contract.deployed()
+    console.log("memberERC721 deployed to:", memberERC721Contract.address)
     await memberERC721Contract
       .connect(signers[i])
       .original_mint(
         a, { value: ethers.utils.parseEther("2.0") }
       )
-    console.log("memberERC721 minted by:", a);
-    const subDAOContractFactory = await ethers.getContractFactory("SubDAO");
+    console.log("memberERC721 minted by:", a)
+    const subDAOContractFactory = await ethers.getContractFactory("SubDAO")
     const subDaoContract = await subDAOContractFactory
       .connect(signers[i])
       .deploy(
@@ -78,11 +77,12 @@ async function main() {
         memberManagerContract.address,
         proposalManagerContract.address,
         memberERC721Contract.address
-      );
-    console.log("SubDAO deployed to:", subDaoContract.address);
+      )
+    await subDaoContract.deployed()
+    console.log("SubDAO deployed to:", subDaoContract.address)
 
     // add subDAO to masterDAO
-    await masterDAOContract.connect(signers[i]).registerDAO(subDaoContract.address, `DAO test ${i}`, "https://github.com/realtakahashi/dao4.commons.shiden", `Description`);
+    await masterDAOContract.connect(signers[i]).registerDAO(subDaoContract.address, `DAO test ${i}`, "https://github.com/realtakahashi/dao4.commons.shiden", `Description`)
     console.log("subDAO: ", subDaoContract.address, "is connected to masterDAO: ", masterDAOContract.address)
 
     // add subdao owner as member manager (the signer is registered as commisionar implicitly)
@@ -105,6 +105,9 @@ async function main() {
     // add other signer as member
     otherSigners.forEach(async (s, j) => {
       const addressAsMember = await s.getAddress()
+      // just wait for queue auto mining problem
+      setTimeout(function () {
+      }, 3000)
       // add member proposals
       await proposalManagerContract.connect(signers[i]).submitProposal(
         subDaoContract.address,
@@ -125,17 +128,42 @@ async function main() {
 
       // add member 
       if ((j + 1) % 2 === 0) {
-        await memberManagerContract.connect(signers[i]).addMember(subDaoContract.address, `Keisuke Funatsu${j + 1}`, addressAsMember, j + 1, j);
+        await memberManagerContract.connect(signers[i]).addMember(subDaoContract.address, `Keisuke Funatsu${j + 1}`, addressAsMember, j + 1, j)
         console.log("member added to:", subDaoContract.address)
-      }      
-    });
+      }
+    })
+
+    // Token sale
+    const daoErc20TokenTotalSupply = 300
+    const daoErc20ContractFactory = await ethers.getContractFactory("DaoERC20")
+    const daoErc20Contract = await daoErc20ContractFactory.connect(signers[i]).deploy("DAO ERC20", "D20", subDaoContract.address)
+    await daoErc20Contract.deployed()
+    console.log("erc20 token deployed to:",  daoErc20Contract.address)
+    await subDaoContract.connect(signers[i]).addTokenToList(tokenConst.TOKEN_KIND_ERC20, daoErc20Contract.address)
+    await daoErc20Contract.connect(signers[i]).mint(ethers.utils.parseEther("2.0"), daoErc20TokenTotalSupply)
+    console.log("erc20 token minted:",  daoErc20Contract.address)
+    if (i % 2 === 0) {
+      await daoErc20Contract.connect(signers[i]).controlTokenSale(true)
+      await daoErc20Contract.connect(signers[i]).buy(10, { value: ethers.utils.parseEther("20.0") })
+      console.log("erc20 token bought by:",  await signers[i].getAddress())
+    }
+    
+
+    // it("check contract balance & withdraw.", async function () {
+    //   assert.equal(await daoErc20.getContractBalance(), 20000000000000000000);
+    //   const beforedaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
+    //   await daoErc20.withdraw();
+    //   const afterdaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()));
+    //   assert.equal(afterdaobalance - beforedaobalance > 19, true);
+    // });
   }
 }
 
 
 main()
+
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+    console.error(error)
+    process.exit(1)
+  })

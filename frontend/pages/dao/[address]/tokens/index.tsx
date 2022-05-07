@@ -1,23 +1,50 @@
 import { Layout } from '@/components/common'
+import { useSubDAOData } from '@/hooks'
 import Link from "next/link"
-
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 const Tokens = () => {
-return (
-  <>
-    <p className="p-2 text-3xl">It's still unfinished now.</p>
-    <div className="p-2"></div>
-    <p className="p-2 text-xl">You can use this feature to deploy ERC20 and ERC721.</p>
-    <p className="p-2 text-xl">You can sell those tokens.</p>
-    <p className="p-2 text-xl">However, the sales revenue of those tokens can only be received by the DAO contract address.</p>
-    <div className="p-5"></div>
-    <Link href="/">
-      <a className="underline text-3xl">
-        Back to Top
-      </a>
-    </Link>
-  </>
-)
+  const router = useRouter()
+  const subDAOaddress = router.query.address as string
+  const targetSubDAO = useSubDAOData(subDAOaddress)
+  useEffect(() => {
+    const getTokenList = async (): TokenList => {
+
+    }
+  }, [])
+
+
+  return (
+    <>
+      <table className="table-auto">
+        <thead>
+          <tr>
+            <th className="border px-4 py-2">Token Name</th>
+            <th className="border px-4 py-2">Symbol</th>
+            <th className="border px-4 py-2">Price</th>
+            <th className="border px-4 py-2">Owner</th>
+            <th className="border px-4 py-2">Mintable Amount</th>
+            <th className="border px-4 py-2">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
+          >
+            <td className="border px-4 py-2"></td>
+            <td className="border px-4 py-2">
+
+            </td>
+            <td className="border px-4 py-2"></td>
+            <td className="border px-4 py-2"></td>
+            <td className="border px-4 py-2"></td>
+            <td className="border px-4 py-2"></td>
+          </tr>
+        </tbody>
+      </table>
+    </>
+  )
 }
 
 Tokens.Layout = Layout
