@@ -135,7 +135,7 @@ async function main() {
     })
 
     // Token sale
-    const daoErc20TokenTotalSupply = 300
+    const daoErc20TokenTotalSupply = 30000
     const daoErc20ContractFactory = await ethers.getContractFactory("DaoERC20")
     const daoErc20Contract = await daoErc20ContractFactory.connect(signers[i]).deploy("DAO ERC20", "D20", subDaoContract.address)
     await daoErc20Contract.deployed()

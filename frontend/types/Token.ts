@@ -9,7 +9,10 @@ export interface DaoErc20 {
   tokenKind: number
   name: string
   symbol: string
-  balance: number
+  totalBalance: number
+  onSale: boolean
+  salesAmount: number
+  price: number
 }
 
 

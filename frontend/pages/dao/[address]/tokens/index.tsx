@@ -61,7 +61,7 @@ const Tokens = () => {
               <th className="border px-4 py-2">Price</th>
               <th className="border px-4 py-2">Token Address</th>
               <th className="border px-4 py-2">Total Amount</th>
-              <th className="border px-4 py-2">Available Amount</th>
+              <th className="border px-4 py-2">Owned Amount</th>
               <th className="border px-4 py-2">Status</th>
             </tr>
           </thead>
@@ -76,11 +76,11 @@ const Tokens = () => {
                     >
                       <td className="border px-4 py-2">{token.name}</td>
                       <td className="border px-4 py-2">{token.symbol}</td>
-                      <td className="border px-4 py-2"></td>
+                      <td className="border px-4 py-2">{token.price}</td>
                       <td className="border px-4 py-2">{token.tokenAddress}</td>
-                      <td className="border px-4 py-2">{token.balance}</td>
-                      <td className="border px-4 py-2"></td>
-                      <td className="border px-4 py-2"></td>
+                      <td className="border px-4 py-2">{token.totalBalance}</td>
+                      <td className="border px-4 py-2">{token.salesAmount}</td>
+                      <td className="border px-4 py-2">{token.onSale? "Now on sale": "Not on sale"}</td>
                     </tr>
                   )
                 })
