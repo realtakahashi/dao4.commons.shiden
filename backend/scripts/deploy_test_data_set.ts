@@ -134,7 +134,7 @@ async function main() {
       // }
     })
 
-    // Token sale
+    // Token sale ERC20
     const daoErc20TokenTotalSupply = 30000
     const daoErc20ContractFactory = await ethers.getContractFactory("DaoERC20")
     const daoErc20Contract = await daoErc20ContractFactory.connect(signers[i]).deploy("DAO ERC20", "D20", subDaoContract.address)
@@ -149,6 +149,7 @@ async function main() {
       console.log("erc20 token bought by:",  await signers[i].getAddress())
     }
     
+    // Token sale ERC721
 
     // it("check contract balance & withdraw.", async function () {
     //   assert.equal(await daoErc20.getContractBalance(), 20000000000000000000);
