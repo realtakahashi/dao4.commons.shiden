@@ -2,7 +2,7 @@ import { ethers } from "hardhat"
 import { proposalConst, tokenConst } from "./const"
 import { NonceManager } from "@ethersproject/experimental"
 
-async function main() {
+async function main () {
 
 
   const masterDAOOwner = await ethers.getSigner("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
@@ -98,7 +98,7 @@ async function main() {
         const signer = await ethers.getSigner(s)
         return new NonceManager(signer)
       }))
-    }    
+    }
 
     const otherSigners = await findOtherSigners()
     // add other signer as member
@@ -139,17 +139,38 @@ async function main() {
     const daoErc20ContractFactory = await ethers.getContractFactory("DaoERC20")
     const daoErc20Contract = await daoErc20ContractFactory.connect(signers[i]).deploy("DAO ERC20", "D20", subDaoContract.address)
     await daoErc20Contract.deployed()
-    console.log("erc20 token deployed to:",  daoErc20Contract.address)
+    console.log("erc20 token deployed to:", daoErc20Contract.address)
     await subDaoContract.connect(signers[i]).addTokenToList(tokenConst.TOKEN_KIND_ERC20, daoErc20Contract.address)
     await daoErc20Contract.connect(signers[i]).mint(ethers.utils.parseEther("2.0"), daoErc20TokenTotalSupply)
-    console.log("erc20 token minted:",  daoErc20Contract.address)
+    console.log("erc20 token minted:", daoErc20Contract.address)
     if (i % 2 === 0) {
       await daoErc20Contract.connect(signers[i]).controlTokenSale(true)
       await daoErc20Contract.connect(signers[i]).buy(10, { value: ethers.utils.parseEther("20.0") })
-      console.log("erc20 token bought by:",  await signers[i].getAddress())
+      console.log("erc20 token bought by:", await signers[i].getAddress())
     }
-    
+
     // Token sale ERC721
+
+    const daoErc721ContractFactory = await ethers.getContractFactory("DaoERC721")
+    const daoErc721Contract = await daoErc721ContractFactory
+      .connect(signers[i])
+      .deploy(
+        `DAO ERC721-${i} `,
+        `D721-${i}`,
+        subDaoContract.address,
+        ethers.utils.parseEther("2.0"),
+        "test uri"
+      )
+    console.log("erc721: ", daoErc20Contract.address, " was deployed")
+    await subDaoContract.connect(signers[i]).addTokenToList(tokenConst.TOKEN_KIND_ERC721, daoErc721Contract.address)
+    if (i % 2 !== 0) {
+      await daoErc721Contract.connect(signers[i]).controlTokenSale(true)
+      await daoErc721Contract.connect(signers[i]).buy({ value: ethers.utils.parseEther("2.0") })
+    }
+
+    console.log("erc721 token", daoErc20Contract.address, " was bought")
+
+
 
     // it("check contract balance & withdraw.", async function () {
     //   assert.equal(await daoErc20.getContractBalance(), 20000000000000000000);
