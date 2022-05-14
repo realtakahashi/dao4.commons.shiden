@@ -14,7 +14,9 @@ const DeployDaoErc20 = () => {
   const [formValue, setFormValue] = useState<DaoErc20DeployFormData>({
     name: "",
     symbol: "",
-    subDAOAddress: subDAOaddress
+    subDAOAddress: subDAOaddress,
+    pricewei: 0,
+    amount: 0,
   })
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormValue({
@@ -49,6 +51,18 @@ const DeployDaoErc20 = () => {
             label='Symbol'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="symbol"
+            handleOnChangeInput={onChangeInput}
+          />
+          <FormInputText
+            label='Price'
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="pricewei"
+            handleOnChangeInput={onChangeInput}
+          />
+          <FormInputText
+            label='Amount'
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="amount"
             handleOnChangeInput={onChangeInput}
           />
           <div className="">

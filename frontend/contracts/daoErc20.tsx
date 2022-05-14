@@ -8,7 +8,7 @@ export const deployDaoErc20 = async (
 ): Promise<string> => {
   const contractConstract = DAOERC20ContractConstruct
   let response: string = ""
-  if (!inputData.name || !inputData.symbol || !inputData.subDAOAddress) {
+  if (!inputData.name || !inputData.symbol || !inputData.subDAOAddress || !inputData.amount) {
     return "failed"
   }
   if (typeof window.ethereum !== 'undefined') {
@@ -19,7 +19,6 @@ export const deployDaoErc20 = async (
       contractConstract.bytecode,
       signer
     )
-    console.log(inputData)
     await factory
       .deploy(
         inputData.name,
@@ -30,8 +29,8 @@ export const deployDaoErc20 = async (
         console.log(res)
         alert('Succeeded to deploy DAO ERC20')
         await AddDAOERC20ToTokenList(res.address, inputData.subDAOAddress)
+        await mintERC20Token(inputData.amount, res.address)
         response = res.address
-
       })
       .catch((err: any) => {
         console.log(err)
@@ -70,6 +69,64 @@ export const AddDAOERC20ToTokenList = async (
   }
   alert('Failed to add erc20 to token list')
   return false
+}
+
+export const mintERC20Token = async (
+  amount: number,
+  tokenAddress: string
+): Promise<void> => {
+  const contractConstract = DAOERC20ContractConstruct
+  if (typeof window.ethereum !== 'undefined' && tokenAddress && amount > 0) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      tokenAddress,
+      contractConstract.abi as string,
+      signer
+    )
+    await contract
+      .mint(ethers.utils.parseEther("2.0"), amount)
+      .then((res: string) => {
+        console.log(res)
+        alert('Success token minted')
+        return
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('Failed to mint')
+        return
+      })
+  }
+  return
+}
+
+export const buyERC20Token = async (
+  amount: number,
+  tokenAddress: string
+): Promise<void> => {
+  const contractConstract = DAOERC20ContractConstruct
+  if (typeof window.ethereum !== 'undefined' && tokenAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      tokenAddress,
+      contractConstract.abi as string,
+      signer
+    )
+    await contract
+      .buy(10, { value: ethers.utils.parseEther("20.0") })
+      .then((res: string) => {
+        console.log(res)
+        alert('Success token bought')
+        return
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('Failed to token buy')
+        return
+      })
+  }
+  return
 }
 
 export const controlERC20TokenSale = async (

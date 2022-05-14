@@ -1,5 +1,5 @@
 import { Layout } from '@/components/common'
-import { controlERC20TokenSale, deployDaoErc20, getDAOERC20TokenList } from '@/contracts/daoErc20'
+import { buyERC20Token, controlERC20TokenSale, deployDaoErc20, getDAOERC20TokenList, mintERC20Token } from '@/contracts/daoErc20'
 import { useSubDAOData } from '@/hooks'
 import Link from "next/link"
 import { useRouter } from 'next/router'
@@ -18,9 +18,13 @@ const ListErc20Tokens = () => {
   useEffect(() => {
     listTokens()
   }, [])
-  const changeTokenSaleStatus = async (tokenAddress: string, saleStatus: boolean) => {
+  const changeDaoErc20TokenSaleStatus = async (tokenAddress: string, saleStatus: boolean) => {
     await controlERC20TokenSale(tokenAddress, saleStatus)
     listTokens()
+  }
+
+  const buy = async (amount: number, tokenAddress: string) => {
+    await buyERC20Token(amount, tokenAddress)
   }
 
   return (
@@ -78,14 +82,26 @@ const ListErc20Tokens = () => {
                     >
                       <td className="border px-4 py-2">{token.name}</td>
                       <td className="border px-4 py-2">{token.symbol}</td>
-                      <td className="border px-4 py-2">{token.price}</td>
+                      <td className="border px-4 py-2">
+                        {token.price}
+                        {token.onSale ? (
+                          <div>
+                            <input type="number" className='text-black' />
+                            <button className='button-dao-default'
+                              onClick={() => buy(2, token.tokenAddress)}>
+                              Buy
+                            </button>
+                          </div>
+
+                        ) : ""}
+                      </td>
                       <td className="border px-4 py-2">{token.tokenAddress}</td>
                       <td className="border px-4 py-2">{token.totalBalance}</td>
                       <td className="border px-4 py-2">{token.salesAmount}</td>
                       <td className="border px-4 py-2">
                         {token.onSale ? "On sale" : "Not on sale"}
                         <button className='button-dao-default p-1'
-                          onClick={() => changeTokenSaleStatus(token.tokenAddress, !token.onSale)}>
+                          onClick={() => changeDaoErc20TokenSaleStatus(token.tokenAddress, !token.onSale)}>
                           Change Status
                         </button>
                       </td>

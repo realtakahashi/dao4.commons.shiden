@@ -2,6 +2,8 @@ export interface DaoErc20DeployFormData {
   name: string
   symbol: string
   subDAOAddress: string
+  amount: number
+  pricewei: number
 }
 
 export interface DaoErc20 {
