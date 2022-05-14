@@ -1,12 +1,16 @@
 import { ethers } from 'ethers'
 import { DaoErc20DeployFormData, DaoErc20 } from '@/types/Token'
-import { DAOERC20ContractConstruct } from './construct'
-import { SubDAOContractConstruct } from './construct'
+import { DAOERC20ContractConstruct, SubDAOContractConstruct } from './construct'
+import { tokenConst } from './const'
 
 export const deployDaoErc20 = async (
   inputData: DaoErc20DeployFormData
 ): Promise<string> => {
   const contractConstract = DAOERC20ContractConstruct
+  let response: string = ""
+  if (!inputData.name || !inputData.symbol || !inputData.subDAOAddress) {
+    return "failed"
+  }
   if (typeof window.ethereum !== 'undefined') {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
@@ -15,25 +19,57 @@ export const deployDaoErc20 = async (
       contractConstract.bytecode,
       signer
     )
+    console.log(inputData)
     await factory
       .deploy(
         inputData.name,
         inputData.symbol,
         inputData.subDAOAddress
       )
-      .then((res: any) => {
+      .then(async (res: { address: string }) => {
         console.log(res)
         alert('Succeeded to deploy DAO ERC20')
-        return res.address
+        await AddDAOERC20ToTokenList(res.address, inputData.subDAOAddress)
+        response = res.address
 
       })
       .catch((err: any) => {
         console.log(err)
         alert('failed to deploy DAO ERC20')
-        return
+        response = "failed"
       })
   }
-  return ""
+  return response
+}
+
+export const AddDAOERC20ToTokenList = async (
+  tokenAddress: string,
+  subDAOAddress: string
+): Promise<boolean> => {
+  const contractConstract = SubDAOContractConstruct
+  if (typeof window.ethereum !== 'undefined' && tokenAddress && subDAOAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      subDAOAddress,
+      contractConstract.abi as string,
+      signer
+    )
+    await contract
+      .addTokenToList(tokenConst.TOKEN_KIND_ERC20, tokenAddress)
+      .then((res: string) => {
+        console.log(res)
+        alert('Added erc20 to token list')
+        return true
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('Failed to add erc20 to token list')
+        return false
+      })
+  }
+  alert('Failed to add erc20 to token list')
+  return false
 }
 
 
@@ -160,3 +196,5 @@ export const getDAOERC20TokenInfo = async (
   }
   return response
 }
+
+

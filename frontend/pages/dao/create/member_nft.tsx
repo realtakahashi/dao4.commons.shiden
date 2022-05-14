@@ -1,9 +1,9 @@
-import { Layout } from '@/components/common';
-import { useState } from 'react';
-import { FormInputSelect, FormInputText } from '@/components/ui';
+import { Layout } from '@/components/common'
+import { useState } from 'react'
+import { FormInputSelect, FormInputText } from '@/components/ui'
 import { MemberNFTDeployFormData } from "@/types/MemberNFT"
-import { deployMemberNFT, mintMemberNFT, updateNftAddressAndOwnerTokenId } from '@/contracts/MemberNFT';
-import { useSubDAOList } from '@/hooks';
+import { deployMemberNFT, mintMemberNFT, updateNftAddressAndOwnerTokenId } from '@/contracts/MemberNFT'
+import { useSubDAOList } from '@/hooks'
 
 const DeployMemberNFT = () => {
   const [memberNFTAddress, setmemberNFTAddress] = useState("")
@@ -24,7 +24,7 @@ const DeployMemberNFT = () => {
     setFormValue({
       ...formValue,
       [event.target.name]: event.target.value
-    })    
+    })
   }
   const onSubmitMemberNFTForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()

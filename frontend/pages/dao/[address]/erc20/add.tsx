@@ -1,97 +1,85 @@
 import { Layout } from '@/components/common'
-import { deployDaoErc20, getDAOERC20TokenList } from '@/contracts/daoErc20'
-import { useSubDAOData } from '@/hooks'
-import Link from "next/link"
+import { useState } from 'react'
+import { FormInputSelect, FormInputText } from '@/components/ui'
+import { DaoErc20DeployFormData } from "@/types/Token"
+
+import { useSubDAOList } from '@/hooks'
+import { deployDaoErc20 } from '@/contracts/daoErc20'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { DaoErc20, DaoErc20DeployFormData } from "@/types/Token"
-const AddERC20 = () => {
+
+const DeployDaoErc20 = () => {
   const router = useRouter()
   const subDAOaddress = router.query.address as string
-  const targetSubDAO = useSubDAOData(subDAOaddress)
-  const [daoErc20TokenList, setDaoErc20TokenList] = useState<Array<DaoErc20>>([])
-  useEffect(() => {
-    const listTokens = async () => {
-      const tokenList = await getDAOERC20TokenList(subDAOaddress)
-      setDaoErc20TokenList(tokenList)
-      console.log(tokenList)
+  const [DaoErc20Address, setDaoErc20Address] = useState("")
+  const [formValue, setFormValue] = useState<DaoErc20DeployFormData>({
+    name: "",
+    symbol: "",
+    subDAOAddress: subDAOaddress
+  })
+  const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormValue({
+      ...formValue,
+      [event.target.name]: event.target.value
+    })
+  }
+
+  const onSubmitDaoErc20Form = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const daoErc20ContractAddress = await deployDaoErc20(formValue)
+    console.log(daoErc20ContractAddress)
+    if (daoErc20ContractAddress !== "") {
+      setDaoErc20Address(daoErc20ContractAddress)
     }
-    listTokens()
-  }, [])
-
-
+  }
   return (
     <>
-      <div>
-        <div className="flex justify-center">
-          {
-            typeof targetSubDAO !== "undefined" ?
-              (<h2>
-                DAO: {targetSubDAO.daoName}
-              </h2>) : ''
-          }
-        </div>
+      <div className="w-full form-container">
+        <h2 className="text-xl">Deploy Your DaoErc20</h2>
+        <form
+          onSubmit={onSubmitDaoErc20Form}
+        >
+          <FormInputText
+            label="name"
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="name"
+            handleOnChangeInput={onChangeInput}
+          />
+          <FormInputText
+            label='Symbol'
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="symbol"
+            handleOnChangeInput={onChangeInput}
+          />
+          <div className="">
+            <div className="md:w-1/3"></div>
+            <div className="md:w-2/3">
+              <button
+                className="button-dao-default px-4 py-2 m-2"
+                type="submit"
+              >
+                Deploy & Add Token To List
+              </button>
+            </div>
+          </div>
 
-
-        <div className="m-5 text-center">
-          <Link
-            href={`/dao/${subDAOaddress}/erc20/add`}
-          >
-            <a
-              className="button-dao-default px-4 py-2 m-2"
-            >
-              {
-                typeof targetSubDAO !== "undefined" ?
-                  (<p>
-                    Add {targetSubDAO.daoName} Token
-                  </p>)
-                  : ''
-              }
-
-            </a>
-          </Link>
-        </div>
-
-        <table className="table-auto">
-          <thead>
-            <tr>
-              <th className="border px-4 py-2">Token Name</th>
-              <th className="border px-4 py-2">Symbol</th>
-              <th className="border px-4 py-2">Price</th>
-              <th className="border px-4 py-2">Token Address</th>
-              <th className="border px-4 py-2">Total Amount</th>
-              <th className="border px-4 py-2">Owned Amount</th>
-              <th className="border px-4 py-2">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              daoErc20TokenList.length > 0 ? (
-                daoErc20TokenList.map((token) => {
-                  return (
-                    <tr
-                      key={token.tokenAddress}
-                      className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
-                    >
-                      <td className="border px-4 py-2">{token.name}</td>
-                      <td className="border px-4 py-2">{token.symbol}</td>
-                      <td className="border px-4 py-2">{token.price}</td>
-                      <td className="border px-4 py-2">{token.tokenAddress}</td>
-                      <td className="border px-4 py-2">{token.totalBalance}</td>
-                      <td className="border px-4 py-2">{token.salesAmount}</td>
-                      <td className="border px-4 py-2">{token.onSale ? "Now on sale" : "Not on sale"}</td>
-                    </tr>
-                  )
-                })
-
-              ) : ""
-            }
-          </tbody>
-        </table>
-      </div>
+        </form>
+        {
+          DaoErc20Address !== "failed" && DaoErc20Address !== "" ? (
+            <div className='mt-10'>
+              <p className="text-lg">
+                Deploy Succeeded!!
+              </p>
+              <p className="text-lg">
+                Your ERC20 Contract Address: {DaoErc20Address}
+              </p>
+            </div>
+          ) : ""
+        }
+      </div >
     </>
   )
 }
 
-AddERC20.Layout = Layout
-export default AddERC20
+DeployDaoErc20.Layout = Layout
+export default DeployDaoErc20
