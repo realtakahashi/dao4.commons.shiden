@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { DaoErc20, DaoErc20DeployFormData } from "@/types/Token"
-const Tokens = () => {
+const ListErc721Tokens = () => {
   const router = useRouter()
   const subDAOaddress = router.query.address as string
   const targetSubDAO = useSubDAOData(subDAOaddress)
@@ -94,5 +94,5 @@ const Tokens = () => {
   )
 }
 
-Tokens.Layout = Layout
-export default Tokens
+ListErc721Tokens.Layout = Layout
+export default ListErc721Tokens
