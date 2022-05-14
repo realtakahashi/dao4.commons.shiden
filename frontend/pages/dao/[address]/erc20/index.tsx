@@ -1,5 +1,5 @@
 import { Layout } from '@/components/common'
-import { deployDaoErc20, getDAOERC20TokenList } from '@/contracts/daoErc20'
+import { controlERC20TokenSale, deployDaoErc20, getDAOERC20TokenList } from '@/contracts/daoErc20'
 import { useSubDAOData } from '@/hooks'
 import Link from "next/link"
 import { useRouter } from 'next/router'
@@ -10,15 +10,18 @@ const ListErc20Tokens = () => {
   const subDAOaddress = router.query.address as string
   const targetSubDAO = useSubDAOData(subDAOaddress)
   const [daoErc20TokenList, setDaoErc20TokenList] = useState<Array<DaoErc20>>([])
+  const listTokens = async () => {
+    const tokenList = await getDAOERC20TokenList(subDAOaddress)
+    setDaoErc20TokenList(tokenList)
+    console.log(tokenList)
+  }
   useEffect(() => {
-    const listTokens = async () => {
-      const tokenList = await getDAOERC20TokenList(subDAOaddress)
-      setDaoErc20TokenList(tokenList)
-      console.log(tokenList)
-    }
     listTokens()
   }, [])
-
+  const changeTokenSaleStatus = async (tokenAddress: string, saleStatus: boolean) => {
+    await controlERC20TokenSale(tokenAddress, saleStatus)
+    listTokens()
+  }
 
   return (
     <>
@@ -79,11 +82,16 @@ const ListErc20Tokens = () => {
                       <td className="border px-4 py-2">{token.tokenAddress}</td>
                       <td className="border px-4 py-2">{token.totalBalance}</td>
                       <td className="border px-4 py-2">{token.salesAmount}</td>
-                      <td className="border px-4 py-2">{token.onSale ? "Now on sale" : "Not on sale"}</td>
+                      <td className="border px-4 py-2">
+                        {token.onSale ? "On sale" : "Not on sale"}
+                        <button className='button-dao-default p-1'
+                          onClick={() => changeTokenSaleStatus(token.tokenAddress, !token.onSale)}>
+                          Change Status
+                        </button>
+                      </td>
                     </tr>
                   )
                 })
-
               ) : ""
             }
           </tbody>

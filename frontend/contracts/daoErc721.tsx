@@ -132,7 +132,6 @@ export const getDAOERC721TokenInfo = async (
     await contract
       .salesAmount()
       .then((res: { _hex: string, _isBigNumber: boolean }) => {
-        console.log(res)
         response.salesAmount = parseInt(ethers.utils.formatEther(res._hex))
       })
       .catch((err: any) => {

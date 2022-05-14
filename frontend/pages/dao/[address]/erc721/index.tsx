@@ -17,9 +17,10 @@ const ListErc721Tokens = () => {
       console.log(tokenList)
     }
     listTokens()
-
   }, [])
-
+  const controlERC20TokenSale = (saleStatus: boolean) => {
+    return
+  }
 
   return (
     <>
@@ -72,7 +73,7 @@ const ListErc721Tokens = () => {
                   return (
                     <tr
                       key={token.tokenAddress}
-                      className="cursor-pointer px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
+                      className="px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
                     >
                       <td className="border px-4 py-2">{token.name}</td>
                       <td className="border px-4 py-2">{token.symbol}</td>
@@ -80,7 +81,8 @@ const ListErc721Tokens = () => {
                       <td className="border px-4 py-2">{token.tokenAddress}</td>
                       <td className="border px-4 py-2">{token.totalBalance}</td>
                       <td className="border px-4 py-2">{token.salesAmount}</td>
-                      <td className="border px-4 py-2">{token.onSale ? "Now on sale" : "Not on sale"}</td>
+                      <td className="border px-4 py-2">{token.onSale ? "Now on sale" : "Not on sale"}
+                      </td>
                     </tr>
                   )
                 })

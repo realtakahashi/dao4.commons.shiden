@@ -1,8 +1,8 @@
-import Head from "next/head";
-import { FC } from "react";
-import { Footer, Header } from "@/components/common";
+import Head from "next/head"
+import { FC } from "react"
+import { Footer, Header } from "@/components/common"
 import styles from "./Layout.module.scss"
-import { Sidebar } from "../Sidebar";
+import { Sidebar } from "../SIdebar"
 
 const Layout: FC = ({ children }) => {
   return (
@@ -17,7 +17,7 @@ const Layout: FC = ({ children }) => {
       <div className={styles.root}>
         <div className={styles.sidebar}>
           <Sidebar></Sidebar>
-        </div>        
+        </div>
         <main className={styles.main}>
           {children}
         </main>

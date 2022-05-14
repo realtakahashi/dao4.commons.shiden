@@ -72,6 +72,34 @@ export const AddDAOERC20ToTokenList = async (
   return false
 }
 
+export const controlERC20TokenSale = async (
+  tokenAddress: string,
+  saleStatus: boolean
+): Promise<void> => {
+  const contractConstract = DAOERC20ContractConstruct
+  if (typeof window.ethereum !== 'undefined' && tokenAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      tokenAddress,
+      contractConstract.abi as string,
+      signer
+    )
+    await contract
+      .controlTokenSale(saleStatus)
+      .then((res: string) => {
+        console.log(res)
+        alert('Success token sale status chaneged')
+        return
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('Failed to token sale status chaneged')
+        return
+      })
+  }
+  return
+}
 
 export const getDAOERC20TokenList = async (
   sudDAOAddress: string
@@ -176,7 +204,6 @@ export const getDAOERC20TokenInfo = async (
     await contract
       .salesAmount()
       .then((res: { _hex: string, _isBigNumber: boolean }) => {
-        console.log(res)
         response.salesAmount = parseInt(ethers.utils.formatEther(res._hex))
       })
       .catch((err: any) => {
