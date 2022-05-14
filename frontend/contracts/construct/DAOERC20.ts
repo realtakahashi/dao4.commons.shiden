@@ -1,4 +1,4 @@
-import {ContractArtifact} from '../base'
+import { ContractArtifact } from '../base'
 const DAOERC20ContractConstruct: ContractArtifact = {
   _format: "hh-sol-artifact-1",
   contractName: "DaoERC20",
