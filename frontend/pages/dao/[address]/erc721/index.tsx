@@ -1,5 +1,5 @@
 import { Layout } from '@/components/common'
-import { deployDaoErc20, getDAOERCTokenList } from '@/contracts/daoErc20'
+import { deployDaoErc721, getDAOERC721TokenList } from '@/contracts/daoErc721'
 import { useSubDAOData } from '@/hooks'
 import Link from "next/link"
 import { useRouter } from 'next/router'
@@ -12,7 +12,7 @@ const Tokens = () => {
   const [daoErc20TokenList, setDaoErc20TokenList] = useState<Array<DaoErc20>>([])
   useEffect(() => {
     const listTokens = async () => {
-      const tokenList = await getDAOERCTokenList(subDAOaddress)
+      const tokenList = await getDAOERC721TokenList(subDAOaddress)
       setDaoErc20TokenList(tokenList)
       console.log(tokenList)
     }
@@ -80,7 +80,7 @@ const Tokens = () => {
                       <td className="border px-4 py-2">{token.tokenAddress}</td>
                       <td className="border px-4 py-2">{token.totalBalance}</td>
                       <td className="border px-4 py-2">{token.salesAmount}</td>
-                      <td className="border px-4 py-2">{token.onSale? "Now on sale": "Not on sale"}</td>
+                      <td className="border px-4 py-2">{token.onSale ? "Now on sale" : "Not on sale"}</td>
                     </tr>
                   )
                 })

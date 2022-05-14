@@ -2,7 +2,7 @@ import { ethers } from "hardhat"
 import { proposalConst, tokenConst } from "./const"
 import { NonceManager } from "@ethersproject/experimental"
 
-async function main () {
+async function main() {
 
 
   const masterDAOOwner = await ethers.getSigner("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266")
@@ -150,7 +150,6 @@ async function main () {
     }
 
     // Token sale ERC721
-
     const daoErc721ContractFactory = await ethers.getContractFactory("DaoERC721")
     const daoErc721Contract = await daoErc721ContractFactory
       .connect(signers[i])
@@ -161,14 +160,14 @@ async function main () {
         ethers.utils.parseEther("2.0"),
         "test uri"
       )
-    console.log("erc721: ", daoErc20Contract.address, " was deployed")
+    console.log("erc721: ", daoErc721Contract.address, " was deployed")
     await subDaoContract.connect(signers[i]).addTokenToList(tokenConst.TOKEN_KIND_ERC721, daoErc721Contract.address)
     if (i % 2 !== 0) {
       await daoErc721Contract.connect(signers[i]).controlTokenSale(true)
       await daoErc721Contract.connect(signers[i]).buy({ value: ethers.utils.parseEther("2.0") })
     }
 
-    console.log("erc721 token", daoErc20Contract.address, " was bought")
+    console.log("erc721 token", daoErc721Contract.address, " was bought")
 
 
 

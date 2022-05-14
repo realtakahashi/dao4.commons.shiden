@@ -1,5 +1,5 @@
 import { Layout } from '@/components/common'
-import { deployDaoErc20, getDAOERCTokenList } from '@/contracts/daoErc20'
+import { deployDaoErc20, getDAOERC20TokenList } from '@/contracts/daoErc20'
 import { useSubDAOData } from '@/hooks'
 import Link from "next/link"
 import { useRouter } from 'next/router'
@@ -12,7 +12,7 @@ const Tokens = () => {
   const [daoErc20TokenList, setDaoErc20TokenList] = useState<Array<DaoErc20>>([])
   useEffect(() => {
     const listTokens = async () => {
-      const tokenList = await getDAOERCTokenList(subDAOaddress)
+      const tokenList = await getDAOERC20TokenList(subDAOaddress)
       setDaoErc20TokenList(tokenList)
       console.log(tokenList)
     }

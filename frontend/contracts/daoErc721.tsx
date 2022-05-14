@@ -37,7 +37,7 @@ export const deployDaoErc721 = async (
 }
 
 
-export const getDAOERCTokenList = async (
+export const getDAOERC721TokenList = async (
   sudDAOAddress: string
 ): Promise<Array<DaoErc721>> => {
   const contractConstract = SubDAOContractConstruct
@@ -53,18 +53,25 @@ export const getDAOERCTokenList = async (
     await contract
       .getTokenList()
       .then(async (res: DaoErc721[]) => {
-        response = await Promise.all(res.map(async (r) => {
-          const { name, symbol, totalBalance, salesAmount, onSale, price } = await getDAOERCTokenInfo(r.tokenAddress)
-          return {
-            ...r,
-            symbol,
-            name,
-            totalBalance,
-            salesAmount,
-            onSale,
-            price
+        const list = await Promise.all(res.map(async (r) => {
+          if (r.tokenKind === 1) {
+            const { name, symbol, totalBalance, salesAmount, onSale, price } = await getDAOERC721TokenInfo(r.tokenAddress)
+            return {
+              ...r,
+              symbol,
+              name,
+              totalBalance,
+              salesAmount,
+              onSale,
+              price
+            }
           }
         }))
+        list.forEach((l) => {
+          if (typeof l !== "undefined") {
+            response.push(l)
+          }
+        })
       })
       .catch((err: any) => {
         console.log(err)
@@ -83,7 +90,7 @@ interface response {
   salesAmount: number
   price: number
 }
-export const getDAOERCTokenInfo = async (
+export const getDAOERC721TokenInfo = async (
   tokenAddress: string
 ): Promise<response> => {
   const contractConstract = DAOERC721ContractConstruct
@@ -115,20 +122,12 @@ export const getDAOERCTokenInfo = async (
         alert('failed to get token symbol')
       })
     await contract
-      .totalSupply()
-      .then((res: { _hex: string, _isBigNumber: boolean }) => {
-        response.totalBalance = parseInt(res._hex)
-      })
-      .catch((err: any) => {
-        alert('failed to get token balance')
-      })
-    await contract
       .onSale()
       .then((res: boolean) => {
         response.onSale = res
       })
       .catch((err: any) => {
-        alert('failed to get token balance')
+        alert('failed to get token onsale')
       })
     await contract
       .salesAmount()
@@ -138,7 +137,7 @@ export const getDAOERCTokenInfo = async (
       })
       .catch((err: any) => {
         console.log(err)
-        alert('failed to get token balance')
+        alert('failed to get token salesamount')
       })
     await contract
       .priceWei()
@@ -147,7 +146,7 @@ export const getDAOERCTokenInfo = async (
       })
       .catch((err: any) => {
         console.log(err)
-        alert('failed to get token balance')
+        alert('failed to get token pricewei')
       })
 
   }
