@@ -4,7 +4,7 @@ import { useSubDAOData } from '@/hooks'
 import Link from "next/link"
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { DaoErc721, DaoErc721DeployFormData } from "@/types/Token"
+import { DaoErc721 } from "@/types/Token"
 const ListErc721Tokens = () => {
   const router = useRouter()
   const subDAOaddress = router.query.address as string
