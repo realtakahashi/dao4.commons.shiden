@@ -211,6 +211,7 @@ interface response {
   salesAmount: number
   price: number
 }
+
 export const getDAOERC20TokenInfo = async (
   tokenAddress: string
 ): Promise<response> => {
@@ -279,6 +280,34 @@ export const getDAOERC20TokenInfo = async (
 
   }
   return response
+}
+
+export const withdrawERC20Token = async (
+  tokenAddress: string
+): Promise<void> => {
+  const contractConstract = DAOERC20ContractConstruct
+  if (typeof window.ethereum !== 'undefined' && tokenAddress) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      tokenAddress,
+      contractConstract.abi as string,
+      signer
+    )
+    await contract
+      .withdraw()
+      .then((res: string) => {
+        console.log(res)
+        alert('Success withdrawal')
+        return
+      })
+      .catch((err: any) => {
+        console.log(err)
+        alert('Failed withdrawal')
+        return
+      })
+  }
+  return
 }
 
 

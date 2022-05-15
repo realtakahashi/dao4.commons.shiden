@@ -1,5 +1,5 @@
 import { Layout } from '@/components/common'
-import { buyERC721Token, controlERC721TokenSale, deployDaoErc721, getDAOERC721TokenList } from '@/contracts/daoErc721'
+import { buyERC721Token, controlERC721TokenSale, withdrawERC721Token, getDAOERC721TokenList } from '@/contracts/daoErc721'
 import { useSubDAOData } from '@/hooks'
 import Link from "next/link"
 import { useRouter } from 'next/router'
@@ -25,8 +25,12 @@ const ListErc721Tokens = () => {
 
   const buy = async (price: number, tokenAddress: string) => {
     await buyERC721Token(price, tokenAddress)
-
   }
+
+  const withdraw = async (tokenAddress: string) => {
+    await withdrawERC721Token(tokenAddress)
+  }
+
   return (
     <>
       <div>
@@ -67,8 +71,9 @@ const ListErc721Tokens = () => {
               <th className="border px-4 py-2">Price</th>
               <th className="border px-4 py-2">Token Address</th>
               <th className="border px-4 py-2">Total Amount</th>
-              <th className="border px-4 py-2">Owned Amount</th>
+              <th className="border px-4 py-2">Sales Amount</th>
               <th className="border px-4 py-2">Status</th>
+              <th className="border px-4 py-2">Withdraw</th>
             </tr>
           </thead>
           <tbody>
@@ -102,6 +107,12 @@ const ListErc721Tokens = () => {
                         <button className='button-dao-default p-1'
                           onClick={() => changeDaoErc721TokenSaleStatus(token.tokenAddress, !token.onSale)}>
                           Change Status
+                        </button>
+                      </td>
+                      <td>
+                        <button className='button-dao-default p-1'
+                          onClick={() => withdraw(token.tokenAddress)}>
+                          Withdraw
                         </button>
                       </td>
                     </tr>
