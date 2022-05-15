@@ -10,10 +10,10 @@ const ListErc20Tokens = () => {
   const subDAOaddress = router.query.address as string
   const targetSubDAO = useSubDAOData(subDAOaddress)
   const [daoErc20TokenList, setDaoErc20TokenList] = useState<Array<DaoErc20>>([])
+  const [inputAmount, setInputAmounts] = useState<{ key: string, amount: string }>({ key: "", amount: "0" })
   const listTokens = async () => {
     const tokenList = await getDAOERC20TokenList(subDAOaddress)
     setDaoErc20TokenList(tokenList)
-    console.log(tokenList)
   }
   useEffect(() => {
     listTokens()
@@ -23,8 +23,10 @@ const ListErc20Tokens = () => {
     listTokens()
   }
 
-  const buy = async (amount: number, tokenAddress: string) => {
-    await buyERC20Token(amount, tokenAddress)
+  const onClickBuyButton = async (tokenAddress: string) => {
+    if (inputAmount.key === tokenAddress) {
+      await buyERC20Token(Number(inputAmount.amount), tokenAddress)
+    }
   }
 
   const withdraw = async (tokenAddress: string) => {
@@ -91,13 +93,14 @@ const ListErc20Tokens = () => {
                         {token.price}
                         {token.onSale ? (
                           <div>
-                            <input type="number" className='text-black' />
+                            <input type="number" className='text-black'
+                              onChange={(event) => setInputAmounts({ key: token.tokenAddress, amount: event.target.value })}
+                            />
                             <button className='button-dao-default'
-                              onClick={() => buy(2, token.tokenAddress)}>
+                              onClick={() => onClickBuyButton(token.tokenAddress)}>
                               Buy
                             </button>
                           </div>
-
                         ) : ""}
                       </td>
                       <td className="border px-4 py-2">{token.tokenAddress}</td>

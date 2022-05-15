@@ -8,7 +8,6 @@ export const deployDaoErc721 = async (
 ): Promise<string> => {
   const contractConstract = DAOERC721ContractConstruct
   let response: string = ""
-  console.log(inputData)
   if (!inputData.name || !inputData.symbol || !inputData.subDAOAddress || !inputData.priceWei || !inputData.tokenUri) {
     return "failed"
   }

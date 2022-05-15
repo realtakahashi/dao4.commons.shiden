@@ -11,6 +11,7 @@ interface InputProps {
   isTextArea?: boolean
   handleOnChangeTextArea?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
 }
+
 export const FormInputText: FC<InputProps> = (props) => {
   return (
     <>
@@ -31,14 +32,14 @@ export const FormInputText: FC<InputProps> = (props) => {
                 onChange={props.handleOnChangeTextArea}
               />
             ) : (
-                <input
-                  className={cn(props.className)}
-                  name={props.name}
-                  type="text"
-                  onChange={props.handleOnChangeInput}
-                />                
+              <input
+                className={cn(props.className)}
+                name={props.name}
+                type="text"
+                onChange={props.handleOnChangeInput}
+              />
             )
-          }          
+          }
         </div>
       </div>
     </>
@@ -72,7 +73,7 @@ export const FormInputSelect: FC<SelectProps> = (props) => {
             onChange={props.handleOnChangeSelect}
             name={props.name}
           >
-            <option value="">Please Choose { props.itemName}</option>
+            <option value="">Please Choose {props.itemName}</option>
             {
               props.selectList.length > 0 || typeof props.selectList !== "undefined" ?
                 props.selectList.map((item) => {
