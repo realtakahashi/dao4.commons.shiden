@@ -2,7 +2,7 @@
   @apply mx-auto;
   background: #111;
   padding: 4rem 0;
-  flex: 1;
+  flex: 3;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -10,4 +10,11 @@
   color:  #fff;
   // footer下の余白よけ
   min-height: 90vh;
+}
+.sidebar {
+  flex: 1;
+  @apply bg-gray-50 dark:bg-gray-800;
+}
+.root {
+  display: flex;
 }

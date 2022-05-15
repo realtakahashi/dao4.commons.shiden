@@ -1,23 +1,24 @@
-import { Layout } from "@/components/common";
-import { AddProposalFormData } from "@/types/Proposal";
-import { useState } from "react";
-import { registerProposal } from "contracts/SubDAO";
-import { FormInputText, FormInputSelect } from "@/components/ui";
-import { useRouter } from "next/router";
+import { Layout } from "@/components/common"
+import { AddProposalFormData } from "@/types/Proposal"
+import { useState } from "react"
+import { registerProposal } from "contracts/SubDAO"
+import { FormInputText, FormInputSelect } from "@/components/ui"
+import { useRouter } from "next/router"
 
 const AddProposal = () => {
   const router = useRouter()
   const subDAOaddress = router.query.address as string
 
-  const [proposalId, setPoposalId] = useState("");
+  const [proposalId, setPoposalId] = useState("")
   const [formValue, setFormValue] = useState<AddProposalFormData>({
     proposalKind: 0,
     title: "",
     outline: "",
     detail: "",
     githubURL: "",
-    relatedAddress:"",
-  });
+    relatedId: 0,
+    relatedAddress: "",
+  })
 
   function onChagngeInput<T extends React.ChangeEvent<HTMLSelectElement>
     | React.ChangeEvent<HTMLInputElement>
@@ -25,7 +26,7 @@ const AddProposal = () => {
     setFormValue({
       ...formValue,
       [event.target.name]: event.target.value,
-    });
+    })
     console.log(formValue)
   }
 
@@ -33,12 +34,12 @@ const AddProposal = () => {
     event: React.FormEvent<HTMLFormElement>
   ) => {
     // console.log("#### Submit 1");
-    event.preventDefault();
-    const proposalId = await registerProposal(subDAOaddress, formValue);
+    event.preventDefault()
+    const proposalId = await registerProposal(subDAOaddress, formValue)
     if (proposalId !== "") {
-      setPoposalId(proposalId);
+      setPoposalId(proposalId)
     }
-  };
+  }
 
   const proposalKind = [
     { value: 0, key: "Add A Member" },
@@ -53,7 +54,7 @@ const AddProposal = () => {
       <div className="w-full form-container">
         <h1 className="text-3xl">Add A Proposal</h1>
         <div className="p-5"></div>
-        <form          
+        <form
           onSubmit={onSubmitAddProposalForm}
         >
           <FormInputSelect
@@ -97,6 +98,13 @@ const AddProposal = () => {
             handleOnChangeInput={onChagngeInput}
           />
           <FormInputText
+            label="Related ID"
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
+			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="relatedId"
+            handleOnChangeInput={onChagngeInput}
+          />
+          <FormInputText
             label="Related Address"
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 
 			    leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
@@ -121,8 +129,8 @@ const AddProposal = () => {
         </form>
       </div>
     </>
-  );
-};
+  )
+}
 
-AddProposal.Layout = Layout;
-export default AddProposal;
+AddProposal.Layout = Layout
+export default AddProposal

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getMemberNFTAddressApi , listSubDAO} from "@/contracts/SubDAO";
+import { getMemberNFTAddress , listSubDAO} from "@/contracts/SubDAO";
 import { useRouter } from "next/router";
 import { Layout } from "@/components/common";
 import { useEffect } from "react";
@@ -13,7 +13,7 @@ const CheckMintedNFT = () => {
   useEffect(() => {
     const getSubDaoList = async () => {
       console.log("## getSubDaoList call 1");
-      const result = await listSubDAO();
+      const result = await listSubDAO().then(res => res.result);
       setSubDaoList(result);
     };
 
@@ -23,7 +23,7 @@ const CheckMintedNFT = () => {
   const _getMemberNFTAddress = async () => {
       console.log("## _getMemberNFTAddress")
       console.log("## subDAOaddress:",subDAOaddress)
-    const result = await getMemberNFTAddressApi(subDAOaddress);
+    const result = await getMemberNFTAddress(subDAOaddress);
     setMemberNFTAddress(result);
   };
 

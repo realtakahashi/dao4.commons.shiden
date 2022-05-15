@@ -1,10 +1,27 @@
 import Web3 from 'web3'
-import {ethers} from 'ethers'
-import {MemberERC721ContractConstruct} from '@/contracts/construct'
-import {MemberNFTDeployFormData} from '@/types/MemberNFT'
-import SubDAOContractConstruct from './construct/SubDAO';
+import { ethers } from 'ethers'
+import { MemberERC721ContractConstruct } from '@/contracts/construct'
+import { MemberNFTDeployFormData } from '@/types/MemberNFT'
+import SubDAOContractConstruct from './construct/SubDAO'
+import { deployContract } from './base'
 
 const DEPOSIT_TOKEN_BALANCE = '2'
+
+// export const deployMemberNFT = async (formValue: MemberNFTDeployFormData) => {
+//   const inputData = [
+//     formValue.name,
+//     formValue.symbol,
+//     formValue.tokenURI
+//   ]
+//   console.log(inputData)
+//   const res = await deployContract<string>({
+//     contractArtifact: MemberERC721ContractConstruct,
+//     data: inputData
+//   })
+//   return res
+// }
+
+
 
 export const deployMemberNFT = async (
   inputData: MemberNFTDeployFormData
@@ -14,7 +31,7 @@ export const deployMemberNFT = async (
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const factory = new ethers.ContractFactory(
-      MemberERC721ContractConstruct.abi,
+      MemberERC721ContractConstruct.abi as string,
       MemberERC721ContractConstruct.bytecode,
       signer
     )
@@ -22,8 +39,7 @@ export const deployMemberNFT = async (
       .deploy(
         inputData.name,
         inputData.symbol,
-        inputData.tokenURI,
-        inputData.subdaoAddress
+        inputData.tokenURI
       )
       .then((res: any) => {
         console.log(res)
@@ -53,12 +69,12 @@ export const mintMemberNFT = async (
     const signerAddress = await signer.getAddress()
     const contract = new ethers.Contract(
       memberNFTTokenAddress,
-      MemberERC721ContractConstruct.abi,
+      MemberERC721ContractConstruct.abi as string,
       signer
     )
 
     contract
-      .original_mint(signerAddress, {value: Web3.utils.toWei(DEPOSIT_TOKEN_BALANCE)})
+      .original_mint(signerAddress, { value: Web3.utils.toWei(DEPOSIT_TOKEN_BALANCE) })
       .then((d: any) => {
         console.log(d)
         id = d.address
@@ -98,7 +114,7 @@ export const updateNftAddressAndOwnerTokenId = async (
     const signer = provider.getSigner()
     const contract = new ethers.Contract(
       subDAOAddress,
-      SubDAOContractConstruct.abi,
+      SubDAOContractConstruct.abi as string,
       signer
     )
 
@@ -106,7 +122,7 @@ export const updateNftAddressAndOwnerTokenId = async (
       .updateNftAddressAndOwnerTokenId(memberNFTTokenAddress, ownerTokenId)
       .then((d: any) => {
         console.log(d)
-        alert('Succeeded to update SubDAO with your member NFT!')        
+        alert('Succeeded to update SubDAO with your member NFT!')
       })
       .catch((err: any) => {
         console.log(err)
@@ -114,7 +130,7 @@ export const updateNftAddressAndOwnerTokenId = async (
         console.log(err.message)
       })
   }
-  return 
+  return
 }
 
 export const checkNFTMinted = async (
@@ -129,7 +145,7 @@ export const checkNFTMinted = async (
     const signerAddress = await signer.getAddress()
     const contract = new ethers.Contract(
       memberNFTTokenAddress,
-      MemberERC721ContractConstruct.abi,
+      MemberERC721ContractConstruct.abi as string,
       signer
     )
     let id = ''

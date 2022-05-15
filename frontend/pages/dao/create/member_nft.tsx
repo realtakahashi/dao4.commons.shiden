@@ -1,9 +1,9 @@
-import { Layout } from '@/components/common';
-import { useState } from 'react';
-import { FormInputSelect, FormInputText } from '@/components/ui';
+import { Layout } from '@/components/common'
+import { useState } from 'react'
+import { FormInputSelect, FormInputText } from '@/components/ui'
 import { MemberNFTDeployFormData } from "@/types/MemberNFT"
-import { deployMemberNFT, mintMemberNFT, updateNftAddressAndOwnerTokenId } from '@/contracts/MemberNFT';
-import { useSubDAOList } from '@/hooks';
+import { deployMemberNFT, mintMemberNFT, updateNftAddressAndOwnerTokenId } from '@/contracts/MemberNFT'
+import { useSubDAOList } from '@/hooks'
 
 const DeployMemberNFT = () => {
   const [memberNFTAddress, setmemberNFTAddress] = useState("")
@@ -24,16 +24,17 @@ const DeployMemberNFT = () => {
     setFormValue({
       ...formValue,
       [event.target.name]: event.target.value
-    })    
+    })
   }
   const onSubmitMemberNFTForm = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const nftContractAddress = await deployMemberNFT(formValue)
+
+    const nftContractAddress = await (await deployMemberNFT(formValue))
     if (nftContractAddress !== "") {
       setmemberNFTAddress(nftContractAddress)
     }
     await mintMemberNFT(nftContractAddress)
-    await updateNftAddressAndOwnerTokenId(formValue.subdaoAddress,nftContractAddress,1)
+    // await updateNftAddressAndOwnerTokenId(formValue.subdaoAddress,nftContractAddress,1)
   }
   return (
     <>
@@ -59,16 +60,6 @@ const DeployMemberNFT = () => {
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="tokenURI"
             handleOnChangeInput={onChangeInput}
-          />
-          <FormInputSelect
-            label='SubDAO Address'
-            className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-            name="subdaoAddress"
-            handleOnChangeSelect={onChangeSelect}
-            selectList={subDAOList ? subDAOList : []}
-            optionLabelKey={"daoName"}
-            optionValueKey={"daoAddress"}
-            itemName={"SubDAO"}
           />
           <div className="">
             <div className="md:w-1/3"></div>
