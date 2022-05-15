@@ -1,12 +1,12 @@
-import { Layout } from "@/components/common"
-import React, { useState, useEffect } from "react"
-import { ProposalInfo } from "@/types/Proposal"
+import { Layout } from "@/components/common";
+import React, { useState, useEffect } from "react";
+import { ProposalInfo } from "@/types/Proposal";
 import {
   getProposalListFromContract,
   changeProposalStatus,
   doVoteForProposal,
-} from "@/contracts/SubDAO"
-import { useRouter } from "next/router"
+} from "@/contracts/SubDAO";
+import { useRouter } from "next/router";
 
 const PROPOSAL_KIND = [
   "AddAMember",
@@ -14,7 +14,7 @@ const PROPOSAL_KIND = [
   "UseOfFunds",
   "CommunityManagement",
   "Activities",
-] as const
+] as const;
 const PROPOSAL_STATUS = [
   "UnderDiscussionOnGithub",
   "Voting",
@@ -23,7 +23,7 @@ const PROPOSAL_STATUS = [
   "Rejected",
   "FinishedVoting",
   "Finished",
-] as const
+] as const;
 
 interface VoteModalProps {
   showVote:boolean
@@ -34,30 +34,30 @@ interface VoteModalProps {
 
 function VoteModal(props:VoteModalProps) {
   const doVote = async (selectProposal:ProposalInfo) => {
-    console.log("## subDaoAddress: ", props.subDaoAddress)
+    console.log("## subDaoAddress: ", props.subDaoAddress);
     console.log(
       "## selectProposal.proposalId: ",
       parseInt(selectProposal.proposalId)
-    )
-    console.log("## proposalStatus: ", voteStatus)
+    );
+    console.log("## proposalStatus: ", voteStatus);
 
     await doVoteForProposal(
       props.subDaoAddress,
       Boolean(Number(voteStatus)),
       parseInt(selectProposal.proposalId)
-    )
-  }
+    );
+  };
 
-  const [voteStatus, setVoteStatus] = useState("0")
+  const [voteStatus, setVoteStatus] = useState("0");
 
   const selectVoteStatus = (status:string) => {
-    setVoteStatus(status)
-  }
+    setVoteStatus(status);
+  };
 
   const changeVoteAndSetShow = async (showVote:boolean, proposal:ProposalInfo) => {
-    props.setShowVote(showVote)
-    await doVote(proposal)
-  }
+    props.setShowVote(showVote);
+    await doVote(proposal);
+  };
 
   if (props.showVote) {
     return (
@@ -120,9 +120,9 @@ function VoteModal(props:VoteModalProps) {
           </div>
         </div>
       </div>
-    )
+    );
   } else {
-    return null
+    return null;
   }
 }
 
@@ -135,30 +135,30 @@ interface ModalPropos{
 
 function Modal(param:ModalPropos) {
   const doChangeProposalStatus = async (selectProposal:ProposalInfo) => {
-    console.log("## subDaoAddress: ", param.subDaoAddress)
+    console.log("## subDaoAddress: ", param.subDaoAddress);
     console.log(
       "## selectProposal.proposalId: ",
       parseInt(selectProposal.proposalId)
-    )
-    console.log("## proposalStatus: ", proposalStatus)
+    );
+    console.log("## proposalStatus: ", proposalStatus);
 
     await changeProposalStatus(
       param.subDaoAddress,
       Number(proposalStatus),
       parseInt(selectProposal.proposalId)
-    )
-  }
+    );
+  };
 
-  const [proposalStatus, setProposalStatus] = useState("0")
+  const [proposalStatus, setProposalStatus] = useState("0");
 
   const selectStatus = (status:string) => {
-    setProposalStatus(status)
-  }
+    setProposalStatus(status);
+  };
 
   const changeStatusAndSetShow = async (show:boolean, proposal:ProposalInfo) => {
-    param.setShow(show)
-    await doChangeProposalStatus(proposal)
-  }
+    param.setShow(show);
+    await doChangeProposalStatus(proposal);
+  };
 
   if (param.show) {
     return (
@@ -229,34 +229,34 @@ function Modal(param:ModalPropos) {
           </div>
         </div>
       </div>
-    )
+    );
   } else {
-    return null
+    return null;
   }
 }
 
 const DaoProposals = () => {
-  const [proposalList, setProposalList] = useState<Array<ProposalInfo>>()
-  const router = useRouter()
-  const subDAOaddress = String(router.query.address)
+  const [proposalList, setProposalList] = useState<Array<ProposalInfo>>();
+  const router = useRouter();
+  const subDAOaddress = String(router.query.address);
 
-  const [show, setShow] = useState(false)
-  const [showVote, setShowVote] = useState(false)
-  const [selectProposal, setSelectProposal] = useState({proposalKind:0,title:"",outline:"",details:"",githubURL:"",proposalId:"",proposalStatus:0})
+  const [show, setShow] = useState(false);
+  const [showVote, setShowVote] = useState(false);
+  const [selectProposal, setSelectProposal] = useState({proposalKind:0,title:"",outline:"",details:"",githubURL:"",proposalId:"",proposalStatus:0});
 
   function setProposal(proposal:ProposalInfo) {
-    setSelectProposal(proposal)
+    setSelectProposal(proposal);
   }
 
   useEffect(() => {
     const getProposalList = async () => {
       if (typeof subDAOaddress === "string") {
-        const response = await getProposalListFromContract(subDAOaddress)
-        setProposalList(response)
+        const response = await getProposalListFromContract(subDAOaddress);
+        setProposalList(response);
       }
-    }
-    getProposalList()
-  }, [])
+    };
+    getProposalList();
+  }, []);
 
   return (
     <>
@@ -342,15 +342,15 @@ const DaoProposals = () => {
                         {PROPOSAL_STATUS[proposal.proposalStatus]}
                       </td>
                     </tr>
-                  )
+                  );
                 })
               : ""}
           </tbody>
         </table>
       </div>
     </>
-  )
-}
+  );
+};
 
-DaoProposals.Layout = Layout
-export default DaoProposals
+DaoProposals.Layout = Layout;
+export default DaoProposals;

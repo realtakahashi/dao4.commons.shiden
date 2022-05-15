@@ -1,12 +1,12 @@
-import { Layout } from '@/components/common'
-import { useState } from 'react'
-import { FormInputText } from '@/components/ui'
-import { deploySubDAO } from '@/contracts/SubDAO'
+import { Layout } from '@/components/common';
+import { useState } from 'react';
+import { FormInputText } from '@/components/ui';
+import { deploySubDAO, registerSubDAO } from '@/contracts/SubDAO';
 import { SubDAODeployFormData } from "@/types/SubDAO"
 const DeploySubDAO = () => {
   const [sudDAOAddress, setSubDAOAddress] = useState("")
   const [formValue, setFormValue] = useState<SubDAODeployFormData>({
-    githubUrl: "",
+    githubUrl: "",    
     name: "",
     memberNFTAddress: "",
     ownerName: "",

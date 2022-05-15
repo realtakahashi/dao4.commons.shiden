@@ -1,11 +1,11 @@
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import { Layout, MemberModal } from '@/components/common'
-import { SubDAOMemberData } from '@/types/SubDAO'
-import Link from 'next/link'
-import { useSubDAOData } from '@/hooks'
-import { useRouter } from 'next/router'
-import { getSubDAOMemberList } from '@/contracts/MemberManager'
+import { SubDAOMemberData } from '@/types/SubDAO';
+import Link from 'next/link';
+import { useSubDAOData } from '@/hooks';
+import { useRouter } from 'next/router';
+import { getSubDAOMemberList } from '@/contracts/MemberManager';
 
 const DaoMembers = () => {
   const router = useRouter()
@@ -15,9 +15,11 @@ const DaoMembers = () => {
   const [targetDAOMember, setTargetDAOMember] = useState<SubDAOMemberData>()
   const [isModalOpen, setIsModalOpen] = useState(false)
   useEffect(() => {
-    const listMember = async () => {      
+    const listMember = async () => {
+      console.log(subDAOaddress)
       const membersList = await getSubDAOMemberList(subDAOaddress)
-      setDAOMemberList(membersList)      
+      setDAOMemberList(membersList)
+      // console.log(daoMemberList)
       if (typeof daoMemberList !== "undefined") {
         daoMemberList.map(member => {          
           return member.memberId
