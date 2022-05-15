@@ -1,13 +1,13 @@
 import React, { FC, ReactElement, useEffect, useState } from "react"
 import detectEthereumProvider from '@metamask/detect-provider'
-import Web3 from 'web3';
+import Web3 from 'web3'
 import cn from "classnames"
-import HeaderNav from '../HeaderNav/HeaderNav';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import HeaderNav from '../HeaderNav/HeaderNav'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const Header: FC = () => {
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState("")
   const [walletConnected, setWalletConnected] = useState(false)
   const [headerMenuOpen, setheaderMenuOpen] = useState(false)
 
@@ -20,16 +20,16 @@ const Header: FC = () => {
     setheaderMenuOpen(!headerMenuOpen)
   }
   const connectWallet = async () => {
-    const provider = await detectEthereumProvider({ mustBeMetaMask: true });
+    const provider = await detectEthereumProvider({ mustBeMetaMask: true })
     if (provider && window.ethereum?.isMetaMask) {
-      const web3 = new Web3(Web3.givenProvider);
+      const web3 = new Web3(Web3.givenProvider)
       const chainId = await web3.eth.getChainId()
-      const accounts = await web3.eth.requestAccounts();
-      setAddress(accounts[0]);
+      const accounts = await web3.eth.requestAccounts()
+      setAddress(accounts[0])
       setWalletConnected(true)
       if (chainId !== 81 && chainId !== 31337) {
         alert("Network wrong, use shibuya network.")
-      }      
+      }
     } else {
       setWalletConnected(false)
       console.log("failed to connect")
@@ -38,10 +38,10 @@ const Header: FC = () => {
   }
 
   const ConnectButton: FC = (): ReactElement => {
-    const router = useRouter();
+    const router = useRouter()
     router.events?.on('routeChangeStart', () => {
       setheaderMenuOpen(false)
-    });
+    })
     let button: ReactElement = <></>
     if (address !== "") {
       <>
@@ -78,8 +78,8 @@ const Header: FC = () => {
           <HeaderNav />
           <div>
             if (address !== "") {
-              <>                
-                <span className="text-white">{address}</span>                
+              <>
+                <span className="text-white">{address}</span>
               </>
             }
           </div>

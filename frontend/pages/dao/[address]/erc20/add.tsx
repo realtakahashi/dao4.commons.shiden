@@ -1,47 +1,45 @@
 import { Layout } from '@/components/common'
 import { useState } from 'react'
 import { FormInputSelect, FormInputText } from '@/components/ui'
-import { MemberNFTDeployFormData } from "@/types/MemberNFT"
-import { deployMemberNFT, mintMemberNFT, updateNftAddressAndOwnerTokenId } from '@/contracts/MemberNFT'
-import { useSubDAOList } from '@/hooks'
+import { DaoErc20DeployFormData } from "@/types/Token"
 
-const DeployMemberNFT = () => {
-  const [memberNFTAddress, setmemberNFTAddress] = useState("")
-  const [formValue, setFormValue] = useState<MemberNFTDeployFormData>({
+import { useSubDAOList } from '@/hooks'
+import { deployDaoErc20 } from '@/contracts/daoErc20'
+import { useRouter } from 'next/router'
+
+const DeployDaoErc20 = () => {
+  const router = useRouter()
+  const subDAOaddress = router.query.address as string
+  const [DaoErc20Address, setDaoErc20Address] = useState("")
+  const [formValue, setFormValue] = useState<DaoErc20DeployFormData>({
     name: "",
     symbol: "",
-    tokenURI: "",
-    subdaoAddress: ""
+    subDAOAddress: subDAOaddress,
+    pricewei: 0,
+    amount: 0,
   })
-  const subDAOList = useSubDAOList()
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormValue({
       ...formValue,
       [event.target.name]: event.target.value
     })
   }
-  const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormValue({
-      ...formValue,
-      [event.target.name]: event.target.value
-    })
-  }
-  const onSubmitMemberNFTForm = async (event: React.FormEvent<HTMLFormElement>) => {
+
+  const onSubmitDaoErc20Form = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const nftContractAddress = await (await deployMemberNFT(formValue))
-    if (nftContractAddress !== "") {
-      setmemberNFTAddress(nftContractAddress)
+    const daoErc20ContractAddress = await deployDaoErc20(formValue)
+    console.log(daoErc20ContractAddress)
+    if (daoErc20ContractAddress !== "") {
+      setDaoErc20Address(daoErc20ContractAddress)
     }
-    await mintMemberNFT(nftContractAddress)
-    // await updateNftAddressAndOwnerTokenId(formValue.subdaoAddress,nftContractAddress,1)
   }
   return (
     <>
       <div className="w-full form-container">
-        <h2 className="text-xl">Deploy Your MemberNFT</h2>
+        <h2 className="text-xl">Deploy Your DaoErc20</h2>
         <form
-          onSubmit={onSubmitMemberNFTForm}
+          onSubmit={onSubmitDaoErc20Form}
         >
           <FormInputText
             label="name"
@@ -56,9 +54,15 @@ const DeployMemberNFT = () => {
             handleOnChangeInput={onChangeInput}
           />
           <FormInputText
-            label='Token URI'
+            label='Price'
             className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
-            name="tokenURI"
+            name="pricewei"
+            handleOnChangeInput={onChangeInput}
+          />
+          <FormInputText
+            label='Amount'
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            name="amount"
             handleOnChangeInput={onChangeInput}
           />
           <div className="">
@@ -68,20 +72,20 @@ const DeployMemberNFT = () => {
                 className="button-dao-default px-4 py-2 m-2"
                 type="submit"
               >
-                Deploy & Mint
+                Deploy & Add Token To List
               </button>
             </div>
           </div>
 
         </form>
         {
-          memberNFTAddress !== "" ? (
+          DaoErc20Address !== "failed" && DaoErc20Address !== "" ? (
             <div className='mt-10'>
               <p className="text-lg">
                 Deploy Succeeded!!
               </p>
               <p className="text-lg">
-                Your Member NFT Contract Address: {memberNFTAddress}
+                Your ERC20 Contract Address: {DaoErc20Address}
               </p>
             </div>
           ) : ""
@@ -91,5 +95,5 @@ const DeployMemberNFT = () => {
   )
 }
 
-DeployMemberNFT.Layout = Layout
-export default DeployMemberNFT
+DeployDaoErc20.Layout = Layout
+export default DeployDaoErc20

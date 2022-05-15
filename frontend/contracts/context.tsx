@@ -1,8 +1,8 @@
 
-import { createContext, FC, useContext } from 'react';
+import { createContext, FC, useContext } from 'react'
 
 // TODO: reactive with connect button
-export interface State {}
+export interface State { }
 
 const WalletContext = createContext<State>({})
 
