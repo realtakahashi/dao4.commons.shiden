@@ -9,11 +9,6 @@
     // alow import JSON file
     "resolveJsonModule": true
   },
-  "include": [
-    "./scripts",
-    "./test"
-  ],
-  "files": [
-    "./hardhat.config.ts"
-  ]
+  "include": ["./scripts", "./test"],
+  "files": ["./hardhat.config.ts"]
 }

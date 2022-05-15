@@ -1,4 +1,4 @@
-import { ContractArtifact } from '../base'
+import {ContractArtifact} from '../base'
 const MemberERC721ContractConstruct: ContractArtifact = {
   _format: "hh-sol-artifact-1",
   contractName: "MemberERC721PresetMinterPauserAutoId",
@@ -821,4 +821,4 @@ const MemberERC721ContractConstruct: ContractArtifact = {
   deployedLinkReferences: {}
 }
 
-export default MemberERC721ContractConstruct
+export default MemberERC721ContractConstruct;
