@@ -1,27 +1,30 @@
 import { Layout } from '@/components/common'
-import { deployDaoErc721, getDAOERC721TokenList } from '@/contracts/daoErc721'
+import { buyERC721Token, controlERC721TokenSale, deployDaoErc721, getDAOERC721TokenList } from '@/contracts/daoErc721'
 import { useSubDAOData } from '@/hooks'
 import Link from "next/link"
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { DaoErc20, DaoErc20DeployFormData } from "@/types/Token"
-
+import { DaoErc721, DaoErc721DeployFormData } from "@/types/Token"
 const ListErc721Tokens = () => {
   const router = useRouter()
   const subDAOaddress = router.query.address as string
   const targetSubDAO = useSubDAOData(subDAOaddress)
-  const [daoErc20TokenList, setDaoErc20TokenList] = useState<Array<DaoErc20>>([])
+  const [daoErc721TokenList, setDaoErc721TokenList] = useState<Array<DaoErc721>>([])
+  const listTokens = async () => {
+    const tokenList = await getDAOERC721TokenList(subDAOaddress)
+    setDaoErc721TokenList(tokenList)
+    console.log(tokenList)
+  }
   useEffect(() => {
-    const listTokens = async () => {
-      const tokenList = await getDAOERC721TokenList(subDAOaddress)
-      setDaoErc20TokenList(tokenList)
-      console.log(tokenList)
-    }
     listTokens()
   }, [])
-  const controlERC20TokenSale = (saleStatus: boolean) => {
+  const changeDaoErc721TokenSaleStatus = async (tokenAddress: string, saleStatus: boolean) => {
+    await controlERC721TokenSale(tokenAddress, saleStatus)
+    listTokens()
+  }
 
-    return
+  const buy = async (tokenAddress: string) => {
+    await buyERC721Token(tokenAddress)
   }
 
   return (
@@ -39,7 +42,7 @@ const ListErc721Tokens = () => {
 
         <div className="m-5 text-center">
           <Link
-            href={`/dao/${subDAOaddress}/tokens/add`}
+            href={`/dao/${subDAOaddress}/erc721/add`}
           >
             <a
               className="button-dao-default px-4 py-2 m-2"
@@ -47,7 +50,7 @@ const ListErc721Tokens = () => {
               {
                 typeof targetSubDAO !== "undefined" ?
                   (<p>
-                    Add {targetSubDAO.daoName} Token
+                    Add {targetSubDAO.daoName} ERC721 Token
                   </p>)
                   : ''
               }
@@ -70,25 +73,41 @@ const ListErc721Tokens = () => {
           </thead>
           <tbody>
             {
-              daoErc20TokenList.length > 0 ? (
-                daoErc20TokenList.map((token) => {
+              daoErc721TokenList.length > 0 ? (
+                daoErc721TokenList.map((token) => {
                   return (
                     <tr
                       key={token.tokenAddress}
-                      className="px-6 py-2 border-b border-gray-200 w-full rounded-t-lg"
+                      className="cursor-pointer px-6 py-2 border-b border-gray-7210 w-full rounded-t-lg"
                     >
                       <td className="border px-4 py-2">{token.name}</td>
                       <td className="border px-4 py-2">{token.symbol}</td>
-                      <td className="border px-4 py-2">{token.price}</td>
+                      <td className="border px-4 py-2">
+                        {token.price}
+                        {token.onSale ? (
+                          <div>
+                            <input type="number" className='text-black' />
+                            <button className='button-dao-default'
+                              onClick={() => buy(token.tokenAddress)}>
+                              Buy
+                            </button>
+                          </div>
+
+                        ) : ""}
+                      </td>
                       <td className="border px-4 py-2">{token.tokenAddress}</td>
                       <td className="border px-4 py-2">{token.totalBalance}</td>
                       <td className="border px-4 py-2">{token.salesAmount}</td>
-                      <td className="border px-4 py-2">{token.onSale ? "Now on sale" : "Not on sale"}
+                      <td className="border px-4 py-2">
+                        {token.onSale ? "On sale" : "Not on sale"}
+                        <button className='button-dao-default p-1'
+                          onClick={() => changeDaoErc721TokenSaleStatus(token.tokenAddress, !token.onSale)}>
+                          Change Status
+                        </button>
                       </td>
                     </tr>
                   )
                 })
-
               ) : ""
             }
           </tbody>

@@ -50,7 +50,7 @@ const ListErc20Tokens = () => {
               {
                 typeof targetSubDAO !== "undefined" ?
                   (<p>
-                    Add {targetSubDAO.daoName} Token
+                    Add {targetSubDAO.daoName} ERC20 Token
                   </p>)
                   : ''
               }

@@ -8,7 +8,8 @@ export const deployDaoErc721 = async (
 ): Promise<string> => {
   const contractConstract = DAOERC721ContractConstruct
   let response: string = ""
-  if (!inputData.name || !inputData.symbol || !inputData.subDAOAddress || inputData.price || !inputData.tokenUri) {
+  console.log(inputData)
+  if (!inputData.name || !inputData.symbol || !inputData.subDAOAddress || !inputData.priceWei || !inputData.tokenUri) {
     return "failed"
   }
   if (typeof window.ethereum !== 'undefined') {
@@ -24,7 +25,7 @@ export const deployDaoErc721 = async (
         inputData.name,
         inputData.symbol,
         inputData.subDAOAddress,
-        inputData.price,
+        inputData.priceWei,
         inputData.tokenUri
       )
       .then(async (res: { address: string }) => {
@@ -73,7 +74,6 @@ export const AddDAOERC721ToTokenList = async (
 }
 
 export const buyERC721Token = async (
-  amount: number,
   tokenAddress: string
 ): Promise<void> => {
   const contractConstract = DAOERC721ContractConstruct
@@ -86,7 +86,7 @@ export const buyERC721Token = async (
       signer
     )
     await contract
-      .buy(10, { value: ethers.utils.parseEther("721.0") })
+      .buy()
       .then((res: string) => {
         console.log(res)
         alert('Success token bought')
@@ -147,13 +147,12 @@ export const getDAOERC721TokenList = async (
       .getTokenList()
       .then(async (res: DaoErc721[]) => {
         const list = await Promise.all(res.map(async (r) => {
-          if (r.tokenKind === 0) {
-            const { name, symbol, totalBalance, salesAmount, onSale, price } = await getDAOERC721TokenInfo(r.tokenAddress)
+          if (r.tokenKind === 1) {
+            const { name, symbol, salesAmount, onSale, price } = await getDAOERC721TokenInfo(r.tokenAddress)
             return {
               ...r,
               symbol,
               name,
-              totalBalance,
               salesAmount,
               onSale,
               price
@@ -213,14 +212,6 @@ export const getDAOERC721TokenInfo = async (
       .catch((err: any) => {
         console.log(err)
         alert('failed to get token symbol')
-      })
-    await contract
-      .totalSupply()
-      .then((res: { _hex: string, _isBigNumber: boolean }) => {
-        response.totalBalance = parseInt(res._hex)
-      })
-      .catch((err: any) => {
-        alert('failed to get token total supply')
       })
     await contract
       .onSale()

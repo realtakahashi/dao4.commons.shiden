@@ -21,7 +21,7 @@ export interface DaoErc721DeployFormData {
   name: string
   symbol: string
   subDAOAddress: string
-  price: number
+  priceWei: number
   tokenUri: string
 }
 
