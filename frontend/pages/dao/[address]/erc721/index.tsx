@@ -23,10 +23,10 @@ const ListErc721Tokens = () => {
     listTokens()
   }
 
-  const buy = async (tokenAddress: string) => {
-    await buyERC721Token(tokenAddress)
-  }
+  const buy = async (price: number, tokenAddress: string) => {
+    await buyERC721Token(price, tokenAddress)
 
+  }
   return (
     <>
       <div>
@@ -86,9 +86,8 @@ const ListErc721Tokens = () => {
                         {token.price}
                         {token.onSale ? (
                           <div>
-                            <input type="number" className='text-black' />
                             <button className='button-dao-default'
-                              onClick={() => buy(token.tokenAddress)}>
+                              onClick={() => buy(token.price, token.tokenAddress)}>
                               Buy
                             </button>
                           </div>

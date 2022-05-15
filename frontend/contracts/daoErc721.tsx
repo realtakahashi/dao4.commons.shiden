@@ -25,7 +25,7 @@ export const deployDaoErc721 = async (
         inputData.name,
         inputData.symbol,
         inputData.subDAOAddress,
-        inputData.priceWei,
+        ethers.utils.parseEther(inputData.priceWei.toString()),
         inputData.tokenUri
       )
       .then(async (res: { address: string }) => {
@@ -74,6 +74,7 @@ export const AddDAOERC721ToTokenList = async (
 }
 
 export const buyERC721Token = async (
+  price: number,
   tokenAddress: string
 ): Promise<void> => {
   const contractConstract = DAOERC721ContractConstruct
@@ -86,7 +87,7 @@ export const buyERC721Token = async (
       signer
     )
     await contract
-      .buy()
+      .buy({ value: ethers.utils.parseEther(price.toString()) })
       .then((res: string) => {
         console.log(res)
         alert('Success token bought')
