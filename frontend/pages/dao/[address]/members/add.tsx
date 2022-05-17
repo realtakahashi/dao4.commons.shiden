@@ -1,47 +1,31 @@
 import type { InferGetStaticPropsType, GetStaticPaths, GetStaticPropsContext } from 'next'
-import { Layout } from '@/components/common'
-import { useState, useEffect } from 'react'
-import { FormInputSelect, FormInputText, FormText } from '@/components/ui'
+import { Layout } from '@/components/common';
+import { useState, useEffect } from 'react';
+import { FormInputText, FormText } from '@/components/ui';
 import { AddMemberFormData } from "@/types/MemberNFT"
-import { addMemberToSubDAO, getProposalListFromContract } from '@/contracts/SubDAO'
-import { Loading } from '@/components/common/Loading'
-import { useSubDAOData } from '@/hooks'
-import { useRouter } from 'next/router'
-import { ProposalInfo } from '@/types/Proposal'
+import { addMemberToSubDAO } from '@/contracts/SubDAO';
+import { Loading } from '@/components/common/Loading';
+import { useSubDAOData } from '@/hooks';
+import { useRouter } from 'next/router';
 
 
 const MintMemberNFT = () => {
   const router = useRouter()
-  const subDAOaddress = router.query.address as string
+  const subDAOaddress = router.query.address as string  
   const [memberAdded, setMemberAdded] = useState(false)
-  const [relatedProposalList, setRelatedProposalList] = useState<Array<ProposalInfo>>([])
   const [formValue, setFormValue] = useState<AddMemberFormData>({
-    tokenID: 0,
+    tokenID: 0,    
     name: "",
     memberAddress: "",
     relatedProposalId: 0,
   })
 
-  useEffect(() => {
-    const getProposalList = async () => {
-      if (typeof subDAOaddress === "string") {
-        const response = await getProposalListFromContract(subDAOaddress)
-        const proposalList = response.filter((res) => {
-          return res.proposalKind == 0 && res.proposalStatus == 6
-        })
-        setRelatedProposalList(proposalList)
-        // console.log(proposalList)
-      }
-    }
-    getProposalList()
-  }, [])
-
   const targetSubDAO = useSubDAOData(subDAOaddress)
-  if (typeof targetSubDAO === "undefined") {
-    return <Loading />
+  if (typeof targetSubDAO === "undefined") { 
+    return <Loading/>
   }
 
-  const onChangeInput = (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
+  const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormValue({
       ...formValue,
       [event.target.name]: event.target.value
@@ -52,6 +36,7 @@ const MintMemberNFT = () => {
     event.preventDefault()
     await addMemberToSubDAO(subDAOaddress, formValue)
     setMemberAdded(true)
+
   }
   return (
     <>
@@ -84,15 +69,11 @@ const MintMemberNFT = () => {
             name="tokenID"
             handleOnChangeInput={onChangeInput}
           />
-          <FormInputSelect
+          <FormInputText
             label='Related Proposal Id'
-            className="text-black appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            className="appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
             name="relatedProposalId"
-            handleOnChangeSelect={onChangeInput}
-            selectList={relatedProposalList}
-            optionLabelKey={"title"}
-            optionValueKey={"proposalId"}
-            itemName={"Related ProposalId"}
+            handleOnChangeInput={onChangeInput}
           />
 
           <FormText
