@@ -1,11 +1,11 @@
 
-import { Layout } from '@/components/common';
-import { useState } from 'react';
-import { FormInputText, FormText } from '@/components/ui';
-import { deleteMemberOfSubDAO } from '@/contracts/SubDAO';
-import { useSubDAOData } from '@/hooks';
-import { useRouter } from 'next/router';
-import { DeleteMemberFormData } from '@/types/SubDAO';
+import { Layout } from '@/components/common'
+import { useState } from 'react'
+import { FormInputText, FormText } from '@/components/ui'
+import { deleteMemberOfSubDAO } from '@/contracts/SubDAO'
+import { useSubDAOData } from '@/hooks'
+import { useRouter } from 'next/router'
+import { DeleteMemberFormData } from '@/types/SubDAO'
 
 
 const MintMemberNFT = () => {
