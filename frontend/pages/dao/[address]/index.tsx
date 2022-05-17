@@ -3,15 +3,15 @@ import Link from "next/link"
 
 
 const DAOportal = () => {
-  return (
-    <>
-      <Link href="/">
-        <a>
-          Back to Top
-        </a>
-      </Link>
-    </>
-  )
+return (
+  <>
+    <Link href="/">
+      <a>
+        Back to Top
+      </a>
+    </Link>
+  </>
+)
 }
 
 DAOportal.Layout = Layout
