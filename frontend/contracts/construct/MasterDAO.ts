@@ -1,4 +1,4 @@
-import { ContractArtifact } from '../base';
+import { ContractArtifact } from '../base'
 const MasterDAOContractConstruct: ContractArtifact = {
   _format: "hh-sol-artifact-1",
   contractName: "MasterDAO",
@@ -371,4 +371,4 @@ const MasterDAOContractConstruct: ContractArtifact = {
   deployedLinkReferences: {}
 }
 
-export default MasterDAOContractConstruct;
+export default MasterDAOContractConstruct

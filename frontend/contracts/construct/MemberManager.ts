@@ -1,4 +1,4 @@
-import {ContractArtifact} from '../base'
+import { ContractArtifact } from '../base'
 const MemberManagerContractConstruct: ContractArtifact = {
   _format: "hh-sol-artifact-1",
   contractName: "MemberManager",

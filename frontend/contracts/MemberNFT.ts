@@ -2,8 +2,8 @@ import Web3 from 'web3'
 import { ethers } from 'ethers'
 import { MemberERC721ContractConstruct } from '@/contracts/construct'
 import { MemberNFTDeployFormData } from '@/types/MemberNFT'
-import SubDAOContractConstruct from './construct/SubDAO';
-import { deployContract } from './base';
+import SubDAOContractConstruct from './construct/SubDAO'
+import { deployContract } from './base'
 
 const DEPOSIT_TOKEN_BALANCE = '2'
 
