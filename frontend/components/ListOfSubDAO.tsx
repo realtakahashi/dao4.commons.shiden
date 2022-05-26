@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { SubDAOData } from "../../masterdao_frontend/types/MasterDaoType";
-import { listSubDAO } from "../../masterdao_frontend/contracts/MasterDaoApi";
+import { SubDAOData } from "../../frontend_common/types/MasterDaoType";
+import { getDaoListOfAffiliation, listSubDAO } from "../../frontend_common/contracts/subdao_api";
 import { useEffect } from "react";
 import Link from "next/link";
 
-const subdaolist = () => {
+const ListOfSubDAO = () => {
   const [subDaoList, setSubDaoList] = useState<Array<SubDAOData>>();
   const [showList, setShowList] = useState(true);
   const [showListButton, setShowListButton] = useState(false);
@@ -21,7 +21,17 @@ const subdaolist = () => {
 
   const getSubDaoList = async () => {
     //console.log("## getSubDaoList call 1");
-    const result = await listSubDAO();
+    let masterDaoAddress = "";
+    if (process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS !== "undefined"){
+      masterDaoAddress = String(process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS);
+    }
+    const list = await listSubDAO(masterDaoAddress);
+    let memberManagerAddress = "";
+    if (process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS !== "undefined"){
+      memberManagerAddress = String(process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS);
+    }
+    console.log("####### before getDaoListOfAffiliation");
+    const result = await getDaoListOfAffiliation(memberManagerAddress,list);
     setSubDaoList(result);
   };
 
@@ -151,4 +161,4 @@ const subdaolist = () => {
   );
 };
 
-export default subdaolist;
+export default ListOfSubDAO;

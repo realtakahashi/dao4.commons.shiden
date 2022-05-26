@@ -2,6 +2,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import Web3 from "web3";
 import { useEffect } from "react";
 import Link from "next/link";
+import ListOfSubDAO from "../components/ListOfSubDAO";
 
 const Home = () => {
   const connectWallet = async () => {
@@ -20,17 +21,17 @@ const Home = () => {
   return (
     <>
       <div className="bg-black flex flex-col min-h-screen">
-        <div className="text-center text-150px font-extrabold leading-none tracking-tight">
+        <div className="text-center text-100px font-extrabold leading-none tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500">
-            Imprementing Your Own DAO
+            Enpower your activities by DAO
           </span>
         </div>
         <div className="p-1 text-center text-25px">
           <button className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500">
-            <Link href="">Create Your Own DAO</Link>
+            <Link href="dao/create/">Create Your Own DAO</Link>
           </button>
         </div>
-        <subdaolist></subdaolist>
+        <ListOfSubDAO></ListOfSubDAO>
       </div>
     </>
   );

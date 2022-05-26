@@ -2,7 +2,6 @@ export interface MemberNFTDeployFormData {
   name: string
   symbol: string
   tokenURI: string
-  subdaoAddress: string
 }
 
 export interface MemberNFTMintFormData {
