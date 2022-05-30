@@ -8,7 +8,8 @@ import { errorFunction } from "./commonFunctions";
 const DEPOSIT_TOKEN_BALANCE = "2";
 
 export const deployMemberNFT = async (
-  inputData: MemberNFTDeployFormData
+  inputData: MemberNFTDeployFormData,
+  setNftAddress:(value: string) => void,
 ): Promise<string> => {
   let memberNFTTokenAddress = "";
   if (typeof window.ethereum !== "undefined") {
@@ -19,23 +20,27 @@ export const deployMemberNFT = async (
       MemberERC721ContractConstruct.bytecode,
       signer
     );
-    await factory
+    const result:any = await factory
       .deploy(inputData.name, inputData.symbol, inputData.tokenURI)
-      .then((res: any) => {
-        memberNFTTokenAddress = res.address;
-        return memberNFTTokenAddress;
-      })
+      // .then((res: any) => {
+      //   memberNFTTokenAddress = res.address;
+      //   return memberNFTTokenAddress;
+      // })
       .catch((err: any) => {
         errorFunction(err);
       });
+    memberNFTTokenAddress = result.address;
   }
+  console.log("### memberNFTTokenAddress:",memberNFTTokenAddress);
+  setNftAddress(memberNFTTokenAddress);
   return memberNFTTokenAddress;
 };
 
 export const mintMemberNFT = async (
-  memberNFTTokenAddress: string
+  memberNFTTokenAddress: string,
+  setTokenId:(id:string) => void
 ): Promise<string> => {
-  let id: string = "";
+  let id: Number = 0;
   console.log('memberNFT address: ', memberNFTTokenAddress)
   if (
     typeof window.ethereum !== "undefined" &&
@@ -55,15 +60,15 @@ export const mintMemberNFT = async (
         value: Web3.utils.toWei(DEPOSIT_TOKEN_BALANCE),
       })
       .then((d: any) => {
-        console.log(d);
-        id = d.address;
+        //console.log(d);
         const filters = contract.filters["IssuedMemberToken"];
         if (filters !== undefined) {
           provider.once("block", () => {
             contract.on(filters(), (senderAddress, tokenID) => {
               console.log(senderAddress, tokenID);
-              id = parseInt(tokenID._hex,16).toString();
-              console.log(id);
+              id = parseInt(tokenID._hex,16);
+              setTokenId(id.toString());
+              //console.log(id);
               alert("Your Token Id is :"+ id);
             });
           });
@@ -73,7 +78,7 @@ export const mintMemberNFT = async (
         errorFunction(err);
       });
   }
-  return id;
+  return id.toString();
 };
 
 export const checkNFTMinted = async (

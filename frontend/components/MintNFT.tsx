@@ -3,14 +3,15 @@ import { mintMemberNFT } from "../../frontend_common/contracts/member_nft_api";
 
 interface FinishMintSetting {
   setCheckMintNft: (flg: boolean) => void;
+  setTokenId:(id:string) => void;
   nftAddress: string;
 }
 
 const MintNFT = (props: FinishMintSetting) => {
-  const [tokenId, setTokenId] = useState("");
 
   const _mintNft = async () => {
-    setTokenId(await mintMemberNFT(props.nftAddress));
+    console.log("### props.nftAddress:",props.nftAddress);
+    await mintMemberNFT(props.nftAddress, props.setTokenId);
     props.setCheckMintNft(true);
   };
 

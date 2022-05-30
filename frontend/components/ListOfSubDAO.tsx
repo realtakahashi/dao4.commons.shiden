@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SubDAOData } from "../../frontend_common/types/MasterDaoType";
+import { SubDAOData } from "../../frontend_common/types/SubDaoType";
 import { getDaoListOfAffiliation, listSubDAO } from "../../frontend_common/contracts/subdao_api";
 import { useEffect } from "react";
 import Link from "next/link";

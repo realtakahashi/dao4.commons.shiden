@@ -22,13 +22,17 @@ const Home = () => {
     <>
       <div className="bg-black flex flex-col min-h-screen">
         <div className="text-center text-100px font-extrabold leading-none tracking-tight">
+          <div className="p-3"></div>
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500">
             Enpower your activities by DAO
           </span>
         </div>
         <div className="p-1 text-center text-25px">
           <button className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500">
-            <Link href="dao/create/">Create Your Own DAO</Link>
+            <Link href="dao/create/">Create Your DAO</Link>
+          </button>
+          <button className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500">
+            <Link href="dao/create/">Join to the DAO</Link>
           </button>
         </div>
         <ListOfSubDAO></ListOfSubDAO>

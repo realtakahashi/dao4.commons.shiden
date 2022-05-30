@@ -1,34 +1,50 @@
-import { MemberNFTDeployFormData } from "../../frontend_common/types/MemberNftType";
+import { deploySubDAO } from "@/../frontend_common/contracts/subdao_api";
+import { SubDAODeployFormData } from "@/../frontend_common/types/SubDaoType";
 import { useState } from "react";
-import { deployMemberNFT } from "../../frontend_common/contracts/member_nft_api";
 
-interface FinishMintSetting {
-  setCheckDeployNft: (flg: boolean) => void;
-  setNftAddress:(value: string) => void;
+interface DeployDaoParameter {
+  memberNFTAddress: string;
+  setCheckDeployDao: (flg: boolean) => void;
+  setDaoAddress: (address: string) => void;
+  setDaoValue: (daoValue:SubDAODeployFormData) => void;
 }
 
-const DeployNFT = (props:FinishMintSetting) => {
-  const [nftAddress, setNftAddress] = useState("");
-  const [nftValue, setNftValue] = useState<MemberNFTDeployFormData>({
+const DeployDAO = (props: DeployDaoParameter) => {
+  const [daoAddress, setDaoAddress] = useState("");
+  const [daoValue, setDaoValue] = useState<SubDAODeployFormData>({
     name: "",
-    symbol: "",
-    tokenURI: "",
+    githubUrl: "",
+    memberNFTAddress: "",
+    ownerName: "",
+    description: "",
   });
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNftValue({
-      ...nftValue,
+    setDaoValue({
+      ...daoValue,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+  const onChangeText = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDaoValue({
+      ...daoValue,
       [event.target.name]: event.target.value,
     });
   };
 
   const _onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const result = await deployMemberNFT(nftValue,props.setNftAddress);
-    setNftAddress(result);
-    props.setCheckDeployNft(true);
-    //props.setNftAddress(nftAddress);
-    console.log("#### nftAddress",nftAddress);
+    const memberManagerAddress =
+      process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? "";
+    const proposalManagerAddress =
+      process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS ?? "";
+    daoValue.memberNFTAddress = props.memberNFTAddress;
+    setDaoAddress(
+      await deploySubDAO(daoValue, memberManagerAddress, proposalManagerAddress, props.setDaoAddress)
+    );
+    props.setCheckDeployDao(true);
+    props.setDaoValue(daoValue);
   };
 
   return (
@@ -50,31 +66,39 @@ const DeployNFT = (props:FinishMintSetting) => {
               </td>
             </tr>
             <tr>
-              <th className=" flex justify-end px-4 py-2">
-                Symbol:
-              </th>
+              <th className=" flex justify-end px-4 py-2">Github Url:</th>
               <td className=" px-4 py-2">
                 <input
                   className="appearance-none rounded w-2/3 py-2 px-4 
                         leading-tight focus:outline-none focus:bg-white focus:border-orange-500"
-                  name="symbol"
+                  name="githubUrl"
                   type="text"
                   onChange={onChangeInput}
                 ></input>
               </td>
             </tr>
             <tr>
-              <th className=" flex justify-end px-4 py-2">
-                Base Uri:
-              </th>
+              <th className=" flex justify-end px-4 py-2">Owner Name:</th>
               <td className=" px-4 py-2">
                 <input
                   className="appearance-none rounded w-2/3 py-2 px-4 
                         leading-tight focus:outline-none focus:bg-white focus:border-orange-500"
-                  name="tokenURI"
+                  name="ownerName"
                   type="text"
                   onChange={onChangeInput}
                 ></input>
+              </td>
+            </tr>
+            <tr>
+              <th className=" flex justify-end px-4 py-2">Description:</th>
+              <td className=" px-4 py-2">
+                <textarea
+                  className="appearance-none rounded w-2/3 py-2 px-4 
+                        leading-tight focus:outline-none focus:bg-white focus:border-orange-500"
+                  name="description"
+                  rows={5}
+                  onInput={onChangeText}
+                ></textarea>
               </td>
             </tr>
           </table>
@@ -88,7 +112,7 @@ const DeployNFT = (props:FinishMintSetting) => {
           </button>
         </div>
         <div className="m-5 text-center text-orange-400 text-20px">
-          Your NFT Address is : {nftAddress}
+          Your DAO Address is : {daoAddress}
         </div>
       </form>
       <div className="p-5"></div>
@@ -96,4 +120,4 @@ const DeployNFT = (props:FinishMintSetting) => {
   );
 };
 
-export default DeployNFT;
+export default DeployDAO;
