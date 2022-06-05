@@ -1,0 +1,6 @@
+[submodule "frontend/dao4.frontend.common"]
+	path = frontend/dao4.frontend.common
+	url = https://github.com/realtakahashi/dao4.frontend.common.git
+[submodule "masterdao_frontend/dao4.frontend.common"]
+	path = masterdao_frontend/dao4.frontend.common
+	url = https://github.com/realtakahashi/dao4.frontend.common.git

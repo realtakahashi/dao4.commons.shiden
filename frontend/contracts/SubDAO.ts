@@ -273,7 +273,7 @@ export const getProposalListFromContract = async (
       console.log(err)
       alert('failed to list Proposal Info.')
     })
-    console.log('### getProposalList Return: ', response)
+    //console.log('### getProposalList Return: ', response)
   }
   return response
 }

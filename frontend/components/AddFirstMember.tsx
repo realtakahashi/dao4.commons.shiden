@@ -1,6 +1,6 @@
-import { addFirstMember } from "../../frontend_common/contracts/membermanager_api";
+import { addFirstMember } from "../dao4.frontend.common/contracts/membermanager_api";
 import { useState } from "react";
-import { FirstMemberData } from "../../frontend_common/types/MemberManagerType";
+import { FirstMemberData } from "../dao4.frontend.common/types/MemberManagerType";
 
 interface FirstMemberParameter {
   setCheckAddFirstMember: (flg: boolean) => void;

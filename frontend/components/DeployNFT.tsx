@@ -1,6 +1,6 @@
-import { MemberNFTDeployFormData } from "../../frontend_common/types/MemberNftType";
+import { MemberNFTDeployFormData } from "../dao4.frontend.common/types/MemberNftType";
 import { useState } from "react";
-import { deployMemberNFT } from "../../frontend_common/contracts/member_nft_api";
+import { deployMemberNFT } from "../dao4.frontend.common/contracts/member_nft_api";
 
 interface FinishMintSetting {
   setCheckDeployNft: (flg: boolean) => void;

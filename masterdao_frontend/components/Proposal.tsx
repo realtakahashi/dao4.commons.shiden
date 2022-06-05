@@ -2,7 +2,11 @@ import { useState } from "react";
 import ProposalList from "./ProposalList";
 import SubmitProposal from "./SubmitProposal";
 
-const Proposal = () => {
+interface ProposalParameter{
+  daoAddress:string
+}
+
+const Proposal = (props:ProposalParameter) => {
   const [showListButton, setShowListButton] = useState(false);
   const [showSubmitButton, setShowSubmitButton] = useState(true);
   const [showList, setShowList] = useState(true);
@@ -59,6 +63,7 @@ const Proposal = () => {
             setShowListButton={setShowListButton}
             setShowSubmitScreen={setShowSubmitScreen}
             showAllList={showAllList}
+            daoAddress={props.daoAddress}
             />
         )}
         {showSubmitScreen == true && <SubmitProposal></SubmitProposal>}

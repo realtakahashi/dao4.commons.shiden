@@ -1,5 +1,5 @@
-import { SubDAODeployFormData } from "@/../frontend_common/types/SubDaoType";
-import { registerSubDAO } from "../../frontend_common/contracts/masterdao_api";
+import { SubDAODeployFormData } from "../dao4.frontend.common/types/SubDaoType";
+import { registerSubDAO } from "../dao4.frontend.common/contracts/masterdao_api";
 
 interface FinishRegisterSetting {
   setCheckRegisterDAO: (flg: boolean) => void;

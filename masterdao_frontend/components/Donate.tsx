@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { doDonateMasterDao, doDonateSelectedDao } from "../contracts/MasterDaoApi";
+import { doDonateSelectedDao } from "../contracts/MasterDaoApi";
 import { TargetDaoInterface } from "../types/MasterDaoType";
 import TargetDao from "../components/TargetDao";
+import { doDonateMasterDao } from "../dao4.frontend.common/contracts/masterdao_api";
 
 const Donate = (props: TargetDaoInterface) => {
   const [donateAmount, setDonateAmount] = useState(0);

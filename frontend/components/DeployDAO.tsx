@@ -1,5 +1,5 @@
-import { deploySubDAO } from "@/../frontend_common/contracts/subdao_api";
-import { SubDAODeployFormData } from "@/../frontend_common/types/SubDaoType";
+import { deploySubDAO } from "../dao4.frontend.common/contracts/subdao_api";
+import { SubDAODeployFormData } from "../dao4.frontend.common/types/SubDaoType";
 import { useState } from "react";
 
 interface DeployDaoParameter {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useEffect } from "react";
-import { checkElectionComission } from "../contracts/MemberManagerApi";
+import { checkElectionComission } from "../dao4.frontend.common/contracts/MemberManagerApi";
 import { getProposalList } from "../contracts/ProposalManagerApi";
 import {
   ProposalInfo,
@@ -19,6 +19,7 @@ interface ProposalListProps {
   setShowList: (flg: boolean) => void;
   setShowSubmitScreen: (flg: boolean) => void;
   showAllList: boolean;
+  daoAddress: string;
 }
 
 const ProposalList = (props: ProposalListProps) => {
@@ -88,7 +89,7 @@ const ProposalList = (props: ProposalListProps) => {
   };
 
   const _checkElectionComission = async () => {
-    setIsElectionComission(await checkElectionComission());
+    setIsElectionComission(await checkElectionComission(props.daoAddress));
   };
 
   useEffect(() => {

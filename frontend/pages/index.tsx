@@ -23,8 +23,8 @@ const Home = () => {
       <div className="bg-black flex flex-col min-h-screen">
         <div className="text-center text-100px font-extrabold leading-none tracking-tight">
           <div className="p-3"></div>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-red-500">
-            Enpower your activities by DAO
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-red-500">
+            Enpower Your Activities by DAO
           </span>
         </div>
         <div className="p-1 text-center text-25px">

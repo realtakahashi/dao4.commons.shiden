@@ -3,13 +3,12 @@ import { useState } from "react";
 import detectEthereumProvider from "@metamask/detect-provider";
 import Web3 from "web3";
 import { useEffect } from "react";
-import { getBalance } from "../contracts/MasterDaoApi";
 import { ethers } from "ethers";
-import Member from "../components/Member";
+import Member from "../dao4.frontend.common/components/Member";
 import Proposal from "../components/Proposal";
 import SubDaoList from "../components/SubDaoList";
 import Donate from "../components/Donate";
-import DaoBalance from "../components/DaoBalance";
+import DaoBalance from "../dao4.frontend.common/components/DaoBalance";
 
 const Home: NextPage = () => {
   const [showSubDaoList, setShowSubDaoList] = useState(false);
@@ -19,7 +18,7 @@ const Home: NextPage = () => {
   const [address, setAddress] = useState("");
   const [walletConnected, setWalletConnected] = useState(false);
   
-  const MasterDaoAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
+  const MasterDaoAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS ?? "";
 
   useEffect(() => {
     const connectWallet = async () => {
@@ -57,7 +56,7 @@ const Home: NextPage = () => {
           </span>
         </div>
         <div className="p-4 text-center">
-          <DaoBalance></DaoBalance>
+          <DaoBalance isMasterDao={true} daoAddress={""}></DaoBalance>
         </div>
         <div className="p-1 text-center text-25px">
           <button
@@ -92,12 +91,12 @@ const Home: NextPage = () => {
         )}
         {showMemberList == true && (
           <div>
-            <Member></Member>
+            <Member daoAddress={MasterDaoAddress}></Member>
           </div>
         )}
         {showProposalList == true &&(
           <div>
-            <Proposal></Proposal>
+            <Proposal daoAddress={MasterDaoAddress}></Proposal>
           </div>
         )}
         {showDonate == true &&(

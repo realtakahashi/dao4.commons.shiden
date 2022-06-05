@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { mintMemberNFT } from "../../frontend_common/contracts/member_nft_api";
+import { mintMemberNFT } from "../dao4.frontend.common/contracts/member_nft_api";
 
 interface FinishMintSetting {
   setCheckMintNft: (flg: boolean) => void;

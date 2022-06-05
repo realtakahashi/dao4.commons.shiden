@@ -1,4 +1,4 @@
-import { SubDAODeployFormData } from "@/../frontend_common/types/SubDaoType";
+import { SubDAODeployFormData } from "../../../dao4.frontend.common/types/SubDaoType"
 import AddFirstMmeber from "@/components/AddFirstMember";
 import DeployDAO from "@/components/DeployDAO";
 import DeployNFT from "@/components/DeployNFT";
