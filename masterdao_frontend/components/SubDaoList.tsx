@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { SubDAOData } from "../types/MasterDaoType";
-import { listSubDAO } from "../contracts/MasterDaoApi";
+import { SubDAOData, TargetDaoKind } from "../dao4.frontend.common/types/MasterDaoType";
+import { listSubDAO } from "../dao4.frontend.common/contracts/MasterDaoApi";
 import { useEffect } from "react";
 import Link from "next/link";
-import Donate from "./Donate";
+import Donate from "../dao4.frontend.common/components/Donate";
 import SupportReward from "./SupportReward";
 
 const SubDaoList = () => {
@@ -139,14 +139,14 @@ const SubDaoList = () => {
         <Donate
           daoAddress={selectDao.daoAddress}
           daoName={selectDao.daoName}
-          isMasterDao={false}
+          targetDaoKind={TargetDaoKind.TARGET_DAO_FROM_MASTER_DAO}
         ></Donate>
       )}
       {showReward == true && (
         <SupportReward
           daoAddress={selectDao.daoAddress}
           daoName={selectDao.daoName}
-          isMasterDao={false}
+          targetDaoKind={TargetDaoKind.NONE}
         ></SupportReward>
       )}
     </>

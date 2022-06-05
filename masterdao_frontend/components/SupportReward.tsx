@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { changeDaoReward } from "../contracts/MasterDaoApi";
-import { TargetDaoInterface } from "../types/MasterDaoType";
-import TargetDao from "./TargetDao";
+import { changeDaoReward } from "../dao4.frontend.common/contracts/MasterDaoApi";
+import { TargetDaoInterface, TargetDaoKind } from "../dao4.frontend.common/types/MasterDaoType";
+import TargetDao from "../dao4.frontend.common/components/TargetDao";
 
 const SupportReward = (props: TargetDaoInterface) => {
   const [doReward, setDoreward] = useState("0");
@@ -24,7 +24,7 @@ const SupportReward = (props: TargetDaoInterface) => {
           <TargetDao
             daoAddress={props.daoAddress}
             daoName={props.daoName}
-            isMasterDao={false}
+            targetDaoKind={TargetDaoKind.NONE}
           ></TargetDao>
           <tr>
             <th className="flex justify-end px-4 py-5 text-white text-24px">

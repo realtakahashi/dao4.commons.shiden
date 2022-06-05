@@ -4,6 +4,9 @@ import DaoBalance from "dao4.frontend.common/components/DaoBalance";
 import { useRouter } from "next/router";
 import { getDaoName } from "dao4.frontend.common/contracts/subdao_api";
 import Member from "@/dao4.frontend.common/components/Member";
+import Proposal from "@/dao4.frontend.common/components/Proposal";
+import Donate from "@/dao4.frontend.common/components/Donate";
+import { TargetDaoKind } from "@/dao4.frontend.common/types/MasterDaoType";
 
 const DaoTop = () => {
   const router = useRouter();
@@ -72,7 +75,12 @@ const DaoTop = () => {
         {showMember == true &&(
           <Member daoAddress={subDAOaddress}></Member>
         )}
-
+        {showProposal == true &&(
+          <Proposal daoAddress={subDAOaddress}></Proposal>
+        )}
+        {showDonate == true && (
+          <Donate daoAddress={subDAOaddress} daoName={daoName} targetDaoKind={TargetDaoKind.TARGET_DAO_FROM_INDIVIDIALS}></Donate>
+        )}
       </div>
     </>
   );
