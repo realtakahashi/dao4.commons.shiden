@@ -1,7 +1,5 @@
 import '../styles/globals.scss'
 import type { AppProps } from 'next/app'
-import { FC } from 'react'
-import { WalletProvider } from '@/contracts/context'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
