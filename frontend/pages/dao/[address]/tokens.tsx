@@ -1,3 +1,6 @@
+import IssueErc20 from "@/components/IssueErc20";
+import IssueErc721 from "@/components/IssueErc721";
+import TokenList from "@/components/TokenList";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -44,9 +47,18 @@ const Tokens = () => {
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500"
             onClick={() => _setShow(false, false, !showIssueErc721)}
           >
-            IssuErc721
+            Issue Erc721
           </button>
         </div>
+      {showTokenList == true && (
+        <TokenList daoAddress={subDAOaddress} showList={true} setShowList={()=>setShowTokenList}></TokenList>
+      )}
+      {showIssueErc20 == true && (
+        <IssueErc20 daoAddress={subDAOaddress}></IssueErc20>
+      )}
+      {showIssueErc721 == true && (
+        <IssueErc721 daoAddress={subDAOaddress}></IssueErc721>
+      )}
       </div>
     </>
   );

@@ -7,6 +7,7 @@ import Member from "@/dao4.frontend.common/components/Member";
 import Proposal from "@/dao4.frontend.common/components/Proposal";
 import Donate from "@/dao4.frontend.common/components/Donate";
 import { TargetDaoKind } from "@/dao4.frontend.common/types/MasterDaoType";
+import Divide from "@/dao4.frontend.common/components/Divide";
 
 const DaoTop = () => {
   const router = useRouter();
@@ -15,6 +16,7 @@ const DaoTop = () => {
   const [showMember,setShowMember] = useState(false);
   const [showProposal,setShowProposal] = useState(false);
   const [showDonate,setShowDonate] = useState(false);
+  const [showDivide,setShowDivide] = useState(false);
 
   useEffect(()=>{
     _getDaoName();
@@ -24,10 +26,11 @@ const DaoTop = () => {
     setDaoName(await getDaoName(subDAOaddress));
   }
 
-  const _setShow = (showMember:boolean,showProposal:boolean,showDonate:boolean) =>{
+  const _setShow = (showMember:boolean,showProposal:boolean,showDonate:boolean,showDivide:boolean) =>{
     setShowMember(showMember);
     setShowProposal(showProposal);
     setShowDonate(showDonate);
+    setShowDivide(showDivide);
   }
 
   return (
@@ -47,21 +50,27 @@ const DaoTop = () => {
         <div className="p-1 text-center text-25px">
           <button 
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500"
-            onClick={()=>_setShow(!showMember,false,false)}
+            onClick={()=>_setShow(!showMember,false,false,false)}
           >
             Members
           </button>
           <button 
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500"
-            onClick={()=>_setShow(false,!showProposal,false)}
+            onClick={()=>_setShow(false,!showProposal,false,false)}
           >
             Proposals
           </button>
           <button 
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500"
-            onClick={()=>_setShow(false,false,!showDonate)}
+            onClick={()=>_setShow(false,false,!showDonate,false)}
           >
             Donate
+          </button>
+          <button 
+            className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500"
+            onClick={()=>_setShow(false,false,false,!showDivide)}
+          >
+            Divide
           </button>
           <Link href={`/dao/${subDAOaddress}/tokens`}>
           <button
@@ -79,6 +88,9 @@ const DaoTop = () => {
         )}
         {showDonate == true && (
           <Donate daoAddress={subDAOaddress} daoName={daoName} targetDaoKind={TargetDaoKind.TARGET_DAO_FROM_INDIVIDIALS}></Donate>
+        )}
+        {showDivide == true && (
+          <Divide></Divide>
         )}
       </div>
     </>

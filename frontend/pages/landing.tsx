@@ -1,5 +1,4 @@
 import type { InferGetStaticPropsType, NextPage } from 'next'
-import { Layout } from '@/components/common'
 import Link from 'next/link';
 
 export const getStaticProps = async () => {
@@ -90,5 +89,4 @@ const NewIndex = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     )
 }
 
-NewIndex.Layout = Layout
 export default NewIndex
