@@ -56,7 +56,7 @@ const IssueErc20 = (props: IssueErc20Parameter) => {
   return (
     <>
       <div className="bg-black min-h-screen">
-      <div className="flex justify-center text-white p-5 text-25px">Deploy Erc20 Token</div>
+      <div className="flex justify-center text-orange-400 p-5 text-25px">Deploy Erc20 Token</div>
         <div className="flex justify-center text-white">
           <form className="" onSubmit={_onSubmit}>
             <table className="p-5">
@@ -97,7 +97,7 @@ const IssueErc20 = (props: IssueErc20Parameter) => {
         </div>
         <div className="p-5"></div>
         <div className="flex justify-center">
-          <div className="text-white text-25px">Mint Erc20 Token</div>
+          <div className="text-orange-400 text-25px">Mint Erc20 Token</div>
         </div>
         <div className="text-white flex justify-center p-5">
           <form className="" onSubmit={_onSubmitMint}>

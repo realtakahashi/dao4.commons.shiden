@@ -8,6 +8,7 @@ import Proposal from "@/dao4.frontend.common/components/Proposal";
 import Donate from "@/dao4.frontend.common/components/Donate";
 import { TargetDaoKind } from "@/dao4.frontend.common/types/MasterDaoType";
 import Divide from "@/dao4.frontend.common/components/Divide";
+import MemberNFTAddress from "@/components/MemberNFTAddress";
 
 const DaoTop = () => {
   const router = useRouter();
@@ -46,6 +47,9 @@ const DaoTop = () => {
         </div>
         <div className="p-4 text-center">
           <DaoBalance daoAddress={subDAOaddress} isMasterDao={false}></DaoBalance>
+        </div>
+        <div className="p-4 text-center">
+          <MemberNFTAddress daoAddress={subDAOaddress}></MemberNFTAddress>
         </div>
         <div className="p-1 text-center text-25px">
           <button 
@@ -90,7 +94,7 @@ const DaoTop = () => {
           <Donate daoAddress={subDAOaddress} daoName={daoName} targetDaoKind={TargetDaoKind.TARGET_DAO_FROM_INDIVIDIALS}></Donate>
         )}
         {showDivide == true && (
-          <Divide></Divide>
+          <Divide  daoAddress={subDAOaddress} daoName={daoName} targetDaoKind={TargetDaoKind.NONE}></Divide>
         )}
       </div>
     </>

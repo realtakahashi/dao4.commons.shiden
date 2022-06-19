@@ -20,6 +20,7 @@ const CreateDAO = () => {
   const [checkAddFirstMember, setCheckAddFirstMember] = useState(false);
   const [nftAddress, setNftAddress] = useState("");
   const [daoAddress, setDaoAddress] = useState("");
+  const [tokenAddress, setTokenAddress] = useState("");
   const [tokenId, setTokenId] = useState("");
   const [daoValue, setDaoValue] = useState<SubDAODeployFormData>({
     name: "",
@@ -36,8 +37,9 @@ const CreateDAO = () => {
           <Link href="/">Back to Top</Link>
         </div>
         <div className="text-50px text-center text-orange-200 leading-none tracking-tight">
-          <p>You need the following steps to create a DAO. </p>
-          <p>Click each step.</p>
+          <p className="">You need the following steps to create a DAO. </p>
+          <div className="p-3"></div>
+          <p className="">Click each step.</p>
         </div>
         <div className="m-3"></div>
         <div className="flex flex-col justify-center m-5 leading-none tracking-tight">
@@ -99,6 +101,7 @@ const CreateDAO = () => {
                   setCheckMintNft={setCheckMintNft}
                   nftAddress={nftAddress}
                   setTokenId={setTokenId}
+                  setTokenAddress={setTokenAddress}
                 ></MintNFT>
               )}
             </div>
@@ -199,38 +202,3 @@ const CreateDAO = () => {
 
 export default CreateDAO;
 
-// import type { InferGetStaticPropsType, NextPage } from "next";
-// import { Layout } from "@/components/common";
-// import Link from "next/link";
-
-// const topLinks = [
-//   { path: "/dao/create/member_nft", label: "Deploy MemberNFT" },
-//   { path: "/dao/create/subdao", label: "Deploy SubDAO" },
-//   { path: '/dao/create/CheckMintedNFT', label: "Check MemberNFT Address" },
-// ];
-
-// const CreateDAO = () => {
-//   return (
-//     <>
-//       {topLinks.map((link) => {
-//         return (
-//           <div
-//             key={link.path}
-//           >
-//             <a
-//               className="button-dao-default block p-4 m-3"
-//               href={link.path}
-
-//             >
-//               {link.label}
-//             </a>
-//           </div>
-//         );
-//       })}
-
-//     </>
-//   );
-// };
-
-// CreateDAO.Layout = Layout;
-// export default CreateDAO;

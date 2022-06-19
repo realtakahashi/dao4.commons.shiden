@@ -15,6 +15,7 @@ interface TokenListParameter {
   daoAddress: string;
   showList: boolean;
   setShowList: (flg: boolean) => void;
+  forMember: boolean;
 }
 
 const TokenList = (props: TokenListParameter) => {
@@ -33,6 +34,7 @@ const TokenList = (props: TokenListParameter) => {
     _showDetail: boolean,
     _selectToken: TokenInfoWithName
   ) => {
+    console.log("#### showSettingAndSelectToken");
     setShowTokenList(_showList);
     setShowDetail(_showDetail);
     setSelectToken(_selectToken);
@@ -51,27 +53,18 @@ const TokenList = (props: TokenListParameter) => {
     }
   };
 
-  // const _getSaleStatus = async (tokenAddress:string):Promise<string> => {
-  //   const ret = await getSalesStatus(tokenAddress);
-  //   if (ret == true) {
-  //     return "On Sale";
-  //   } else {
-  //     return "Not On Sale";
-  //   }
-  // };
-
   useEffect(() => {
     _getTokenList();
   }, []);
 
   return (
     <>
-      <div className="p-2 flex flex-wrap justify-center mx-1 lg:-mx-4">
-        {typeof tokenList !== "undefined"
-          ? tokenList.map((token) => {
-              return (
-                <div key={token.tokenAddress}>
-                  {showTokenList == true && (
+      {showTokenList == true && (
+        <div className="p-2 flex flex-wrap justify-center mx-1 lg:-mx-4">
+          {typeof tokenList !== "undefined"
+            ? tokenList.map((token) => {
+                return (
+                  <div key={token.tokenAddress}>
                     <div className="m-5  max-w-sm rounded overflow-hidden shadow-lg bg-black border-4 border-white">
                       <div className="px-6 py-4">
                         <div className="font-bold mb-2 text-white text-20px">
@@ -80,7 +73,6 @@ const TokenList = (props: TokenListParameter) => {
                         <p className=" text-gray-400 text-base">
                           {_getTokenKindString(token.tokenKind)}
                         </p>
-                        {/* <p className="text-gray-300">{_getSaleStatus(token.tokenAddress)}</p> */}
                         <div className="p-2"></div>
                         <p className="text-gray-200 text-12px">
                           {token.tokenAddress}
@@ -97,15 +89,19 @@ const TokenList = (props: TokenListParameter) => {
                         </button>
                       </div>
                     </div>
-                  )}
-                  ;
-                </div>
-              );
-            })
-          : ""}
-      </div>
+                  </div>
+                );
+              })
+            : ""}
+        </div>
+      )}
+      ;
       {showDetail == true && (
-        <TokenDetail _selectToken={selectToken}></TokenDetail>
+        <TokenDetail
+          _selectToken={selectToken}
+          _forMember={props.forMember}
+          _showSettingAndSelectToken={showSettingAndSelectToken}
+        ></TokenDetail>
       )}
     </>
   );

@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { SubDAOData, SubDAODataWithMemberFlg } from "../dao4.frontend.common/types/SubDaoType";
+import {
+  SubDAOData,
+  SubDAODataWithMemberFlg,
+} from "../dao4.frontend.common/types/SubDaoType";
 import {
   getDaoListOfAffiliation,
   listSubDAO,
@@ -8,9 +11,11 @@ import { useEffect } from "react";
 import Link from "next/link";
 import Donate from "@/dao4.frontend.common/components/Donate";
 import { TargetDaoKind } from "@/dao4.frontend.common/types/MasterDaoType";
+import TokenList from "./TokenList";
 
 const ListOfSubDAO = () => {
-  const [subDaoList, setSubDaoList] = useState<Array<SubDAODataWithMemberFlg>>();
+  const [subDaoList, setSubDaoList] =
+    useState<Array<SubDAODataWithMemberFlg>>();
   const [showList, setShowList] = useState(true);
   const [showListButton, setShowListButton] = useState(false);
   const [showDonate, setShowDonate] = useState(false);
@@ -22,15 +27,17 @@ const ListOfSubDAO = () => {
     rewardApproved: false,
     description: "",
     ownerAddress: "",
-    isMember:false,
+    isMember: false,
   });
 
   const getSubDaoList = async () => {
     //console.log("## getSubDaoList call 1");
-    let masterDaoAddress = String(process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS) ?? "";
-    let memberManagerAddress = process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? "";
+    let masterDaoAddress =
+      String(process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS) ?? "";
+    let memberManagerAddress =
+      process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? "";
     const list = await listSubDAO(masterDaoAddress);
-    const result = await getDaoListOfAffiliation(memberManagerAddress,list);
+    const result = await getDaoListOfAffiliation(memberManagerAddress, list);
     setSubDaoList(result);
   };
 
@@ -41,19 +48,19 @@ const ListOfSubDAO = () => {
   const showSettingAndSelectDAO = (
     _showList: boolean,
     _showListButton: boolean,
-    _showDonate:boolean,
-    _showTokens:boolean,
+    _showDonate: boolean,
+    _showTokens: boolean,
     _selectDao: SubDAODataWithMemberFlg
   ) => {
-    showSetting(_showList, _showListButton,_showDonate,_showTokens);
+    showSetting(_showList, _showListButton, _showDonate, _showTokens);
     setSelectDao(_selectDao);
   };
 
   const showSetting = (
     _showList: boolean,
     _showListButton: boolean,
-    _showDonate:boolean,
-    _showTokens:boolean
+    _showDonate: boolean,
+    _showTokens: boolean
   ) => {
     setShowList(_showList);
     getSubDaoList();
@@ -68,18 +75,18 @@ const ListOfSubDAO = () => {
         {showListButton == true && (
           <button
             className="px-4 py-2 text-20px text-white underline  hover:text-orange-400"
-            onClick={() => showSetting(true, false, false,false)}
+            onClick={() => showSetting(true, false, false, false)}
           >
-            Back To List
+            Back To DAO List
           </button>
         )}
       </div>
-      <div className="p-2 flex flex-wrap justify-center mx-1 lg:-mx-4">
-        {typeof subDaoList !== "undefined"
-          ? subDaoList.map((subDao) => {
-              return (
-                <div key={subDao.daoName}>
-                  {showList == true && (
+      {showList == true && (
+        <div className="p-2 flex flex-wrap justify-center mx-1 lg:-mx-4">
+          {typeof subDaoList !== "undefined"
+            ? subDaoList.map((subDao) => {
+                return (
+                  <div key={subDao.daoName}>
                     <div className="m-5  max-w-sm rounded overflow-hidden shadow-lg bg-black border-4 border-white">
                       <div className="px-6 py-4">
                         <div className="font-bold mb-2 text-white">
@@ -112,7 +119,7 @@ const ListOfSubDAO = () => {
                           onClick={() =>
                             showSettingAndSelectDAO(
                               false,
-                              false,
+                              true,
                               false,
                               true,
                               subDao
@@ -130,20 +137,20 @@ const ListOfSubDAO = () => {
                         </button>
                         {subDao.isMember == true && (
                           <Link href={`/dao/${subDao.daoAddress}/top`}>
-                          <button className="inline-block bg-orange-500 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">
-                            DAO Entrance
-                          </button>
-                        </Link>
-                      )}
+                            <button className="inline-block bg-orange-500 rounded-full px-3 py-1 text-sm font-semibold text-white mr-2 mb-2">
+                              DAO Entrance
+                            </button>
+                          </Link>
+                        )}
                       </div>
                     </div>
-                  )}
-                  ;
-                </div>
-              );
-            })
-          : ""}
-      </div>
+                  </div>
+                );
+              })
+            : ""}
+        </div>
+      )}
+      ;
       {showDonate == true && (
         <Donate
           daoAddress={selectDao.daoAddress}
@@ -152,7 +159,12 @@ const ListOfSubDAO = () => {
         ></Donate>
       )}
       {showTokens == true && (
-        <div>Token Sale to be implemented....</div>
+        <TokenList
+          daoAddress={selectDao.daoAddress}
+          showList={showList}
+          setShowList={setShowList}
+          forMember={false}
+        ></TokenList>
       )}
     </>
   );

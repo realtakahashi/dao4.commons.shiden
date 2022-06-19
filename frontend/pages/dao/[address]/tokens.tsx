@@ -51,7 +51,7 @@ const Tokens = () => {
           </button>
         </div>
       {showTokenList == true && (
-        <TokenList daoAddress={subDAOaddress} showList={true} setShowList={()=>setShowTokenList}></TokenList>
+        <TokenList daoAddress={subDAOaddress} showList={true} setShowList={()=>setShowTokenList} forMember={true}></TokenList>
       )}
       {showIssueErc20 == true && (
         <IssueErc20 daoAddress={subDAOaddress}></IssueErc20>

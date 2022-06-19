@@ -39,7 +39,7 @@ const IssueErc721 = (props: IssueErc721Parameter) => {
     <>
       <div className="bg-black flex flex-col min-h-screen">
         <div className="flex flex-col justify-center m-5 leading-none tracking-tight">
-          <div className="text-orange-300 text-30px text-center">Deploy Erc721 Token</div>
+          <div className="text-orange-400 text-30px text-center">Deploy Erc721 Token</div>
           <div className="p-2"></div>
           <div className="flex justify-center">
           <form className="" onSubmit={_onSubmit}>

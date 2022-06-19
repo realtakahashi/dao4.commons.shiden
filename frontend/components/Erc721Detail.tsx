@@ -1,26 +1,25 @@
 import {
     controlTokenSale,
-  getMintedAmount,
   getPrice,
   getSalesAmount,
   getSalesStatus,
-  mint,
-} from "@/dao4.frontend.common/contracts/DaoErc20_api";
+} from "@/dao4.frontend.common/contracts/DaoErc721_api";
 import { MintInfo, TokenInfoWithName } from "@/dao4.frontend.common/types/Token";
 import { useEffect, useState } from "react";
+import { ethers } from "ethers";
 
 interface Erc721DetailParameter{
     selectToken: TokenInfoWithName;
 }
 
 const Erc721Detail = (props:Erc721DetailParameter) => {
-  const [saleStatus, setSaleStatus] = useState(false);
+  const [saleStatus, setSaleStatus] = useState("");
   const [salesAmount, setSalesAmount] = useState("");
-  const [changeStatus, setChangeStatus] = useState(false);
+  const [changeStatus, setChangeStatus] = useState(true);
   const [price, setPrice] = useState("");
 
   const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setChangeStatus(Boolean(event.target.value));
+    setChangeStatus(Boolean(Number(event.target.value)));
   };
 
   const _onSubmitStatus = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -29,16 +28,22 @@ const Erc721Detail = (props:Erc721DetailParameter) => {
   };
 
   const _getSalesStatus = async () => {
-    setSaleStatus(await getSalesStatus(props.selectToken.tokenAddress));
+    if (await getSalesStatus(props.selectToken.tokenAddress) == true){
+      setSaleStatus("On Sale");
+    }
+    else {
+      setSaleStatus("Not On Sale");
+    }
   };
   
   const _getSalesAmount = async () => {
     const ret = await getSalesAmount(props.selectToken.tokenAddress);
-    setSalesAmount(ret);
+    setSalesAmount(ethers.utils.formatEther(ret));
   };
   
   const _getPrice =async () => {
-    setPrice(await getPrice(props.selectToken.tokenAddress));
+    const ret = await getPrice(props.selectToken.tokenAddress); 
+    setPrice(ethers.utils.formatEther(ret));
   }
 
   useEffect(() => {
@@ -49,38 +54,41 @@ const Erc721Detail = (props:Erc721DetailParameter) => {
 
   return (
     <>
-      <div className="bg-black flex flex-col min-h-screen">
-        <div className="flex flex-col justify-center m-5 leading-none tracking-tight">
-          <div className="text-orange-300 text-30px">Token Status</div>
-          <table>
+      <div className="bg-black  min-h-screen">
+        <div className=" justify-center leading-none tracking-tight">
+          <div className="text-center text-orange-400 text-30px">Token Status</div>
+          <div className="flex justify-center p-5">
+          <table className="text-white text-20px">
             <tr>
-              <th className="text-white">Name/Symbol</th>
+              <th className="flex justify-start px-2 py-4 text-white">Name/Symbol : </th>
               <td>
                 {props.selectToken.tokenName} / {props.selectToken.tokenSymbol}
               </td>
             </tr>
             <tr>
-              <th>Sales Status</th>
+              <th className="flex justify-start text-start px-2 py-4 text-white">Sales Status : </th>
               <td>{saleStatus}</td>
             </tr>
             <tr>
-              <th>Price</th>
+              <th className="flex justify-start px-2 py-4 text-white">Price : </th>
               <td>{price}</td>
             </tr>
             <tr>
-              <th>Sales Amount</th>
+              <th className="flex justify-start px-2 py-4 text-white">Sales Amount : </th>
               <td>{salesAmount}</td>
             </tr>
           </table>
+          </div>
+          <div className="p-8"></div>
           <form className="" onSubmit={_onSubmitStatus}>
-            <div className=" p-2 flex flex-col">
-              <div>Change Sales Status...</div>
-              <table className="text-20px text-orange-400">
+              <div className="text-center text-orange-400 text-30px">Change Sales Status...</div>
+              <div className=" p-5 flex justify-center">
+              <table className="text-20px text-white">
                 <tr>
                   <th className=" flex justify-end px-4 py-2">Status:</th>
                   <td className=" px-4 py-2">
                     <select
-                      className="py-2 px-4"
+                      className="py-2 px-4 text-black"
                       name="proposalKind"
                       onChange={onChangeSelect}
                     >
@@ -91,12 +99,14 @@ const Erc721Detail = (props:Erc721DetailParameter) => {
                 </tr>
               </table>
             </div>
+            <div className="flex justify-center">
             <button
               className="px-7 py-3 border-double border-white border-2 bg-black rounded text-20px text-orange-400  hover:bg-orange-200"
               onClick={() => _onSubmitStatus}
             >
               Change Status
             </button>
+            </div>
           </form>
         </div>
       </div>

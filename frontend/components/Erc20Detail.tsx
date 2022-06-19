@@ -66,7 +66,8 @@ const Erc20Detail = (props: Erc20DetailParameter) => {
   };
 
   const _getSalesAmount = async () => {
-    setSalesAmount(await getSalesAmount(props.selectToken.tokenAddress));
+    const ret = await getSalesAmount(props.selectToken.tokenAddress);
+    setSalesAmount(ethers.utils.formatEther(ret));
   };
 
   const _getMintedAmount = async () => {
@@ -75,7 +76,7 @@ const Erc20Detail = (props: Erc20DetailParameter) => {
 
   const _getPrice = async () => {
     const ret = await getPrice(props.selectToken.tokenAddress);
-    setPrice(ethers.utils.formatEther(ret));
+    setPrice(ret);
   };
 
   useEffect(() => {
