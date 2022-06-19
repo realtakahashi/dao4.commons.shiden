@@ -14,7 +14,10 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     uint256 public priceWei;
     address public daoAddress;
     uint256 public salesAmount;
+    uint256 public mintedAmount;
     bool public onSale;
+    
+    uint256 decimal = 100000000000000000;
 
     event Minted(address indexed executer, uint256 price, uint256 amount);
     event Bought(address indexed executer, uint256 amount);
@@ -28,6 +31,7 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
         owner = msg.sender;
         daoAddress = _daoAddress;
         onSale = false;
+        mintedAmount = 0;
     }
 
     modifier onlyOwner(){
@@ -41,6 +45,7 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     function mint(uint256 _priceWei,uint256 amount) public onlyOwner {
         priceWei = _priceWei;
         _mint(address(this),amount);
+        mintedAmount = mintedAmount + amount;
         emit Minted(msg.sender, _priceWei, amount);   
     }
 
@@ -48,6 +53,8 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     * トークンを販売する
     */
     function buy(uint256 _amount) public payable {
+        console.log("amount: " ,_amount);
+        console.log("totalSupply: ",totalSupply());
         require(onSale,"now not on sale.");
         require(_amount>0 && _amount<=totalSupply(),"invalid amount.");
         require(msg.value==_amount*priceWei,"invalid transfering value.");

@@ -3,23 +3,24 @@ import { useState } from "react";
 import detectEthereumProvider from "@metamask/detect-provider";
 import Web3 from "web3";
 import { useEffect } from "react";
-import { getBalance } from "../contracts/MasterDaoApi";
 import { ethers } from "ethers";
-import Member from "../components/Member";
-import Proposal from "../components/Proposal";
+import Member from "../dao4.frontend.common/components/Member";
+import Proposal from "../dao4.frontend.common/components/Proposal";
 import SubDaoList from "../components/SubDaoList";
-import Donate from "../components/Donate";
-import DaoBalance from "../components/DaoBalance";
+import Donate from "../dao4.frontend.common/components/Donate";
+import DaoBalance from "../dao4.frontend.common/components/DaoBalance";
+import { TargetDaoKind } from "../dao4.frontend.common/types/MasterDaoType";
 
 const Home: NextPage = () => {
   const [showSubDaoList, setShowSubDaoList] = useState(false);
   const [showMemberList, setShowMemberList] = useState(false);
-  const [showProposalList,setShowProposalList] = useState(false);
+  const [showProposalList, setShowProposalList] = useState(false);
   const [showDonate, setShowDonate] = useState(false);
   const [address, setAddress] = useState("");
   const [walletConnected, setWalletConnected] = useState(false);
-  
-  const MasterDaoAddress = process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS;
+
+  const MasterDaoAddress =
+    process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS ?? "";
 
   useEffect(() => {
     const connectWallet = async () => {
@@ -40,13 +41,18 @@ const Home: NextPage = () => {
     connectWallet();
   }, []);
 
-  const setShow=(_showSubDao:boolean,_showMember:boolean, _showPropsal:boolean, _showDonate:boolean)=>{
-    console.log("### showSubDao:",_showSubDao);
+  const setShow = (
+    _showSubDao: boolean,
+    _showMember: boolean,
+    _showPropsal: boolean,
+    _showDonate: boolean
+  ) => {
+    console.log("### showSubDao:", _showSubDao);
     setShowSubDaoList(_showSubDao);
     setShowMemberList(_showMember);
     setShowProposalList(_showPropsal);
     setShowDonate(_showDonate);
-  }
+  };
 
   return (
     <>
@@ -57,30 +63,30 @@ const Home: NextPage = () => {
           </span>
         </div>
         <div className="p-4 text-center">
-          <DaoBalance></DaoBalance>
+          <DaoBalance isMasterDao={true} daoAddress={""}></DaoBalance>
         </div>
         <div className="p-1 text-center text-25px">
           <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
-            onClick={() => setShow(!showSubDaoList,false,false,false)}
+            onClick={() => setShow(!showSubDaoList, false, false, false)}
           >
             Sub DAOs
           </button>
-          <button 
+          <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
-            onClick={()=>setShow(false,!showMemberList,false,false)}
+            onClick={() => setShow(false, !showMemberList, false, false)}
           >
             Members
           </button>
-          <button 
+          <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
-            onClick={()=>setShow(false,false,!showProposalList,false)}
+            onClick={() => setShow(false, false, !showProposalList, false)}
           >
             Proposals
           </button>
-          <button 
+          <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
-            onClick={()=>setShow(false,false,false,!showDonate)}
+            onClick={() => setShow(false, false, false, !showDonate)}
           >
             Donate
           </button>
@@ -92,16 +98,22 @@ const Home: NextPage = () => {
         )}
         {showMemberList == true && (
           <div>
-            <Member></Member>
+            <Member daoAddress={MasterDaoAddress}></Member>
           </div>
         )}
-        {showProposalList == true &&(
+        {showProposalList == true && (
           <div>
-            <Proposal></Proposal>
+            <Proposal daoAddress={MasterDaoAddress}></Proposal>
           </div>
         )}
-        {showDonate == true &&(
-          <div><Donate daoAddress={String(MasterDaoAddress)} daoName={"Master DAO"} isMasterDao={true}></Donate></div>
+        {showDonate == true && (
+          <div>
+            <Donate
+              daoAddress={String(MasterDaoAddress)}
+              daoName={"Master DAO"}
+              targetDaoKind={TargetDaoKind.MASTER_DAO}
+            ></Donate>
+          </div>
         )}
       </div>
     </>

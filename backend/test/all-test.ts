@@ -534,13 +534,13 @@ describe("All contract", function () {
         })
         it("Only owner check.", async function () {
             // not owner error.
-            await expect(daoErc20.connect(SubDaoOwner2).mint(ethers.utils.parseEther("2.0"), 10000))
+            await expect(daoErc20.connect(SubDaoOwner2).mint(2, ethers.utils.parseEther("3.0")))
                 .to.be.revertedWith("only owner does")
             await expect(daoErc20.connect(SubDaoOwner2).controlTokenSale(true))
                 .to.be.revertedWith("only owner does")
         })
         it("owner mint.", async function () {
-            daoErc20.connect(SubDaoOwner1).mint(ethers.utils.parseEther("2.0"), 300)
+            daoErc20.connect(SubDaoOwner1).mint(2, ethers.utils.parseEther("3.0"))
         })
         it("not on sale", async function () {
             await expect(daoErc20.connect(SubDaoOwner3).buy(10000, { value: ethers.utils.parseEther("2.0") }))
@@ -555,21 +555,27 @@ describe("All contract", function () {
             assert.equal(await daoErc20.onSale(), true)
         })
         it("buy with error.", async function () {
-            await expect(daoErc20.connect(SubDaoOwner3).buy(301, { value: ethers.utils.parseEther("602.0") }))
+            await expect(daoErc20.connect(SubDaoOwner3).buy(ethers.utils.parseEther("4"), { value: ethers.utils.parseEther("2.0") }))
                 .to.be.revertedWith("invalid amount.")
-            await expect(daoErc20.connect(SubDaoOwner3).buy(10, { value: ethers.utils.parseEther("30.0") }))
+            await expect(daoErc20.connect(SubDaoOwner3).buy(ethers.utils.parseEther("2"), { value: ethers.utils.parseEther("30.0") }))
                 .to.be.revertedWith("invalid transfering value.")
         })
         it("normal buy", async function () {
-            await daoErc20.connect(SubDaoOwner3).buy(10, { value: ethers.utils.parseEther("20.0") })
-            assert.equal(await daoErc20.balanceOf(SubDaoOwner3.address), 10)
+            await daoErc20.connect(SubDaoOwner3).buy(ethers.utils.parseEther("1.0"), { value: ethers.utils.parseEther("2.0")})
+            const ret = await daoErc20.balanceOf(SubDaoOwner3.address);
+            assert.equal(ret.toString(), ethers.utils.parseEther("1.0").toString())
         })
         it("check contract balance & withdraw.", async function () {
-            assert.equal(await daoErc20.getContractBalance(), 20000000000000000000)
+            const ret = await daoErc20.getContractBalance();
+            console.log("### erc20balance: ", ret.toString());
+            assert.equal(ret.toString(), 2000000000000000000)
             const beforedaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()))
             await daoErc20.withdraw()
             const afterdaobalance = parseInt(ethers.utils.formatEther(await subDao.getContractBalance()))
-            assert.equal(afterdaobalance - beforedaobalance > 19, true)
+            console.log("## beforedaobalance", beforedaobalance);
+            console.log("## afterdaobalance", afterdaobalance);
+            console.log("## afterdaobalance - beforedaobalance : ",afterdaobalance - beforedaobalance);
+            assert.equal(afterdaobalance - beforedaobalance < 3, true)
         })
     })
     describe("Erc721 for DAO.", async function () {
