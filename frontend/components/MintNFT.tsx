@@ -9,7 +9,7 @@ interface FinishMintSetting {
 }
 
 const MintNFT = (props: FinishMintSetting) => {
-  console.log("#### MintNFT")
+  //console.log("#### MintNFT")
   const [nftAddress,setNftAddress] = useState("");
   const _mintNft = async () => {
     let tmpAddress = props.nftAddress;
