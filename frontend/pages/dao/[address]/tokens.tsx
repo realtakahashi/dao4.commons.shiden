@@ -1,5 +1,6 @@
 import IssueErc20 from "@/components/IssueErc20";
 import IssueErc721 from "@/components/IssueErc721";
+import IssueGovernance from "@/components/IssueGovernanceToken";
 import TokenList from "@/components/TokenList";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -11,15 +12,18 @@ const Tokens = () => {
   const [showTokenList, setShowTokenList] = useState(true);
   const [showIssueErc20, setShowIssueErc20] = useState(false);
   const [showIssueErc721, setShowIssueErc721] = useState(false);
+  const [showIssueGovernance, setShowIssueGovernance] = useState(false);
 
   const _setShow = (
     _showTokeList: boolean,
     _showIssueErc20: boolean,
-    _showIssueErc721: boolean
+    _showIssueErc721: boolean,
+    _showIssueGovernance: boolean,
   ) => {
       setShowTokenList(_showTokeList);
       setShowIssueErc20(_showIssueErc20);
       setShowIssueErc721(_showIssueErc721);
+      setShowIssueGovernance(_showIssueGovernance);
   };
 
   return (
@@ -33,21 +37,27 @@ const Tokens = () => {
         <div className="p-1 text-center text-25px">
             <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500"
-            onClick={() => _setShow(!showTokenList,false,false)}
+            onClick={() => _setShow(!showTokenList,false,false,false)}
           >
             Token List
           </button>
           <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500"
-            onClick={() => _setShow(false,!showIssueErc20,false)}
+            onClick={() => _setShow(false,!showIssueErc20,false,false)}
           >
             Issue Erc20
           </button>
           <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500"
-            onClick={() => _setShow(false, false, !showIssueErc721)}
+            onClick={() => _setShow(false, false, !showIssueErc721,false)}
           >
             Issue Erc721
+          </button>
+          <button
+            className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500"
+            onClick={() => _setShow(false, false, false,!showIssueGovernance)}
+          >
+            Issue Governance Token
           </button>
         </div>
       {showTokenList == true && (
@@ -58,6 +68,9 @@ const Tokens = () => {
       )}
       {showIssueErc721 == true && (
         <IssueErc721 daoAddress={subDAOaddress}></IssueErc721>
+      )}
+      {showIssueGovernance == true && (
+        <IssueGovernance daoAddress={subDAOaddress}></IssueGovernance>
       )}
       </div>
     </>

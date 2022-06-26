@@ -3,6 +3,7 @@ import {
   getPrice,
   getSalesAmount,
   getSalesStatus,
+  withdraw,
 } from "@/dao4.frontend.common/contracts/DaoErc721_api";
 import { MintInfo, TokenInfoWithName } from "@/dao4.frontend.common/types/Token";
 import { useEffect, useState } from "react";
@@ -44,6 +45,12 @@ const Erc721Detail = (props:Erc721DetailParameter) => {
   const _getPrice =async () => {
     const ret = await getPrice(props.selectToken.tokenAddress); 
     setPrice(ethers.utils.formatEther(ret));
+  }
+
+  const _onWithdraw =async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("## _onWithdraw");
+    await withdraw(props.selectToken.tokenAddress);
   }
 
   useEffect(() => {
@@ -109,6 +116,25 @@ const Erc721Detail = (props:Erc721DetailParameter) => {
             </div>
           </form>
         </div>
+        <div className="p-5"></div>
+        <div className="flex justify-center">
+          <form onSubmit={_onWithdraw}>
+          <div className=" p-2 ">
+            <div className="text-orange-400 text-center text-30px">
+              Withdraw Sales Amount To DAO Address.
+            </div>
+            <div className="flex justify-center">
+              <button
+                className="px-4 py-2 border-double border-white border-2 bg-black rounded text-20px text-orange-400  hover:bg-orange-200"
+                onClick={()=>_onWithdraw}
+              >
+                Excecute
+              </button>
+            </div>
+          </div>
+          </form>
+        </div>
+
       </div>
     </>
   );

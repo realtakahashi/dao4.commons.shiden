@@ -48,9 +48,12 @@ const TokenList = (props: TokenListParameter) => {
   const _getTokenKindString = (tokenKind: TokenKind): string => {
     if (tokenKind == TokenKind.ERC20) {
       return "ERC20";
-    } else {
+    } else if (tokenKind == TokenKind.ERC721){
       return "ERC721";
+    } else{
+      return "Governance"
     }
+
   };
 
   useEffect(() => {
