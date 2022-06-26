@@ -16,8 +16,6 @@ contract DaoERC20 is ERC20,ReentrancyGuard{
     uint256 public salesAmount;
     uint256 public mintedAmount;
     bool public onSale;
-    
-    uint256 decimal = 100000000000000000;
 
     event Minted(address indexed executer, uint256 price, uint256 amount);
     event Bought(address indexed executer, uint256 amount);

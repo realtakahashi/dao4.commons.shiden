@@ -5,6 +5,7 @@ import {
   getSalesAmount,
   getSalesStatus,
   mint,
+  withdraw,
 } from "@/dao4.frontend.common/contracts/DaoErc20_api";
 import {
   MintInfo,
@@ -36,7 +37,7 @@ const Erc20Detail = (props: Erc20DetailParameter) => {
   };
 
   const onChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log("event.target.value",event.target.value);
+    console.log("event.target.value", event.target.value);
     setChangeStatus(Boolean(Number(event.target.value)));
   };
 
@@ -51,16 +52,21 @@ const Erc20Detail = (props: Erc20DetailParameter) => {
 
   const _onSubmitStatus = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("status:",changeStatus);
+    console.log("status:", changeStatus);
     await controlTokenSale(changeStatus, props.selectToken.tokenAddress);
+  };
+
+  const _onWithdraw = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("## _onWithdraw");
+    await withdraw(props.selectToken.tokenAddress);
   };
 
   const _getSalesStatus = async () => {
     const ret = await getSalesStatus(props.selectToken.tokenAddress);
     if (ret == true) {
-    setSaleStatus("On Sale");
-    }
-    else{
+      setSaleStatus("On Sale");
+    } else {
       setSaleStatus("Not On Sale");
     }
   };
@@ -78,6 +84,7 @@ const Erc20Detail = (props: Erc20DetailParameter) => {
     const ret = await getPrice(props.selectToken.tokenAddress);
     setPrice(ret);
   };
+
 
   useEffect(() => {
     _getSalesStatus();
@@ -123,7 +130,9 @@ const Erc20Detail = (props: Erc20DetailParameter) => {
         <div className="flex justify-center">
           <form className="" onSubmit={_onSubmitMint}>
             <div className=" p-2">
-              <div className="text-orange-300 text-center text-30px">If you mint more token...</div>
+              <div className="text-orange-300 text-center text-30px">
+                If you mint more token...
+              </div>
               <div className="p-2"></div>
               <table className="text-20px text-white">
                 <tr>
@@ -166,7 +175,9 @@ const Erc20Detail = (props: Erc20DetailParameter) => {
         <div className="flex justify-center">
           <form className="" onSubmit={_onSubmitStatus}>
             <div className=" p-2 ">
-              <div className="text-orange-300 text-center text-30px">Change Sales Status...</div>
+              <div className="text-orange-300 text-center text-30px">
+                Change Sales Status...
+              </div>
               <table className="text-20px text-white">
                 <tr>
                   <th className=" flex justify-end px-4 py-2">Status:</th>
@@ -191,6 +202,24 @@ const Erc20Detail = (props: Erc20DetailParameter) => {
                 Change Status
               </button>
             </div>
+          </form>
+        </div>
+        <div className="p-5"></div>
+        <div className="flex justify-center">
+          <form onSubmit={_onWithdraw}>
+          <div className=" p-2 ">
+            <div className="text-orange-300 text-center text-30px">
+              Withdraw Sales Amount To DAO Address.
+            </div>
+            <div className="flex justify-center">
+              <button
+                className="px-4 py-2 border-double border-white border-2 bg-black rounded text-20px text-orange-400  hover:bg-orange-200"
+                onClick={() => _onWithdraw}
+              >
+                Excecute
+              </button>
+            </div>
+          </div>
           </form>
         </div>
       </div>

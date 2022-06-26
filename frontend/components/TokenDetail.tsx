@@ -3,6 +3,8 @@ import Erc20Detail from "./Erc20Detail";
 import Erc20ForSale from "./Erc20ForSale";
 import Erc721Detail from "./Erc721Detail";
 import Erc721ForSale from "./Erc721ForSale";
+import GovernanceTokenShowOnly from "./GovenanceTokenShowOnly";
+import GovernanceTokenDetail from "./GovernanceTokenDetail";
 
 interface TokenDetailParameter {
   _selectToken: TokenInfoWithName;
@@ -35,6 +37,12 @@ const TokenDetail = (props: TokenDetailParameter) => {
         )}
         {(props._selectToken.tokenKind == TokenKind.ERC721 && props._forMember == false) &&(
           <Erc721ForSale selectToken={props._selectToken}></Erc721ForSale>
+        )}
+        {(props._selectToken.tokenKind == TokenKind.GOVERNANCE && props._forMember == true) &&(
+          <GovernanceTokenDetail selectToken={props._selectToken}></GovernanceTokenDetail>
+        )}
+        {(props._selectToken.tokenKind == TokenKind.GOVERNANCE && props._forMember == false) &&(
+          <GovernanceTokenShowOnly selectToken={props._selectToken}></GovernanceTokenShowOnly>
         )}
       </div>
     </>

@@ -32,7 +32,8 @@ contract SubDAO is ReentrancyGuard{
 
     enum TokenKind {
         erc20,
-        erm721
+        erm721,
+        Governance
     }
 
     struct TokenInfo {

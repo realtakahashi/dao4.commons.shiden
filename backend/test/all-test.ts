@@ -633,4 +633,20 @@ describe("All contract", function () {
             assert.equal(list[1].tokenAddress, daoErc721.address)
         })
     })
+    describe("GovernaceToken",async () => {
+        let GovToken;
+        let govToken;
+        it("deploy token",async function() {
+            GovToken = await ethers.getContractFactory("GovernanceToken")
+            govToken = await GovToken.connect(SubDaoOwner1).deploy("GovToken", "GOV", subDao.address)
+            assert.equal(await govToken.name(), "GovToken")
+            assert.equal(await govToken.symbol(), "GOV")
+        })
+        it("Mint token",async function() {
+            await govToken.connect(SubDaoOwner1).mint(ethers.utils.parseEther("300.0"));
+        })
+        it("transfer token",async function() {
+            await govToken.connect(SubDaoOwner1).transfer(SubDaoOwner2.address,ethers.utils.parseEther("2.0"));
+        })
+    })
 })
