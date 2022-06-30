@@ -27,7 +27,7 @@ const AddFirstMmeber = (props: FirstMemberParameter) => {
       process.env.NEXT_PUBLIC_MEMBER_MANAGER_CONTRACT_ADDRESS ?? "";
     memberValue.tokenId = parseInt(props.tokenId);
 
-    const result = await addFirstMember(memberValue,memberManagerAddress,props.subDaoAddress);
+    const result = await addFirstMember(memberValue,memberManagerAddress,props.subDaoAddress,props.setCheckAddFirstMember);
     props.setCheckAddFirstMember(true);
   };
 

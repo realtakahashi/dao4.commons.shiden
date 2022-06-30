@@ -16,7 +16,7 @@ const MintNFT = (props: FinishMintSetting) => {
     if (tmpAddress == ""){
       tmpAddress = nftAddress;
     }
-    await mintMemberNFT(tmpAddress, props.setTokenId);
+    await mintMemberNFT(tmpAddress, props.setTokenId, props.setCheckMintNft);
     props.setCheckMintNft(true);
     props.setTokenAddress(tmpAddress);
   };

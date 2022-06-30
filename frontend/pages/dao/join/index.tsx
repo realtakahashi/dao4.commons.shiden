@@ -101,7 +101,7 @@ const Join = () => {
                 )}
               </tr>
               <div>
-                {showAddMember == true && (
+                {(checkMintNft==true && showAddMember == true) && (
                   <>
                     <div className="p-5"></div>
                     <AddMemberForDao setCheckAddMember={setCheckAddMember} tokenAddress={tokenAddress}></AddMemberForDao>

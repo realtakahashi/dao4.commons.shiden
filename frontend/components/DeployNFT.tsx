@@ -24,10 +24,8 @@ const DeployNFT = (props:FinishMintSetting) => {
 
   const _onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const result = await deployMemberNFT(nftValue,props.setNftAddress);
+    const result = await deployMemberNFT(nftValue,props.setNftAddress,props.setCheckDeployNft);
     setNftAddress(result);
-    props.setCheckDeployNft(true);
-    //props.setNftAddress(nftAddress);
     console.log("#### nftAddress",nftAddress);
   };
 
