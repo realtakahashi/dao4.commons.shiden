@@ -41,9 +41,8 @@ const DeployDAO = (props: DeployDaoParameter) => {
       process.env.NEXT_PUBLIC_PROPOSAL_MANAGER_CONTRACT_ADDRESS ?? "";
     daoValue.memberNFTAddress = props.memberNFTAddress;
     setDaoAddress(
-      await deploySubDAO(daoValue, memberManagerAddress, proposalManagerAddress, props.setDaoAddress)
+      await deploySubDAO(daoValue, memberManagerAddress, proposalManagerAddress, props.setDaoAddress, props.setCheckDeployDao)
     );
-    props.setCheckDeployDao(true);
     props.setDaoValue(daoValue);
   };
 

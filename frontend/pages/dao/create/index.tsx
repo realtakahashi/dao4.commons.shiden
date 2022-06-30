@@ -96,7 +96,7 @@ const CreateDAO = () => {
               )}
             </tr>
             <div>
-              {showMintNft == true && (
+              {(checkDeployNft == true && showMintNft == true) && (
                 <MintNFT
                   setCheckMintNft={setCheckMintNft}
                   nftAddress={nftAddress}
@@ -126,7 +126,7 @@ const CreateDAO = () => {
               )}
             </tr>
             <div>
-              {showDeployDao == true && (
+              {(checkMintNft == true && showDeployDao == true) && (
                 <DeployDAO
                   setCheckDeployDao={setCheckDeployDao}
                   memberNFTAddress={nftAddress}
@@ -156,7 +156,7 @@ const CreateDAO = () => {
               )}
             </tr>
             <div>
-              {showRegisterDao == true && (
+              {(checkDeployDao == true && showRegisterDao == true) && (
                 <RegisterToMasterDao
                   setCheckRegisterDAO={setCheckRegisterDAO}
                   dataToBeRegisterd={daoValue}
@@ -185,7 +185,7 @@ const CreateDAO = () => {
               )}
             </tr>
             <div>
-              {showAddFirstMember == true && (
+              {(checkRegisterDAO == true && showAddFirstMember == true) && (
                 <AddFirstMmeber
                 setCheckAddFirstMember={setCheckAddFirstMember}
                 subDaoAddress={daoAddress}

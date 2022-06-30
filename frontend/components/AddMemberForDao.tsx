@@ -31,6 +31,7 @@ const AddMemberForDao = (props:AddMemberForDaoParam) => {
     await addMemberForDao(
         memberManagerAddress,
       addMemberValue,
+      props.setCheckAddMember
     );
   };
 

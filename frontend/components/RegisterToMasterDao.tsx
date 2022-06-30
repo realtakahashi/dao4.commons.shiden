@@ -19,9 +19,9 @@ const RegisterToMasterDao = (props: FinishRegisterSetting) => {
     await registerSubDAO(
       props.subDaoAddress,
       props.dataToBeRegisterd,
-      masterDaoAddress
+      masterDaoAddress,
+      props.setCheckRegisterDAO
     );
-    props.setCheckRegisterDAO(true);
   };
 
   return (
