@@ -34,6 +34,9 @@ const Home = () => {
           <button className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500">
             <Link href="dao/join/">Join to the DAO</Link>
           </button>
+          <button className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500">
+            <Link href="dao/burn/">Burn Member NFT</Link>
+          </button>
         </div>
         <ListOfSubDAO></ListOfSubDAO>
       </div>
