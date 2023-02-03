@@ -23,7 +23,7 @@ npx hardhat node --hostname localhost
 ```
 cd dao4.commons.shiden/backend
 npx hardhat compile
-npx hardhat run --network localhost scripts/initial_deploy.js 
+npx hardhat run --network localhost scripts/initial_deploy.ts
 ```
 
 # Deploy Contract Command Example

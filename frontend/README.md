@@ -1,7 +1,9 @@
 # DAO Frontend
 ## Setup
 
+- note: After cloning the whole repository, after entering the frontend directory, run the following command to get the submodules.　"git submodule update --init"
 ```
+
 cd frontend
 npm install 
 npm run dev
