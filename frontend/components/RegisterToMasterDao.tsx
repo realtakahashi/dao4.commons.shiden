@@ -5,6 +5,7 @@ interface FinishRegisterSetting {
   setCheckRegisterDAO: (flg: boolean) => void;
   dataToBeRegisterd: SubDAODeployFormData;
   subDaoAddress: string;
+  setShowAddFirstMember: (flg: boolean) => void;
 }
 
 const RegisterToMasterDao = (props: FinishRegisterSetting) => {
@@ -22,6 +23,7 @@ const RegisterToMasterDao = (props: FinishRegisterSetting) => {
       masterDaoAddress,
       props.setCheckRegisterDAO
     );
+    props.setShowAddFirstMember(true);
   };
 
   return (

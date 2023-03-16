@@ -3,6 +3,8 @@ import Web3 from "web3";
 import { useEffect } from "react";
 import Link from "next/link";
 import ListOfSubDAO from "../components/ListOfSubDAO";
+import { DfCHeader } from "../components/DfCHeader";
+import { DfCFooter } from "../components/DfCFooter";
 
 const Home = () => {
   const connectWallet = async () => {
@@ -20,10 +22,12 @@ const Home = () => {
 
   return (
     <>
-      <div className="bg-black flex flex-col min-h-screen">
+      <div className="bg-black flex flex-col">
+      <DfCHeader />
+      <main className="min-h-[85vh]">
         <div className="text-center text-100px font-extrabold leading-none tracking-tight">
           <div className="p-3"></div>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-red-500">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-red-500" style={{"fontFamily":"Gill sans"}}>
             Enpower Your Activities by DAO
           </span>
         </div>
@@ -38,10 +42,12 @@ const Home = () => {
             <Link href="dao/burn/">Burn Member NFT</Link>
           </button>
         </div>
-        <ListOfSubDAO></ListOfSubDAO>
+        <ListOfSubDAO/>
+      </main>
+      <DfCFooter/>
       </div>
+
     </>
   );
 };
 export default Home;
-

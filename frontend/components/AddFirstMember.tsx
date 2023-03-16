@@ -1,6 +1,7 @@
 import { addFirstMember } from "../dao4.frontend.common/contracts/membermanager_api";
 import { useState } from "react";
 import { FirstMemberData } from "../dao4.frontend.common/types/MemberManagerType";
+import Link from "next/link";
 
 interface FirstMemberParameter {
   setCheckAddFirstMember: (flg: boolean) => void;
@@ -46,7 +47,8 @@ const AddFirstMmeber = (props: FirstMemberParameter) => {
                   name="ownerName"
                   type="text"
                   onChange={onChangeInput}
-                ></input>
+                >
+                </input>
               </td>
             </tr>
           </table>

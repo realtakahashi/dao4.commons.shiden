@@ -10,6 +10,8 @@ import SubDaoList from "../components/SubDaoList";
 import Donate from "../dao4.frontend.common/components/Donate";
 import DaoBalance from "../dao4.frontend.common/components/DaoBalance";
 import { TargetDaoKind } from "../dao4.frontend.common/types/MasterDaoType";
+import { MDfCFooter } from "../components/MDfCFooter";
+import { MDfCHeader } from "../components/MDfCHeader";
 
 const Home: NextPage = () => {
   const [showSubDaoList, setShowSubDaoList] = useState(false);
@@ -21,6 +23,7 @@ const Home: NextPage = () => {
 
   const MasterDaoAddress =
     process.env.NEXT_PUBLIC_MASTERDAO_CONTRACT_ADDRESS ?? "";
+
 
   useEffect(() => {
     const connectWallet = async () => {
@@ -56,9 +59,10 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <div className="bg-black flex flex-col min-h-screen">
-        <div className="text-center text-150px font-extrabold leading-none tracking-tight">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-500">
+    <MDfCHeader/>
+      <div className="bg-black flex flex-col min-h-[85vh]">  
+        <div className="text-center text-[100px] font-extrabold leading-none tracking-tight">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-500" style={{"fontFamily":"Gill sans"}}>
             Master DAO
           </span>
         </div>
@@ -66,30 +70,75 @@ const Home: NextPage = () => {
           <DaoBalance isMasterDao={true} daoAddress={""}></DaoBalance>
         </div>
         <div className="p-1 text-center text-25px">
-          <button
+          { showSubDaoList == false && (
+            <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
             onClick={() => setShow(!showSubDaoList, false, false, false)}
           >
             Sub DAOs
           </button>
-          <button
+          )}
+          { showSubDaoList == true && (
+            <button
+            className="m-5 px-7 py-3 border-double border-white border-2 bg-white rounded hover:border-green-500"
+            style={{"color":"royalblue"}}
+            onClick={() => setShow(!showSubDaoList, false, false, false)}
+          >
+            Sub DAOs
+          </button>
+          )}
+          { showMemberList == false && (
+            <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
             onClick={() => setShow(false, !showMemberList, false, false)}
           >
             Members
           </button>
-          <button
+          )}
+          { showMemberList == true && (
+            <button
+            className="m-5 px-7 py-3 border-double border-white border-2 bg-white rounded hover:border-green-500"
+            style={{"color":"royalblue"}}
+            onClick={() => setShow(false, !showMemberList, false, false)}
+          >
+            Members
+          </button>
+          )}
+          { showProposalList == false && (
+            <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
             onClick={() => setShow(false, false, !showProposalList, false)}
           >
             Proposals
           </button>
-          <button
+          )}
+          { showProposalList == true && (
+            <button
+            className="m-5 px-7 py-3 border-double border-white border-2 bg-white rounded hover:border-green-500"
+            style={{"color":"royalblue"}}
+            onClick={() => setShow(false, false, !showProposalList, false)}
+          >
+            Proposals
+          </button>
+          )}
+          { showDonate == false && (
+            <button
             className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-green-500"
             onClick={() => setShow(false, false, false, !showDonate)}
           >
             Donate
           </button>
+          )}
+          { showDonate == true && (
+            <button
+            className="m-5 px-7 py-3 border-double border-white border-2 bg-white rounded hover:border-green-500"
+            style={{"color":"royalblue"}}
+            onClick={() => setShow(false, false, false, !showDonate)}
+          >
+            Donate
+          </button>
+          )}
+
         </div>
         {showSubDaoList == true && (
           <div>
@@ -116,6 +165,7 @@ const Home: NextPage = () => {
           </div>
         )}
       </div>
+      <MDfCFooter/>
     </>
   );
 };
