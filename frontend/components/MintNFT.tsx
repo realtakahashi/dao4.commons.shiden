@@ -6,6 +6,7 @@ interface FinishMintSetting {
   setTokenId: (id: string) => void;
   setTokenAddress:(tokenAddress:string) => void;
   nftAddress: string;
+  setShowNextStep?: (flg: boolean) => void;
 }
 
 const MintNFT = (props: FinishMintSetting) => {
@@ -17,8 +18,9 @@ const MintNFT = (props: FinishMintSetting) => {
       tmpAddress = nftAddress;
     }
     await mintMemberNFT(tmpAddress, props.setTokenId, props.setCheckMintNft);
-    props.setCheckMintNft(true);
+    // props.setCheckMintNft(true);
     props.setTokenAddress(tmpAddress);
+    props.setShowNextStep!(true);
   };
 
   return (
@@ -47,7 +49,7 @@ const MintNFT = (props: FinishMintSetting) => {
           className="px-7 py-3 border-double border-white border-2 bg-black rounded text-orange-400  hover:bg-orange-200"
           onClick={() => _mintNft()}
         >
-          <a href="#deploy_nft">Mint The NFT</a>
+          <a href="#deploy_nft" style={{"fontFamily":"Gill sans"}}>Mint The NFT</a>
         </button>
         <div className="p-3"></div>
       </div>

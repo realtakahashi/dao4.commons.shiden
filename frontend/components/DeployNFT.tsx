@@ -5,6 +5,8 @@ import { deployMemberNFT } from "../dao4.frontend.common/contracts/member_nft_ap
 interface FinishMintSetting {
   setCheckDeployNft: (flg: boolean) => void;
   setNftAddress:(value: string) => void;
+  setShowDeployNft:(flg: boolean) => void;
+  setShowMintNft:(flg: boolean) => void;
 }
 
 const DeployNFT = (props:FinishMintSetting) => {
@@ -26,6 +28,8 @@ const DeployNFT = (props:FinishMintSetting) => {
     event.preventDefault();
     const result = await deployMemberNFT(nftValue,props.setNftAddress,props.setCheckDeployNft);
     setNftAddress(result);
+    props.setShowDeployNft(false);
+    props.setShowMintNft(true);
     console.log("#### nftAddress",nftAddress);
   };
 
@@ -81,13 +85,14 @@ const DeployNFT = (props:FinishMintSetting) => {
           <button
             className="px-7 py-3 border-double border-white border-2 bg-black rounded text-20px text-orange-400  hover:bg-orange-200"
             onClick={() => _onSubmit}
+            style={{"fontFamily":"Gill sans"}}
           >
             Submit
           </button>
         </div>
-        <div className="m-5 text-center text-orange-400 text-20px">
+        {/* <div className="m-5 text-center text-orange-400 text-20px">
           Your NFT Address is : {nftAddress}
-        </div>
+        </div> */}
       </form>
       <div className="p-5"></div>
     </>
