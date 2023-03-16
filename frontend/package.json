@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
-    "@mantine/core": "^5.10.5",
+    "@mantine/core": "^6.0.2",
     "@mantine/hooks": "^5.10.5",
     "big.js": "^6.2.0",
     "feather-icons": "^4.29.0",
