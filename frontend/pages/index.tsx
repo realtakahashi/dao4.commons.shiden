@@ -22,7 +22,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="bg-black flex flex-col">
+      <div className="bg-black flex flex-col min-w-fit">
       <DfCHeader />
       <main className="min-h-[85vh]">
         <div className="text-center text-100px font-extrabold leading-none tracking-tight">
