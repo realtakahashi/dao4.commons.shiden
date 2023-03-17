@@ -59,8 +59,8 @@ const Home: NextPage = () => {
 
   return (
     <>
-    <MDfCHeader/>
-      <div className="bg-black flex flex-col min-h-[85vh] min-w-fit">  
+      <div className="bg-black flex flex-col min-h-[93vh] min-w-fit">
+      <MDfCHeader/>
         <div className="text-center text-[100px] font-extrabold leading-none tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-500" style={{"fontFamily":"Gill sans"}}>
             Master DAO
