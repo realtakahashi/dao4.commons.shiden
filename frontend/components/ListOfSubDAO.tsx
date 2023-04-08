@@ -12,6 +12,7 @@ import Donate from "@/dao4.frontend.common/components/Donate";
 import { TargetDaoKind } from "@/dao4.frontend.common/types/MasterDaoType";
 import TokenList from "./TokenList";
 import { Text } from "@mantine/core";
+import ProposalListReadOnly from "@/dao4.frontend.common/components/ProposalListReadOnly";
 
 
 const ListOfSubDAO = () => {
@@ -21,6 +22,7 @@ const ListOfSubDAO = () => {
   const [showListButton, setShowListButton] = useState(false);
   const [showDonate, setShowDonate] = useState(false);
   const [showTokens, setShowTokens] = useState(false);
+  const [showProposals, setShowProposals] = useState(false);
   const [selectDao, setSelectDao] = useState<SubDAODataWithMemberFlg>({
     daoName: "",
     daoAddress: "",
@@ -58,9 +60,10 @@ const ListOfSubDAO = () => {
     _showListButton: boolean,
     _showDonate: boolean,
     _showTokens: boolean,
+    _showProposals: boolean,
     _selectDao: SubDAODataWithMemberFlg
   ) => {
-    showSetting(_showList, _showListButton, _showDonate, _showTokens);
+    showSetting(_showList, _showListButton, _showDonate, _showTokens,_showProposals);
     setSelectDao(_selectDao);
   };
 
@@ -69,13 +72,15 @@ const ListOfSubDAO = () => {
     _showList: boolean,
     _showListButton: boolean,
     _showDonate: boolean,
-    _showTokens: boolean
+    _showTokens: boolean,
+    _showProposals: boolean,
   ) => {
     setShowList(_showList);
     getSubDaoList();
     setShowListButton(_showListButton);
     setShowDonate(_showDonate);
     setShowTokens(_showTokens);
+    setShowProposals(_showProposals);
   };
   
     return (
@@ -84,7 +89,7 @@ const ListOfSubDAO = () => {
           {showListButton == true && (
             <button
               className="px-4 py-2 text-20px text-white underline  hover:text-orange-400"
-              onClick={() => showSetting(true, false, false, false)}
+              onClick={() => showSetting(true, false, false, false, false)}
             >
               Back To DAO List
             </button>
@@ -100,7 +105,7 @@ const ListOfSubDAO = () => {
         )}
 
         {showList == true && (
-          <div className="p-2 flex flex-wrap justify-center mx-1 lg:-mx-4">
+          <div className="flex flex-wrap justify-center mx-1 lg:-mx-4">
             {typeof subDaoList !== "undefined"
               ? subDaoList.map((subDao) => {
                 console.log("Here,%d",subDaoList.length);
@@ -119,6 +124,21 @@ const ListOfSubDAO = () => {
                           </p>
                         </div>
                         <div className="px-6 pb-2">
+                        <button
+                            className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
+                            onClick={() =>
+                              showSettingAndSelectDAO(
+                                false,
+                                true,
+                                false,
+                                false,
+                                true,
+                                subDao
+                              )
+                            }
+                          >
+                            Proposals
+                          </button>
                           <button
                             className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"
                             onClick={() =>
@@ -126,6 +146,7 @@ const ListOfSubDAO = () => {
                                 false,
                                 true,
                                 true,
+                                false,
                                 false,
                                 subDao
                               )
@@ -141,6 +162,7 @@ const ListOfSubDAO = () => {
                                 true,
                                 false,
                                 true,
+                                false,
                                 subDao
                               )
                             }
@@ -184,6 +206,12 @@ const ListOfSubDAO = () => {
             setShowList={setShowList}
             forMember={false}
           ></TokenList>
+        )}
+        {showProposals == true && (
+          <ProposalListReadOnly
+            daoAddress={selectDao.daoAddress}
+            daoName={selectDao.daoName}
+          ></ProposalListReadOnly>
         )}
       </>
     );

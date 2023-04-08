@@ -12,7 +12,8 @@ enum ProposalKind {
     CommunityManagement,
     Activities,
     ElectionComissionPropsal,
-    DaoReward
+    DaoReward,
+    CooperationProposal
 }
 
 enum ProposalStatus {
@@ -72,8 +73,7 @@ contract ProposalManager {
     // Dao address => proposal id => Voting Info
     mapping(address => mapping(uint256 => VotingInfo)) private votingInfoes;
     // Dao address => proposal id => ( eoa => Already Voted)
-    mapping(address => mapping(uint256 => mapping(address => bool)))
-        private checkVoted;
+    mapping(address => mapping(uint256 => mapping(address => bool))) private checkVoted;
     // Dao address => Counter
     mapping(address => Counters.Counter) private proposalCounters;
 

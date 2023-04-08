@@ -13,6 +13,12 @@ const proposalManager = await ProposalManager.deploy();
 await proposalManager.deployed();
 console.log("Proposal Manager deployed to:", proposalManager.address);
 
+// Cooperate Proposal Manager
+const CooperateProposalManager = await ethers.getContractFactory("CooperateProposalManager");
+const cooperateProposalManager = await CooperateProposalManager.deploy();
+await cooperateProposalManager.deployed();
+console.log("Cooperate Proposal Manager deployed to:", cooperateProposalManager.address);
+
 // set eachother
 await memberManager.setProposalManager(proposalManager.address);
 await proposalManager.setMemberManager(memberManager.address);

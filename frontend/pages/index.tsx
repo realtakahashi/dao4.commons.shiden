@@ -26,10 +26,10 @@ const Home = () => {
       <DfCHeader />
       <main className="min-h-[85vh]">
         <div className="text-center text-100px font-extrabold leading-none tracking-tight">
-          <div className="p-3"></div>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-red-500" style={{"fontFamily":"Gill sans"}}>
+          {/* <div className="p-3"></div> */}
+          {/* <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-red-500" style={{"fontFamily":"Gill sans"}}>
             Enpower Your Activities by DAO
-          </span>
+          </span> */}
         </div>
         <div className="p-1 text-center text-25px">
           <button className="m-5 px-7 py-3 border-double border-white border-2 bg-black rounded text-white  hover:border-orange-500">
