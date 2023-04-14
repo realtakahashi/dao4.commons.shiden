@@ -180,7 +180,7 @@ const NewIndex = () => {
 
         <p className="p-12"></p>
         <Link href="/">
-          <a className="text-red-500  text-50px font-extrabold leading-10 underline">
+          <a className="text-orange-300  text-50px font-extrabold leading-10 underline">
             →→→→ Starting to Create Sub DAO →→→→{" "}
           </a>
         </Link>

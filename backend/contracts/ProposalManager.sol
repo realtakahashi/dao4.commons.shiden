@@ -45,16 +45,26 @@ struct VotingInfo {
 }
 
 interface ProposalManagerInterface {
-    function getPropsalInfo(address _targetDaoAddress, uint256 _proposalId)
-        external
-        view
-        returns (ProposalInfo memory);
+    function getPropsalInfo(
+        address _targetDaoAddress,
+        uint256 _proposalId
+    ) external view returns (ProposalInfo memory);
 
     function updateProposalStatus(
         address _targetDaoAddress,
         uint256 _proposalId,
         uint256 _poposalStatus
     ) external;
+
+    function checkProposalStatusIsRunning(
+        address _targetDaoAddress,
+        uint256 _proposalId
+    ) external view returns (bool);
+
+    function checkProposalKindIsCooperateProposal(
+        address _targetDaoAddress,
+        uint256 _proposalId
+    ) external view returns (bool);
 }
 
 /**
@@ -73,7 +83,8 @@ contract ProposalManager {
     // Dao address => proposal id => Voting Info
     mapping(address => mapping(uint256 => VotingInfo)) private votingInfoes;
     // Dao address => proposal id => ( eoa => Already Voted)
-    mapping(address => mapping(uint256 => mapping(address => bool))) private checkVoted;
+    mapping(address => mapping(uint256 => mapping(address => bool)))
+        private checkVoted;
     // Dao address => Counter
     mapping(address => Counters.Counter) private proposalCounters;
 
@@ -277,11 +288,9 @@ contract ProposalManager {
     /**
      * 提案の一覧を取得する
      */
-    function getProposalList(address _targetDaoAddress)
-        public
-        view
-        returns (ProposalInfo[] memory)
-    {
+    function getProposalList(
+        address _targetDaoAddress
+    ) public view returns (ProposalInfo[] memory) {
         uint256 index = 0;
         if (proposalCounters[_targetDaoAddress].current() != 0) {
             index = proposalCounters[_targetDaoAddress].current() - 1;
@@ -302,31 +311,30 @@ contract ProposalManager {
     /**
      * 投票結果を取得する
      */
-    function getVotingResult(address _targetDaoAddress, uint256 _proposalId)
-        public
-        view
-        returns (VotingInfo memory)
-    {
+    function getVotingResult(
+        address _targetDaoAddress,
+        uint256 _proposalId
+    ) public view returns (VotingInfo memory) {
         return votingInfoes[_targetDaoAddress][_proposalId];
     }
 
     /**
      * 投票を開始する
      */
-    function _startVoting(address _targetDaoAddress, uint256 _proposalId)
-        internal
-    {
+    function _startVoting(
+        address _targetDaoAddress,
+        uint256 _proposalId
+    ) internal {
         votingInfoes[_targetDaoAddress][_proposalId] = VotingInfo(0, 0, 0);
     }
 
     /**
      * 投票結果をチェックする。
      */
-    function _checkVotingResult(address _targetDaoAddress, uint256 _proposalId)
-        internal
-        view
-        returns (ProposalStatus)
-    {
+    function _checkVotingResult(
+        address _targetDaoAddress,
+        uint256 _proposalId
+    ) internal view returns (ProposalStatus) {
         uint256 memberCount = memberManagerContract.getMemberCount(
             _targetDaoAddress
         );
@@ -344,11 +352,10 @@ contract ProposalManager {
     /**
      * 該当の提案状態を取得する
      */
-    function getPropsalInfo(address _targetDaoAddress, uint256 _proposalId)
-        external
-        view
-        returns (ProposalInfo memory)
-    {
+    function getPropsalInfo(
+        address _targetDaoAddress,
+        uint256 _proposalId
+    ) external view returns (ProposalInfo memory) {
         return proposalInfoes[_targetDaoAddress][_proposalId];
     }
 
@@ -369,5 +376,33 @@ contract ProposalManager {
         // require(memberManagerContract.isMember(_targetDaoAddress, msg.sender),"only member does.");
         proposalInfoes[_targetDaoAddress][_proposalId]
             .proposalStatus = ProposalStatus(_poposalStatus);
+    }
+
+    function checkProposalStatusIsRunning(
+        address _targetDaoAddress,
+        uint256 _proposalId
+    ) external view returns (bool) {
+        if (
+            proposalInfoes[_targetDaoAddress][_proposalId].proposalStatus ==
+            ProposalStatus.Running
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function checkProposalKindIsCooperateProposal(
+        address _targetDaoAddress,
+        uint256 _proposalId
+    ) external view returns (bool) {
+        if (
+            proposalInfoes[_targetDaoAddress][_proposalId].proposalKind ==
+            ProposalKind.CooperationProposal
+        ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -8,7 +8,14 @@ import "./ProposalManager.sol";
 import "./CooperateProposal.sol";
 
 interface CooperateProposalManagerInterface {
-    function addToCooperateProposalList(address cooperateProposalInfoAddress) external;
+    function addToCooperateProposalList(
+        address cooperateProposalInfoAddress
+    ) external;
+
+    function getManagerAddresses()
+        external
+        view
+        returns (address, address, address);
 }
 
 /**
@@ -20,19 +27,35 @@ contract CooperateProposalManager is ReentrancyGuard {
     // proposal id => CooperateProposalInfo Contract Address
     mapping(uint256 => address) private cooperateProposalInfoes;
 
-    function addToCooperateProposalList(address cooperateProposalInfoAddress) external {
+    function addToCooperateProposalList(
+        address cooperateProposalInfoAddress
+    ) external {
         require(msg.sender != tx.origin, "can not depoist directly.");
-        cooperateProposalInfoes[cooperateProposalCounter.current()] = cooperateProposalInfoAddress;
+        cooperateProposalInfoes[
+            cooperateProposalCounter.current()
+        ] = cooperateProposalInfoAddress;
         cooperateProposalCounter.increment();
     }
 
-    function getCooperateProposalList() public view returns(CooperationProposalInfo[] memory) {
-        CooperationProposalInfo[] memory cooperateProposalList = new CooperationProposalInfo[](cooperateProposalCounter.current());
-        for (uint i=0; i<cooperateProposalCounter.current(); i++) {
-            CooperateProposalInterface cooperateProposalContract = CooperateProposalInterface(cooperateProposalInfoes[i]);
-            cooperateProposalList[i] = cooperateProposalContract.getCooperateProposalInfo();
+    function getCooperateProposalList()
+        public
+        view
+        returns (CooperationProposalInfo[] memory)
+    {
+        CooperationProposalInfo[]
+            memory cooperateProposalList = new CooperationProposalInfo[](
+                cooperateProposalCounter.current()
+            );
+        for (uint i = 0; i < cooperateProposalCounter.current(); i++) {
+            CooperateProposalInterface cooperateProposalContract = CooperateProposalInterface(
+                    cooperateProposalInfoes[i]
+                );
+            CooperationProposalInfo
+                memory cooperationProposalInfo = cooperateProposalContract
+                    .getCooperateProposalInfo();
+            cooperationProposalInfo.proposalId = i;
+            cooperateProposalList[i] = cooperationProposalInfo;
         }
         return cooperateProposalList;
     }
-
 }

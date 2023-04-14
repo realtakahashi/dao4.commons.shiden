@@ -8,7 +8,10 @@ import "./ProposalManager.sol";
 import "./CooperateProposalManager.sol";
 
 interface CooperateProposalInterface {
-    function getCooperateProposalInfo() external view returns(CooperationProposalInfo memory);
+    function getCooperateProposalInfo()
+        external
+        view
+        returns (CooperationProposalInfo memory);
 }
 
 enum CooperationProposalKind {
@@ -24,8 +27,24 @@ struct CooperationProposalInfo {
     string outline;
     string details;
     string githubURL;
+    uint256 proposalId;
     uint256[] relatedProposalIdList;
     ProposalStatus proposalStatus;
+    address[] targetAddressList;
+    uint256 targetAmount;
+    address addressOfThisContract;
+}
+
+struct ParamStruct {
+    uint256 coProposalKind;
+    address[] daoAddressList;
+     string title;
+    string outline;
+    string details;
+    string githubURL;
+    uint256 proposalId;
+    uint256[] relatedProposalIdList;
+    uint256 proposalStatus;
     address[] targetAddressList;
     uint256 targetAmount;
     address addressOfThisContract;
@@ -39,9 +58,6 @@ contract CooperateProposal is ReentrancyGuard {
     MemberManagerInterface private memberManagerContract;
     ProposalManagerInterface private proposalManagerContract;
     CooperateProposalManagerInterface private cooperateProposalManagerContract;
-    address private memberManagerAddress;
-    address private proposalManagerAddress;
-    address private cooperateProposalManagerAddress;
     CooperationProposalInfo public cooperateProposalInfo;
     VotingInfo public cooperateVotingInfo;
     mapping(address => bool) private cooperateCheckVoted;
@@ -61,58 +77,121 @@ contract CooperateProposal is ReentrancyGuard {
     );
     event ExecutedDivide(address indexed thisContractAddress);
 
-    function setManagerContract(
+    constructor(
         address _memberManagerAddress,
         address _proposalManagerAddress,
-        address _cooperateProposalManagerAddress
-    ) public {
+        address _cooperateProposalManagerAddress,
+        ParamStruct memory _paramStruct
+    ) {
         memberManagerContract = MemberManagerInterface(_memberManagerAddress);
-        memberManagerAddress = _memberManagerAddress;
         proposalManagerContract = ProposalManagerInterface(
             _proposalManagerAddress
         );
-        proposalManagerAddress = _proposalManagerAddress;
-        cooperateProposalManagerContract = CooperateProposalManagerInterface(_cooperateProposalManagerAddress);
-        cooperateProposalManagerAddress = _cooperateProposalManagerAddress;
+        cooperateProposalManagerContract = CooperateProposalManagerInterface(
+            _cooperateProposalManagerAddress
+        );
+        setProposalInfo(_paramStruct);
+        checkOnlyCooperateMemeber(cooperateProposalInfo.daoAddressList);
+        checkPassedProposalByEachDao(
+            cooperateProposalInfo.daoAddressList,
+            cooperateProposalInfo.relatedProposalIdList
+        );
+        checkTermOfElectionCommision(cooperateProposalInfo.daoAddressList);
+        cooperateProposalManagerContract.addToCooperateProposalList(
+            address(this)
+        );
+
+        emit SubmitedCooperateProposal(
+            address(this),
+            cooperateProposalInfo.title
+        );
     }
 
-    /**
-     * 提案を提出する
-     */
-    function submitProposal(
-        address[] memory _daoAddressList,
-        CooperationProposalKind _proposalKind,
-        string memory _title,
-        string memory _outline,
-        string memory _details,
-        string memory _githubURL,
-        uint256[] memory _proposalIdListPassedByEachDao,
-        address[] memory _targetAddressList,
-        uint256 _targetAmount
-    )
-        public
-        onlyCooperateMemeber(_daoAddressList)
-        passedProposalByEachDao(_daoAddressList, _proposalIdListPassedByEachDao)
-        CheckTermOfElectionCommision(_daoAddressList)
-    {
-        cooperateProposalInfo.cooperationProposalKind = _proposalKind;
-        cooperateProposalInfo.daoAddressList = _daoAddressList;
-        cooperateProposalInfo.title = _title;
-        cooperateProposalInfo.outline = _outline;
-        cooperateProposalInfo.details = _details;
-        cooperateProposalInfo.githubURL = _githubURL;
+    function setProposalInfo(ParamStruct memory _paramStruct) private {
+        cooperateProposalInfo.cooperationProposalKind = CooperationProposalKind(_paramStruct.coProposalKind);
+        cooperateProposalInfo.daoAddressList = _paramStruct.daoAddressList;
+        cooperateProposalInfo.title = _paramStruct.title;
+        cooperateProposalInfo.outline = _paramStruct.outline;
+        cooperateProposalInfo.details = _paramStruct.details;
+        cooperateProposalInfo.githubURL = _paramStruct.githubURL;
+        cooperateProposalInfo.proposalId = 0;
         cooperateProposalInfo
-            .relatedProposalIdList = _proposalIdListPassedByEachDao;
+            .relatedProposalIdList = _paramStruct.relatedProposalIdList;
         cooperateProposalInfo.proposalStatus = ProposalStatus
             .UnderDiscussionOnGithub;
-        cooperateProposalInfo.targetAddressList = _targetAddressList;
-        cooperateProposalInfo.targetAmount = _targetAmount;
+        cooperateProposalInfo.targetAddressList = _paramStruct.targetAddressList;
+        cooperateProposalInfo.targetAmount = _paramStruct.targetAmount;
         cooperateProposalInfo.addressOfThisContract = address(this);
-
-        cooperateProposalManagerContract.addToCooperateProposalList(address(this));
-
-        emit SubmitedCooperateProposal(address(this), _title);
     }
+
+    // constructor(
+    //     address _memberManagerAddress,
+    //     address _proposalManagerAddress,
+    //     address _cooperateProposalManagerAddress
+    // )
+    // {
+    //     memberManagerContract = MemberManagerInterface(_memberManagerAddress);
+    //     proposalManagerContract = ProposalManagerInterface(
+    //         _proposalManagerAddress
+    //     );
+    //     cooperateProposalManagerContract = CooperateProposalManagerInterface(_cooperateProposalManagerAddress);
+    // }
+
+    // function setManagerContract(
+    //     address _memberManagerAddress,
+    //     address _proposalManagerAddress,
+    //     address _cooperateProposalManagerAddress
+    // ) public {
+    //     memberManagerContract = MemberManagerInterface(_memberManagerAddress);
+    //     memberManagerAddress = _memberManagerAddress;
+    //     proposalManagerContract = ProposalManagerInterface(
+    //         _proposalManagerAddress
+    //     );
+    //     proposalManagerAddress = _proposalManagerAddress;
+    //     cooperateProposalManagerContract = CooperateProposalManagerInterface(_cooperateProposalManagerAddress);
+    //     cooperateProposalManagerAddress = _cooperateProposalManagerAddress;
+    // }
+
+    // /**
+    //  * 提案を提出する
+    //  */
+    // function submitProposal(
+    //     address[] memory _daoAddressList,
+    //     CooperationProposalKind _proposalKind,
+    //     string memory _title,
+    //     string memory _outline,
+    //     string memory _details,
+    //     string memory _githubURL,
+    //     uint256[] memory _proposalIdListPassedByEachDao,
+    //     address[] memory _targetAddressList,
+    //     uint256 _targetAmount
+    // )
+    //     public
+    //     onlyCooperateMemeber(_daoAddressList)
+    //     passedProposalByEachDao(_daoAddressList, _proposalIdListPassedByEachDao)
+    //     CheckTermOfElectionCommision(_daoAddressList)
+    // {
+    //     cooperateProposalInfo.cooperationProposalKind = _proposalKind;
+    //     cooperateProposalInfo.daoAddressList = _daoAddressList;
+    //     cooperateProposalInfo.title = _title;
+    //     cooperateProposalInfo.outline = _outline;
+    //     cooperateProposalInfo.details = _details;
+    //     cooperateProposalInfo.githubURL = _githubURL;
+    //     cooperateProposalInfo.proposalId = 0;
+    //     cooperateProposalInfo
+    //         .relatedProposalIdList = _proposalIdListPassedByEachDao;
+    //     cooperateProposalInfo.proposalStatus = ProposalStatus
+    //         .UnderDiscussionOnGithub;
+    //     cooperateProposalInfo.targetAddressList = _targetAddressList;
+    //     cooperateProposalInfo.targetAmount = _targetAmount;
+    //     cooperateProposalInfo.addressOfThisContract = address(this);
+
+    //     cooperateProposalManagerContract.addToCooperateProposalList(
+    //         address(this)
+    //     );
+
+    //     emit SubmitedCooperateProposal(address(this), _title);
+    // }
 
     function changeProposalStatus(ProposalStatus _proposalStatus) public {
         require(
@@ -149,9 +228,7 @@ contract CooperateProposal is ReentrancyGuard {
     /**
      * 投票する
      */
-    function voteForProposal(
-        bool yes
-    ) public {
+    function voteForProposal(bool yes) public {
         checkOnlyCooperateMemeber(cooperateProposalInfo.daoAddressList);
         require(
             cooperateProposalInfo.proposalStatus == ProposalStatus.Voting,
@@ -168,9 +245,7 @@ contract CooperateProposal is ReentrancyGuard {
         emit VotedForCooperateProposal(msg.sender, address(this));
     }
 
-    function divide(
-        uint256[] memory divideList
-    ) public payable {
+    function divide(uint256[] memory divideList) public payable {
         require(
             cooperateProposalInfo.targetAddressList.length == divideList.length,
             "Invalid divide."
@@ -192,7 +267,11 @@ contract CooperateProposal is ReentrancyGuard {
         emit ExecutedDivide(address(this));
     }
 
-    function getCooperateProposalInfo() external view returns(CooperationProposalInfo memory) {
+    function getCooperateProposalInfo()
+        external
+        view
+        returns (CooperationProposalInfo memory)
+    {
         return cooperateProposalInfo;
     }
 
@@ -213,7 +292,9 @@ contract CooperateProposal is ReentrancyGuard {
         _;
     }
 
-    function checkOnlyCooperateMemeber(address[] memory _daoAddressList) private onlyCooperateMemeber(_daoAddressList) {}
+    function checkOnlyCooperateMemeber(
+        address[] memory _daoAddressList
+    ) public onlyCooperateMemeber(_daoAddressList) {}
 
     modifier passedProposalByEachDao(
         address[] memory _daoAddressList,
@@ -232,16 +313,20 @@ contract CooperateProposal is ReentrancyGuard {
                 result = false;
             } else {
                 for (uint i = 0; i < _daoAddressList.length; i++) {
-                    ProposalInfo memory proposalInfo = proposalManagerContract
-                        .getPropsalInfo(
+                    if (
+                        !proposalManagerContract.checkProposalStatusIsRunning(
                             _daoAddressList[i],
                             _proposalIdListPassedByEachDao[i]
-                        );
-                    if (proposalInfo.proposalStatus != ProposalStatus.Running) {
+                        )
+                    ) {
                         result = false;
-                    } else if (
-                        proposalInfo.proposalKind !=
-                        ProposalKind.CooperationProposal
+                    }
+                    if (
+                        !proposalManagerContract
+                            .checkProposalKindIsCooperateProposal(
+                                _daoAddressList[i],
+                                _proposalIdListPassedByEachDao[i]
+                            )
                     ) {
                         result = false;
                     }
@@ -252,7 +337,15 @@ contract CooperateProposal is ReentrancyGuard {
         _;
     }
 
-    modifier CheckTermOfElectionCommision(address[] memory _daoAddressList) {
+    function checkPassedProposalByEachDao(
+        address[] memory _daoAddressList,
+        uint256[] memory _proposalIdListPassedByEachDao
+    )
+        public
+        passedProposalByEachDao(_daoAddressList, _proposalIdListPassedByEachDao)
+    {}
+
+    modifier termOfElectionCommision(address[] memory _daoAddressList) {
         bool result = false;
         for (uint i = 0; i < _daoAddressList.length; i++) {
             if (
@@ -267,6 +360,10 @@ contract CooperateProposal is ReentrancyGuard {
         require(result, "Any DAO Electoral Commissioner must be in office");
         _;
     }
+
+    function checkTermOfElectionCommision(
+        address[] memory _daoAddressList
+    ) public termOfElectionCommision(_daoAddressList) {}
 
     function getDaoAddressWhichYouBelong(
         address[] memory _daoAddressList
@@ -288,7 +385,7 @@ contract CooperateProposal is ReentrancyGuard {
 
     function onlyEitherElectionCommision(
         address[] memory _daoAddressList
-    ) private view returns (bool) {
+    ) public view returns (bool) {
         bool result = false;
         for (uint i = 0; i < _daoAddressList.length; i++) {
             if (
@@ -338,7 +435,6 @@ contract CooperateProposal is ReentrancyGuard {
         }
         return true;
     }
-
 
     /**
      * 投票を開始する
