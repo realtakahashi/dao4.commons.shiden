@@ -55,13 +55,28 @@ describe("Cooperate contract", function () {
         outline: string;
         details: string;
         githubURL: string;
-        proposalId: number;
-        relatedProposalIdList: number[];
+        proposalId: string;
+        relatedProposalIdList: string[];
         proposalStatus: number;
         targetAddressList: string[];
-        targetAmount: number;
+        targetAmount: string;
         addressOfThisContract: string;
       }
+
+      // interface CooperateProposalInfo {
+    //     coProposalKind: number;
+    //     daoAddressList: string[];
+    //      title: string;
+    //     outline: string;
+    //     details: string;
+    //     githubURL: string;
+    //     proposalId: number;
+    //     relatedProposalIdList: number[];
+    //     proposalStatus: number;
+    //     targetAddressList: string[];
+    //     targetAmount: number;
+    //     addressOfThisContract: string;
+    //   }
       
     describe("MemberManager", function () {
         it("MemberManager Deployment.", async function () {
@@ -180,11 +195,11 @@ describe("Cooperate contract", function () {
                  outline: "test outline",
                 details: "test details",
                 githubURL: "test url",
-                proposalId: 0,
-                relatedProposalIdList: [1,1],
+                proposalId: "0",
+                relatedProposalIdList: ["1","1"],
                 proposalStatus: 0,
                 targetAddressList: [SubDaoOwner1.address, SubDaoOwner2.address],
-                targetAmount: 100000,
+                targetAmount: "100000",
                 addressOfThisContract: ADDRESS_ZERO,    
             }
             const CooperateProposal = await ethers.getContractFactory("CooperateProposal")

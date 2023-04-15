@@ -294,7 +294,7 @@ contract CooperateProposal is ReentrancyGuard {
 
     function checkOnlyCooperateMemeber(
         address[] memory _daoAddressList
-    ) public onlyCooperateMemeber(_daoAddressList) {}
+    ) public view onlyCooperateMemeber(_daoAddressList) {}
 
     modifier passedProposalByEachDao(
         address[] memory _daoAddressList,
@@ -341,7 +341,7 @@ contract CooperateProposal is ReentrancyGuard {
         address[] memory _daoAddressList,
         uint256[] memory _proposalIdListPassedByEachDao
     )
-        public
+        public view
         passedProposalByEachDao(_daoAddressList, _proposalIdListPassedByEachDao)
     {}
 
@@ -363,7 +363,7 @@ contract CooperateProposal is ReentrancyGuard {
 
     function checkTermOfElectionCommision(
         address[] memory _daoAddressList
-    ) public termOfElectionCommision(_daoAddressList) {}
+    ) public view termOfElectionCommision(_daoAddressList) {}
 
     function getDaoAddressWhichYouBelong(
         address[] memory _daoAddressList

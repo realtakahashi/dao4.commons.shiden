@@ -9,14 +9,17 @@ const CooperateProposal = () => {
   const [showSubmit, setShowSubmit] = useState(false);
   const [showList, setShowList] = useState(true);
   const [showAll, setShowAll] = useState(true);
+  const [showBackListButton, setShowBackListButton] = useState(false);
   const _manageShowing = (
     _showSubmit: boolean,
     _showList: boolean,
+    _showBackListButton: boolean,
     _showAllList: boolean
   ) => {
     setShowSubmit(_showSubmit);
     setShowList(_showList);
     setShowAll(_showAllList);
+    setShowBackListButton(_showBackListButton);
   };
   return (
     <>
@@ -27,10 +30,10 @@ const CooperateProposal = () => {
               <Link href="/">Back To Top</Link>
             </button>
           <div className="flex justify-center">
-            {showSubmit == true && (
+            {showBackListButton == true && (
               <button 
                 className="m-2 px-4 py-2  border-black border-2 bg-indigo-200 rounded text-black  hover:bg-indigo-100"
-                onClick={() => _manageShowing(false, true, true)}
+                onClick={() => _manageShowing(false, true, false, true)}
                 >
                 Back To List
               </button>
@@ -41,13 +44,13 @@ const CooperateProposal = () => {
                 <div>
                   <button
                     className="m-2 px-4 py-2  border-black border-2 bg-white rounded text-black  hover:bg-green-200"
-                    onClick={() => _manageShowing(true, false, false)}
+                    onClick={() => _manageShowing(true, false, true,false)}
                   >
                     + Submit New
                   </button>
                   <button
                     className="m-2 px-4 py-2  border-black border-2 bg-white rounded text-black  hover:bg-green-200"
-                    onClick={() => _manageShowing(false, true, !showAll)}
+                    onClick={() => _manageShowing(false, true, false,!showAll)}
                   >
                     All or Not Finished
                   </button>
